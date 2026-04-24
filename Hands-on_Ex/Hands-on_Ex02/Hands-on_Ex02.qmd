@@ -1,0 +1,234 @@
+---
+title: "Hands-on_Ex02"
+author: "Huang Kuan Yu"
+---
+
+# Getting Started
+
+## Installing and loading the required libraries
+
+In this exercise, beside tidyverse, four R packages will be used. They are:
+
+ggrepel: an R package provides geoms for ggplot2 to repel overlapping text labels. ggthemes: an R package provides some extra themes, geoms, and scales for ‘ggplot2’. hrbrthemes: an R package provides typography-centric themes and theme components for ggplot2. patchwork: an R package for preparing composite figure created using ggplot2. Code chunk below will be used to check if these packages have been installed and also will load them onto your working R environment.
+
+```{r}
+pacman::p_load(ggrepel, patchwork, 
+               ggthemes, hrbrthemes,
+               tidyverse) 
+```
+
+## Importing data
+
+For the purpose of this exercise, a data file called Exam_data will be used. It consists of year end examination grades of a cohort of primary 3 students from a local school. It is in csv file format.
+
+The code chunk below imports exam_data.csv into R environment by using read_csv() function of readr package. readr is one of the tidyverse package.
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+There are a total of seven attributes in the exam_data tibble data frame. Four of them are categorical data type and the other three are in continuous data type.
+
+The categorical attributes are: ID, CLASS, GENDER and RACE. The continuous attributes are: MATHS, ENGLISH and SCIENCE.
+
+## Beyond ggplot2 Annotation:ggrepel
+
+ggrepel is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text as in our examples on the right. This is to solve the challenge in plotting statistical graph with large number of data points requiring annotation.
+
+Compare the below two graphs and you can see the difference.
+
+### The ggplot Graph
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x= MATHS, 
+           y=ENGLISH)) +
+  geom_point() +
+  geom_smooth(method=lm, 
+              size=0.5) +  
+  geom_label(aes(label = ID), 
+             hjust = .5, 
+             vjust = -.5) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100)) +
+  ggtitle("English scores versus Maths scores for Primary 3")
+```
+
+### The ggrepel Graph
+
+```{r}
+ggplot(data=exam_data, 
+       aes(x= MATHS, 
+           y=ENGLISH)) +
+  geom_point() +
+  geom_smooth(method=lm, 
+              size=0.5) +  
+  geom_label_repel(aes(label = ID), 
+                   fontface = "bold") +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100)) +
+  ggtitle("English scores versus Maths scores for Primary 3")
+```
+
+## ggplot2 Themes
+
+ggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().
+
+In the example below theme_gray() is used.
+
+```{r}
+ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  theme_gray() +
+  ggtitle("Distribution of Maths scores") 
+```
+
+## About ggthemes package
+
+ggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.
+
+In the example below, The Economist theme is used.
+
+```{r}
+ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  ggtitle("Distribution of Maths scores") +
+  theme_economist()
+```
+
+## About the hrbthems package
+
+hrbrthemes package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.
+
+Compare the two code chunks and how they impact the graph display.
+
+```{r}
+ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  ggtitle("Distribution of Maths scores") +
+  theme_ipsum()
+```
+
+```{r}
+ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  ggtitle("Distribution of Maths scores") +
+  theme_ipsum(axis_title_size = 18,
+              base_size = 15,
+              grid = "Y"
+              )
+```
+
+### Lesson learned from comparing the code chunk
+
+axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
+
+## Beyond single graphs
+
+In this section, I will display how to create composite plot by combining multiple graphs. First, I will have to create three statistical graphics by using the code chunk below.
+
+Graph 1: Distribution of Math scores
+
+```{r}
+p1 <- ggplot(data=exam_data, 
+             aes(x = MATHS)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") + 
+  coord_cartesian(xlim=c(0,100)) +
+  ggtitle("Distribution of Maths scores")
+```
+
+Graph 2: Distribution of English scores
+
+```{r}
+p2 <- ggplot(data=exam_data, 
+             aes(x = ENGLISH)) +
+  geom_histogram(bins=20, 
+                 boundary = 100,
+                 color="grey25", 
+                 fill="grey90") +
+  coord_cartesian(xlim=c(0,100)) +
+  ggtitle("Distribution of English scores")
+```
+
+Graph 3: Scatterplot for English score versus Maths score
+
+```{r}
+p3 <- ggplot(data=exam_data, 
+             aes(x= MATHS, 
+                 y=ENGLISH)) +
+  geom_point() +
+  geom_smooth(method=lm, 
+              size=0.5) +  
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100)) +
+  ggtitle("English scores versus Maths scores for Primary 3")
+```
+
+## Creating Composite Graphics
+
+In the section above, I have completed 3 individual graphs, now how can I compose them together?
+
+There are several ggplot2 extension’s functions support the needs to prepare composite figure by combining several graphs such as grid.arrange() of gridExtra package and plot_grid() of cowplot package. In this section, I am going to shared with you an ggplot2 extension called patchwork which is specially designed for combining separate ggplot2 graphs into a single figure.
+
+Patchwork package has a very simple syntax where we can create layouts super easily. Here’s the general syntax that combines:
+
+Two-Column Layout using the Plus Sign +. Parenthesis () to create a subplot group. Two-Row Layout using the Division Sign /
+
+### Combining two ggplot2 graphs
+
+```{r}
+p1 + p2
+```
+
+### Combining three ggplot2 graphs
+
+```{r}
+(p1 / p2) | p3
+```
+
+### Creating a composite figure with tag
+
+To identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.
+
+```{r}
+((p1 / p2) | p3) + 
+  plot_annotation(tag_levels = 'I')
+```
+
+### Creating figure with insert
+
+With inset_element() of patchwork, we can place one or several plots or graphic elements freely on top or below another plot.
+
+```{r}
+p3 + inset_element(p2, 
+                   left = 0.02, 
+                   bottom = 0.7, 
+                   right = 0.5, 
+                   top = 1)
+```
+
+### Creating a composite figure by using patchwork and ggtheme
+
+```{r}
+patchwork <- (p1 / p2) | p3
+patchwork & theme_economist()
+```
