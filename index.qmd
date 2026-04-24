@@ -2,4 +2,4 @@
 title: "ISSS608-VAA"
 ---
 
-Welcome to **ISSS608 Visual Analytics and Applications**. This website is coursework made by Huang Kuan Yu (Edith).
+Welcome to **ISSS608 Visual Analytics and Applications**. This website contains coursework made by Huang Kuan Yu (Edith).
