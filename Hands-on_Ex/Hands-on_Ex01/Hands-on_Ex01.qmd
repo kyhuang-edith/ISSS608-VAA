@@ -29,21 +29,20 @@ exam_data <- read_csv("data/Exam_data.csv")
 
 # Plotting a simple bar chart
 
-:::: panel-tabset
+::: panel-tabset
 ## The plot
+
 ```{r}
 #| echo: false
-#| fig-width:12
-#| fig_height: 8
 ggplot(data = exam_data, aes(x=RACE))
   geom_bar()
 ```
+
 ## The code
+
 ```{r}
 #| eval: false
-#| fig-width:12
-#| fig_height: 8
 ggplot(data = exam_data, aes(x=RACE))
   geom_bar()
 ```
-::::
+:::
