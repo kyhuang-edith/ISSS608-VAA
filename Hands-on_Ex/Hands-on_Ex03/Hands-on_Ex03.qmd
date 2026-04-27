@@ -24,8 +24,10 @@ exam_data <- read_csv("data/Exam_data.csv")
 
 ::: panel-tabset
 ## The plot
+:::
 
 ```{r}
+
 #|echo: false
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
@@ -43,9 +45,10 @@ girafe(
 )
 ```
 
-## The code
+:::: :::: \## The code
 
 ```{r}
+
 #|eval: false
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
@@ -62,13 +65,15 @@ girafe(
   height_svg = 6*0.618
 )
 ```
-:::
+
+:::: :::
 
 # Display multiple information on tooltip
 
 ::: panel-tabset
 ## The Plot
-````{r}
+
+```{r}
 #|echo: false
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
@@ -88,10 +93,11 @@ girafe(
   width_svg = 8,
   height_svg = 8*0.618
 )
-````
+```
 
 ## The Code
-````{r}
+
+```{r}
 #|eval: false
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
@@ -111,7 +117,5 @@ girafe(
   width_svg = 8,
   height_svg = 8*0.618
 )
-````
+```
 :::
-
-
