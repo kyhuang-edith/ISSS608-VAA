@@ -2,7 +2,7 @@
 title: "Hands-on Exercise 1"
 author: "Huang Kuan Yu"
 date: "25/4/2026"
-date-modfified: "last-modified"
+date-modified: "last-modified"
 format: html
 execute:
     echo: true

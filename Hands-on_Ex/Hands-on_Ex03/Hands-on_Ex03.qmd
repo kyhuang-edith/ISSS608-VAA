@@ -2,7 +2,7 @@
 title: "Hands-on Exercise 3"
 author: "Huang Kuan Yu"
 date: "25/4/2026"
-date-modfified: "last-modified"
+date-modified: "last-modified"
 format: html
 execute:
     echo: true
@@ -15,8 +15,8 @@ execute:
 pacman::p_load(ggiraph, plotly, 
                patchwork, DT, tidyverse) 
 ```
-
-# Import Data
+# Programming Interactive Data Visualisation with R
+## Import Data
 
 ```{r}
 exam_data <- read_csv("data/Exam_data.csv")
@@ -119,3 +119,6 @@ girafe(
 )
 ```
 :::
+
+
+# Programming Animated Statistical Graphics with R
