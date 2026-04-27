@@ -1,7 +1,7 @@
 ---
 title: "Hands-on Exercise 3"
 author: "Huang Kuan Yu"
-date: "25/4/2026"
+date: "2026-04-27"
 date-modified: "last-modified"
 format: html
 execute:
@@ -15,7 +15,9 @@ execute:
 pacman::p_load(ggiraph, plotly, 
                patchwork, DT, tidyverse) 
 ```
+
 # Programming Interactive Data Visualisation with R
+
 ## Import Data
 
 ```{r}
@@ -66,7 +68,7 @@ girafe(
 ```
 :::
 
-# Display multiple information on tooltip
+## Display multiple information on tooltip
 
 ::: panel-tabset
 ## The Plot
@@ -120,5 +122,13 @@ girafe(
 ```
 :::
 
-
 # Programming Animated Statistical Graphics with R
+
+## Install package
+
+```{r}
+pacman::p_load(readxl, gifski, gapminder,
+               plotly, gganimate, tidyverse)
+```
+
+## Import Data
