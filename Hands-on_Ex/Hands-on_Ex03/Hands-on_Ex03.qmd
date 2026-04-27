@@ -23,10 +23,11 @@ exam_data <- read_csv("data/Exam_data.csv")
 ```
 
 ::: panel-tabset
-
 ## The plot
+
 ```{r}
 #| echo: false
+
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
   geom_dotplot_interactive(
@@ -42,10 +43,12 @@ girafe(
   height_svg = 6*0.618
 )
 ```
+
 ## The code
 
 ```{r}
 #| eval: false
+
 p <- ggplot(data=exam_data, 
        aes(x = MATHS)) +
   geom_dotplot_interactive(
@@ -63,7 +66,6 @@ girafe(
 ```
 :::
 
-
 # Display multiple information on tooltip
 
 ::: panel-tabset
@@ -71,6 +73,7 @@ girafe(
 
 ```{r}
 #| echo: false
+
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
   "\n Class = ", exam_data$CLASS)) 
@@ -95,6 +98,7 @@ girafe(
 
 ```{r}
 #| eval: false
+
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
   "\n Class = ", exam_data$CLASS)) 
