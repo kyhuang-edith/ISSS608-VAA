@@ -23,50 +23,46 @@ exam_data <- read_csv("data/Exam_data.csv")
 ```
 
 ::: panel-tabset
+
 ## The plot
+```{r}
+#| echo: false
+p <- ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(tooltip = ID),
+    stackgroups = TRUE, 
+    binwidth = 1, 
+    method = "histodot") +
+  scale_y_continuous(NULL, 
+                     breaks = NULL)
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
+```
+## The code
+
+```{r}
+#| eval: false
+p <- ggplot(data=exam_data, 
+       aes(x = MATHS)) +
+  geom_dotplot_interactive(
+    aes(tooltip = ID),
+    stackgroups = TRUE, 
+    binwidth = 1, 
+    method = "histodot") +
+  scale_y_continuous(NULL, 
+                     breaks = NULL)
+girafe(
+  ggobj = p,
+  width_svg = 6,
+  height_svg = 6*0.618
+)
+```
 :::
 
-```{r}
-
-#|echo: false
-p <- ggplot(data=exam_data, 
-       aes(x = MATHS)) +
-  geom_dotplot_interactive(
-    aes(tooltip = ID),
-    stackgroups = TRUE, 
-    binwidth = 1, 
-    method = "histodot") +
-  scale_y_continuous(NULL, 
-                     breaks = NULL)
-girafe(
-  ggobj = p,
-  width_svg = 6,
-  height_svg = 6*0.618
-)
-```
-
-:::: :::: \## The code
-
-```{r}
-
-#|eval: false
-p <- ggplot(data=exam_data, 
-       aes(x = MATHS)) +
-  geom_dotplot_interactive(
-    aes(tooltip = ID),
-    stackgroups = TRUE, 
-    binwidth = 1, 
-    method = "histodot") +
-  scale_y_continuous(NULL, 
-                     breaks = NULL)
-girafe(
-  ggobj = p,
-  width_svg = 6,
-  height_svg = 6*0.618
-)
-```
-
-:::: :::
 
 # Display multiple information on tooltip
 
@@ -74,7 +70,7 @@ girafe(
 ## The Plot
 
 ```{r}
-#|echo: false
+#| echo: false
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
   "\n Class = ", exam_data$CLASS)) 
@@ -98,7 +94,7 @@ girafe(
 ## The Code
 
 ```{r}
-#|eval: false
+#| eval: false
 exam_data$tooltip <- c(paste0(     
   "Name = ", exam_data$ID,         
   "\n Class = ", exam_data$CLASS)) 
