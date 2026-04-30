@@ -802,8 +802,9 @@ gganimate extends the grammar of graphics as implemented by ggplot2 to include t
 
 ### Building a static population bubble plot
 
-:::panel-tabset
+::: panel-tabset
 ### The Plot
+
 ```{r}
 #| echo: false
 #| fig-width: 12
@@ -839,10 +840,11 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ```
 :::
 
-### Building a animated population bubble plot 
+### Building a animated population bubble plot
 
-:::panel-tabset
+::: panel-tabset
 ### The Plot
+
 ```{r}
 #| echo: false
 #| fig-width: 12
@@ -885,8 +887,10 @@ ggplot(globalPop, aes(x = Old, y = Young,
 ### Animated data visualisation: plotly()
 
 ### Building an animated bubble plot: ggplotly() method
-:::panel-tabset
+
+::: panel-tabset
 ### The Plot
+
 ```{r}
 #| echo: false
 #| fig-width: 12
@@ -934,8 +938,9 @@ ggplotly(gg)
 
 To remove the legend and provide better visualisation,theme(legend.position='none') should be used as shown in the plot and code chunk below.
 
-:::panel-tabset
+::: panel-tabset
 ### The Plot
+
 ```{r}
 #| echo: false
 #| fig-width: 12
@@ -983,8 +988,9 @@ ggplotly(gg)
 
 ### Building an animated bubble plot: plot_ly() method
 
-:::panel-tabset
+::: panel-tabset
 ### The Plot
+
 ```{r}
 #| echo: false
 #| fig-width: 12
@@ -1027,6 +1033,3 @@ bp <- globalPop %>%
 bp
 ```
 :::
-
-
-
