@@ -182,7 +182,6 @@ girafe(
       css = tooltip_css)) #<<
 )                                        
 ```
-
 ### The code
 
 ```{r}
@@ -285,7 +284,10 @@ girafe(ggobj = gg_point,
 
 Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
 
-Important note: the default value of the hover css is hover_css = “fill:orange;”. :::panel-tabset \## The plot
+Important note: the default value of the hover css is hover_css = “fill:orange;”. 
+
+::: panel-tabset 
+### The plot
 
 ```{r}
 #| echo: false
@@ -330,6 +332,7 @@ girafe(
   height_svg = 6*0.618                      
 )                                        
 ```
+:::
 
 ### Styling hover effect
 
@@ -393,7 +396,10 @@ girafe(
 
 ### Combining tooltip and hover effect
 
-Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. At the same time, the tooltip will show the CLASS. :::panel-tabset \## The plot
+Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. At the same time, the tooltip will show the CLASS. 
+
+:::panel-tabset 
+### The plot
 
 ```{r}
 #| echo: false
@@ -446,8 +452,7 @@ girafe(
   )                                        
 )                                        
 ```
-
-:::::
+:::
 
 ### Click effect with onclick
 
