@@ -31,6 +31,8 @@ format:
       - custom.scss
     css: styles.css
     toc: true
+    include-in-header: header-for-photo-gallery-feature.html
+      
 
 editor: visual
 

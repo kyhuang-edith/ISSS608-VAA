@@ -72,9 +72,16 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About Me",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "About this site"
+  },
+  {
+    "objectID": "about.html#cat-photo-gallery",
+    "href": "about.html#cat-photo-gallery",
+    "title": "About Me",
+    "section": "Cat Photo Gallery",
+    "text": "Cat Photo Gallery"
   },
   {
     "objectID": "Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html",

@@ -1,9 +1,42 @@
 ---
-title: "About"
+title: "About Me"
 ---
 
 About this site
 
-```{r}
-1 + 1
-```
+## Cat Photo Gallery
+
+::: {.gallery-grid}
+<a href="images/photo1.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo1.jpg" alt="Photo 1">
+</a>
+
+<a href="images/photo2.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo2.jpg" alt="Photo 2">
+</a>
+
+<a href="images/photo3.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo3.jpg" alt="Photo 3">
+</a>
+
+<a href="images/photo4.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo4.jpg" alt="Photo 4">
+</a>
+
+<a href="images/photo5.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo5.jpg" alt="Photo 5">
+</a>
+
+<a href="images/photo6.jpg" class="glightbox" data-gallery="gallery1">
+  <img src="images/photo6.jpg" alt="Photo 6">
+</a>
+
+:::
+
+<script>
+  const lightbox = GLightbox({
+    touchNavigation: true,
+    loop: true,
+    zoomable: true
+  });
+</script>
