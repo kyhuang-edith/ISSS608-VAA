@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Huang Kuan Yu">
+<meta name="dcterms.date" content="2026-04-25">
 
 <title>Hands-on_Ex02 – ISSS608-VAA</title>
 <style>
@@ -181,13 +182,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="4">
     <h2 id="toc-title">On this page</h2>
    
   <ul>
   <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a>
   <ul class="collapse">
   <li><a href="#installing-and-loading-the-required-libraries" id="toc-installing-and-loading-the-required-libraries" class="nav-link" data-scroll-target="#installing-and-loading-the-required-libraries">Installing and loading the required libraries</a></li>
+  </ul></li>
   <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing data</a></li>
   <li><a href="#beyond-ggplot2-annotationggrepel" id="toc-beyond-ggplot2-annotationggrepel" class="nav-link" data-scroll-target="#beyond-ggplot2-annotationggrepel">Beyond ggplot2 Annotation:ggrepel</a>
   <ul class="collapse">
@@ -208,7 +210,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#creating-a-composite-figure-with-tag" id="toc-creating-a-composite-figure-with-tag" class="nav-link" data-scroll-target="#creating-a-composite-figure-with-tag">Creating a composite figure with tag</a></li>
   <li><a href="#creating-figure-with-insert" id="toc-creating-figure-with-insert" class="nav-link" data-scroll-target="#creating-figure-with-insert">Creating figure with insert</a></li>
   <li><a href="#creating-a-composite-figure-by-using-patchwork-and-ggtheme" id="toc-creating-a-composite-figure-by-using-patchwork-and-ggtheme" class="nav-link" data-scroll-target="#creating-a-composite-figure-by-using-patchwork-and-ggtheme">Creating a composite figure by using patchwork and ggtheme</a></li>
-  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -235,14 +236,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Invalid Date</p>
+      <p class="date">April 25, 2026</p>
     </div>
   </div>
   
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">April 28, 2026</p>
+      <p class="date-modified">April 29, 2026</p>
     </div>
   </div>
     
@@ -253,10 +254,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="getting-started" class="level1">
-<h1>Getting Started</h1>
-<section id="installing-and-loading-the-required-libraries" class="level2">
-<h2 class="anchored" data-anchor-id="installing-and-loading-the-required-libraries">Installing and loading the required libraries</h2>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<section id="installing-and-loading-the-required-libraries" class="level3">
+<h3 class="anchored" data-anchor-id="installing-and-loading-the-required-libraries">Installing and loading the required libraries</h3>
 <p>In this exercise, beside tidyverse, four R packages will be used. They are:</p>
 <p>ggrepel: an R package provides geoms for ggplot2 to repel overlapping text labels. ggthemes: an R package provides some extra themes, geoms, and scales for ‘ggplot2’. hrbrthemes: an R package provides typography-centric themes and theme components for ggplot2. patchwork: an R package for preparing composite figure created using ggplot2. Code chunk below will be used to check if these packages have been installed and also will load them onto your working R environment.</p>
 <div class="cell">
@@ -264,6 +265,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               ggthemes, hrbrthemes,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               tidyverse) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
 </section>
 <section id="importing-data" class="level2">
 <h2 class="anchored" data-anchor-id="importing-data">Importing data</h2>
@@ -535,7 +537,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
-</section>
 </section>
 </section>
 

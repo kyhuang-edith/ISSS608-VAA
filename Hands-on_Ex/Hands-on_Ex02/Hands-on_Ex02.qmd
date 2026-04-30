@@ -3,7 +3,10 @@ title: "Hands-on_Ex02"
 author: "Huang Kuan Yu"
 date: "2026-04-25"
 date-modified: "last-modified"
-format: html
+format: 
+  html:
+    toc: true
+    toc-expand: 4
 execute:
     echo: true
     eval: true
@@ -11,9 +14,9 @@ execute:
     freeze: true
 ---
 
-# Getting Started
+## Getting Started
 
-## Installing and loading the required libraries
+### Installing and loading the required libraries
 
 In this exercise, beside tidyverse, four R packages will be used. They are:
 
@@ -25,7 +28,7 @@ pacman::p_load(ggrepel, patchwork,
                tidyverse) 
 ```
 
-## Importing data
+### Importing data
 
 For the purpose of this exercise, a data file called Exam_data will be used. It consists of year end examination grades of a cohort of primary 3 students from a local school. It is in csv file format.
 
@@ -39,13 +42,13 @@ There are a total of seven attributes in the exam_data tibble data frame. Four o
 
 The categorical attributes are: ID, CLASS, GENDER and RACE. The continuous attributes are: MATHS, ENGLISH and SCIENCE.
 
-## Beyond ggplot2 Annotation:ggrepel
+### Beyond ggplot2 Annotation:ggrepel
 
 ggrepel is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text as in our examples on the right. This is to solve the challenge in plotting statistical graph with large number of data points requiring annotation.
 
 Compare the below two graphs and you can see the difference.
 
-### The ggplot Graph
+#### The ggplot Graph
 
 ```{r}
 ggplot(data=exam_data, 
@@ -62,7 +65,7 @@ ggplot(data=exam_data,
   ggtitle("English scores versus Maths scores for Primary 3")
 ```
 
-### The ggrepel Graph
+#### The ggrepel Graph
 
 ```{r}
 ggplot(data=exam_data, 
@@ -78,7 +81,7 @@ ggplot(data=exam_data,
   ggtitle("English scores versus Maths scores for Primary 3")
 ```
 
-## ggplot2 Themes
+### ggplot2 Themes
 
 ggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().
 
@@ -95,7 +98,7 @@ ggplot(data=exam_data,
   ggtitle("Distribution of Maths scores") 
 ```
 
-## About ggthemes package
+### About ggthemes package
 
 ggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.
 
@@ -112,7 +115,7 @@ ggplot(data=exam_data,
   theme_economist()
 ```
 
-## About the hrbthems package
+### About the hrbthems package
 
 hrbrthemes package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.
 
@@ -143,11 +146,11 @@ ggplot(data=exam_data,
               )
 ```
 
-### Lesson learned from comparing the code chunk
+#### Lesson learned from comparing the code chunk
 
 axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
 
-## Beyond single graphs
+### Beyond single graphs
 
 In this section, I will display how to create composite plot by combining multiple graphs. First, I will have to create three statistical graphics by using the code chunk below.
 
@@ -191,7 +194,7 @@ p3 <- ggplot(data=exam_data,
   ggtitle("English scores versus Maths scores for Primary 3")
 ```
 
-## Creating Composite Graphics
+### Creating Composite Graphics
 
 In the section above, I have completed 3 individual graphs, now how can I compose them together?
 
@@ -201,19 +204,19 @@ Patchwork package has a very simple syntax where we can create layouts super eas
 
 Two-Column Layout using the Plus Sign +. Parenthesis () to create a subplot group. Two-Row Layout using the Division Sign /
 
-### Combining two ggplot2 graphs
+#### Combining two ggplot2 graphs
 
 ```{r}
 p1 + p2
 ```
 
-### Combining three ggplot2 graphs
+#### Combining three ggplot2 graphs
 
 ```{r}
 (p1 / p2) | p3
 ```
 
-### Creating a composite figure with tag
+#### Creating a composite figure with tag
 
 To identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.
 
@@ -222,7 +225,7 @@ To identify subplots in text, patchwork also provides auto-tagging capabilities 
   plot_annotation(tag_levels = 'I')
 ```
 
-### Creating figure with insert
+#### Creating figure with insert
 
 With inset_element() of patchwork, we can place one or several plots or graphic elements freely on top or below another plot.
 
@@ -234,7 +237,7 @@ p3 + inset_element(p2,
                    top = 1)
 ```
 
-### Creating a composite figure by using patchwork and ggtheme
+#### Creating a composite figure by using patchwork and ggtheme
 
 ```{r}
 patchwork <- (p1 / p2) | p3

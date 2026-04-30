@@ -3,7 +3,10 @@ title: "Hands-on Exercise 3"
 author: "Huang Kuan Yu"
 date: "2026-04-27"
 date-modified: "last-modified"
-format: html
+format: 
+  html:
+    toc: true
+    toc-expand: 4
 execute:
     echo: true
     eval: true
@@ -11,9 +14,9 @@ execute:
     freeze: true
 ---
 
-# Programming Interactive Data Visualisation with R
+## Programming Interactive Data Visualisation with R
 
-## Getting started
+### Getting started
 
 Hands on exercise 3 requires to install and launch these R packages
 
@@ -28,13 +31,13 @@ pacman::p_load(ggiraph, plotly,
                patchwork, DT, tidyverse) 
 ```
 
-## Import Data
+### Import Data
 
 ```{r}
 exam_data <- read_csv("data/Exam_data.csv")
 ```
 
-## Interactive data visualisation - ggiraph method
+### Interactive data visualisation - ggiraph method
 
 ggiraph is an htmlwidget and a ggplot2 extension. It allows ggplot graphics to be interactive.
 
@@ -48,10 +51,10 @@ Interactive is made with ggplot geometries that can understand three arguments:
 
 If it used within a shiny application, elements associated with an id (data_id) can be selected and manipulated on client and server sides. Refer to this article for more detail explanation.
 
-## Tooltip effect with tooltip aesthetic
+### Tooltip effect with tooltip aesthetic
 
 ::: panel-tabset
-## The plot
+### The plot
 
 ```{r}
 #| echo: false
@@ -72,7 +75,7 @@ girafe(
 )
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -94,10 +97,10 @@ girafe(
 ```
 :::
 
-## Display multiple information on tooltip
+### Display multiple information on tooltip
 
 ::: panel-tabset
-## The Plot
+### The Plot
 
 ```{r}
 #| echo: false
@@ -122,7 +125,7 @@ girafe(
 )
 ```
 
-## The Code
+### The Code
 
 ```{r}
 #| eval: false
@@ -148,10 +151,10 @@ girafe(
 ```
 :::
 
-## Customising Tooltip style
+### Customising Tooltip style
 
-::::: panel-tabset
-##The plot
+::: panel-tabset
+###The plot
 
 ```{r}
 #| echo: false
@@ -180,7 +183,7 @@ girafe(
 )                                        
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -208,11 +211,12 @@ girafe(
       css = tooltip_css)) #<<
 )                                        
 ```
+:::
 
-##Displaying statistics on tooltip
+### Displaying statistics on tooltip
 
 ::: panel-tabset
-## The plot
+### The plot
 
 ```{r}
 #| echo: false
@@ -244,7 +248,7 @@ girafe(ggobj = gg_point,
        height_svg = 8*0.618)
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -277,7 +281,7 @@ girafe(ggobj = gg_point,
 ```
 :::
 
-## Hover effect with data_id aesthetic
+### Hover effect with data_id aesthetic
 
 Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
 
@@ -304,7 +308,7 @@ girafe(
 )                                        
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -327,14 +331,14 @@ girafe(
 )                                        
 ```
 
-## Styling hover effect
+### Styling hover effect
 
 Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
 
 Important note: different from previous example, in this example the ccs customisation request are encoded directly.
 
 ::: panel-tabset
-## The plot
+### The plot
 
 ```{r}
 #| echo: false
@@ -360,7 +364,7 @@ girafe(
 )                                        
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -387,7 +391,7 @@ girafe(
 ```
 :::
 
-## Combining tooltip and hover effect
+### Combining tooltip and hover effect
 
 Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. At the same time, the tooltip will show the CLASS. :::panel-tabset \## The plot
 
@@ -416,7 +420,7 @@ girafe(
 )                                        
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -442,14 +446,15 @@ girafe(
   )                                        
 )                                        
 ```
+
 :::::
 
-## Click effect with onclick
+### Click effect with onclick
 
 onclick argument of ggiraph provides hotlink interactivity on the web. Interactivity: Web document link with a data object will be displayed on the web browser upon mouse click.
 
 ::: panel-tabset
-## The plot
+### The plot
 
 ```{r}
 #| echo: false
@@ -474,7 +479,7 @@ girafe(
   height_svg = 6*0.618)                                        
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -500,10 +505,10 @@ girafe(
 ```
 :::
 
-## Coordinated multiple views with ggiraph
+### Coordinated multiple views with ggiraph
 
 ::: panel-tabset
-## The Plot
+### The Plot
 
 ```{r}
 #| echo: false
@@ -541,7 +546,7 @@ girafe(code = print(p1 + p2),
        ) 
 ```
 
-## The code
+### The code
 
 ```{r}
 #| eval: false
@@ -580,17 +585,19 @@ girafe(code = print(p1 + p2),
 ```
 :::
 
-## Interactive data visualisation - plotly methods
+### Interactive data visualisation - plotly methods
+
 There are two ways to create interactive graph by using plotly, they are:
 
-by using plot_ly(), and
-by using ggplotly()
+by using plot_ly(), and by using ggplotly()
 
-## Creating an interactive scatter plot: plot_ly() method vs. ggplotly() method
+### Creating an interactive scatter plot: plot_ly() method vs. ggplotly() method
 
-### The Plot
-:::panel-tabset
-## The plot_ly() Method
+#### The Plot
+
+::: panel-tabset
+### The plot_ly() Method
+
 ```{r}
 #| echo: false
 #| fig-widith: 12
@@ -599,7 +606,9 @@ plot_ly(data = exam_data,
              x = ~MATHS, 
              y = ~ENGLISH)
 ```
-## The ggplotly() method
+
+### The ggplotly() method
+
 ```{r}
 #| echo: false
 #| fig-widith: 12
@@ -613,47 +622,54 @@ p <- ggplot(data=exam_data,
 ggplotly(p)
 ```
 :::
+
+#### The Code
+
+::: panel-tabset
+### The plot_ly() Method
+
+```{r}
+#| eval: false
+#| fig-widith: 12
+#| fig-height: 8
+plot_ly(data = exam_data, 
+             x = ~MATHS, 
+             y = ~ENGLISH)
+```
+
+### The ggplotly() method
+
+```{r}
+#| eval: false
+#| fig-widith: 12
+#| fig-height: 8
+p <- ggplot(data=exam_data, 
+            aes(x = MATHS,
+                y = ENGLISH)) +
+  geom_point(size=1) +
+  coord_cartesian(xlim=c(0,100),
+                  ylim=c(0,100))
+ggplotly(p)
+```
+:::
+
+### Working with visual variable: plot_ly() method
+
+::: panel-tabset
+### The Plot
+
+```{r}
+#| echo: false
+#| fig-widith: 12
+#| fig-height: 8
+plot_ly(data = exam_data, 
+        x = ~ENGLISH, 
+        y = ~MATHS, 
+        color = ~RACE)
+```
 
 ### The Code
-:::panel-tabset
-## The plot_ly() Method
-```{r}
-#| eval: false
-#| fig-widith: 12
-#| fig-height: 8
-plot_ly(data = exam_data, 
-             x = ~MATHS, 
-             y = ~ENGLISH)
-```
-## The ggplotly() method
-```{r}
-#| eval: false
-#| fig-widith: 12
-#| fig-height: 8
-p <- ggplot(data=exam_data, 
-            aes(x = MATHS,
-                y = ENGLISH)) +
-  geom_point(size=1) +
-  coord_cartesian(xlim=c(0,100),
-                  ylim=c(0,100))
-ggplotly(p)
-```
-:::
 
-## Working with visual variable: plot_ly() method
-
-:::panel-tabset
-## The Plot
-```{r}
-#| echo: false
-#| fig-widith: 12
-#| fig-height: 8
-plot_ly(data = exam_data, 
-        x = ~ENGLISH, 
-        y = ~MATHS, 
-        color = ~RACE)
-```
-## The Code
 ```{r}
 #| eval: false
 #| fig-widith: 12
@@ -665,9 +681,11 @@ plot_ly(data = exam_data,
 ```
 :::
 
-## Coordinated Multiple views with plotly 
-:::panel-tabset
-## The Plot
+### Coordinated Multiple views with plotly
+
+::: panel-tabset
+### The Plot
+
 ```{r}
 #| echo: false
 #| fig-widith: 12
@@ -689,7 +707,9 @@ p2 <- ggplot(data=d,
 subplot(ggplotly(p1),
         ggplotly(p2))
 ```
-## The Code
+
+### The Code
+
 ```{r}
 #| eval: false
 #| fig-widith: 12
@@ -713,9 +733,9 @@ subplot(ggplotly(p1),
 ```
 :::
 
-## Interactive data visualisation  - crosstalk methods
+### Interactive data visualisation - crosstalk methods
 
-## Interactive data table: DT package 
+### Interactive data table: DT package
 
 ```{r}
 #| fig-widith: 12
@@ -723,7 +743,7 @@ subplot(ggplotly(p1),
 DT::datatable(exam_data, class= "compact")
 ```
 
-## Linked brushing: crosstalk method
+### Linked brushing: crosstalk method
 
 ```{r}
 #| fig-widith: 12
@@ -744,13 +764,269 @@ crosstalk::bscols(gg,
                   widths = 5)        
 ```
 
-# Programming Animated Statistical Graphics with R
+## Programming Animated Statistical Graphics with R
 
-## Install package
+### Install package
 
 ```{r}
 pacman::p_load(readxl, gifski, gapminder,
                plotly, gganimate, tidyverse)
 ```
 
-## Import Data
+### Import Data
+
+#### Code 1
+
+```{r}
+col <- c("Country", "Continent")
+globalPop <- read_xls("data/GlobalPopulation.xls",
+                      sheet="Data") %>%
+  mutate_at(col, as.factor) %>%
+  mutate(Year = as.integer(Year))
+glimpse(globalPop)
+```
+
+### Animated Data Visualisation: gganimate methods
+
+gganimate extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.
+
+- transition\_*() defines how the data should be spread out and how it relates to itself across time.*
+
+- *view\_*() defines how the positional scales should change along the animation.
+
+- shadow\_*() defines how data from other points in time should be presented in the given point in time.*
+
+- *enter\_*()/exit\_\*() defines how new data should appear and how old data should disappear during the course of the animation.
+
+- ease_aes() defines how different aesthetics should be eased during transitions.
+
+### Building a static population bubble plot
+
+:::panel-tabset
+### The Plot
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', 
+       x = '% Aged', 
+       y = '% Young') 
+```
+
+### The Code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', 
+       x = '% Aged', 
+       y = '% Young') 
+```
+:::
+
+### Building a animated population bubble plot 
+
+:::panel-tabset
+### The Plot
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', 
+       x = '% Aged', 
+       y = '% Young') +
+  transition_time(Year) +       
+  ease_aes('linear')          
+```
+
+### The Code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+ggplot(globalPop, aes(x = Old, y = Young, 
+                      size = Population, 
+                      colour = Country)) +
+  geom_point(alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(title = 'Year: {frame_time}', 
+       x = '% Aged', 
+       y = '% Young') +
+  transition_time(Year) +       
+  ease_aes('linear')          
+```
+:::
+
+### Animated data visualisation: plotly()
+
+### Building an animated bubble plot: ggplotly() method
+:::panel-tabset
+### The Plot
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young')
+
+ggplotly(gg)
+```
+
+### The Code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7, 
+             show.legend = FALSE) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young')
+
+ggplotly(gg)
+```
+:::
+
+To remove the legend and provide better visualisation,theme(legend.position='none') should be used as shown in the plot and code chunk below.
+
+:::panel-tabset
+### The Plot
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young') + 
+  theme(legend.position='none')
+
+ggplotly(gg)
+```
+
+### The Code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+gg <- ggplot(globalPop, 
+       aes(x = Old, 
+           y = Young, 
+           size = Population, 
+           colour = Country)) +
+  geom_point(aes(size = Population,
+                 frame = Year),
+             alpha = 0.7) +
+  scale_colour_manual(values = country_colors) +
+  scale_size(range = c(2, 12)) +
+  labs(x = '% Aged', 
+       y = '% Young') + 
+  theme(legend.position='none')
+
+ggplotly(gg)
+```
+:::
+
+### Building an animated bubble plot: plot_ly() method
+
+:::panel-tabset
+### The Plot
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+bp <- globalPop %>%
+  plot_ly(x = ~Old, 
+          y = ~Young, 
+          size = ~Population, 
+          color = ~Continent,
+          sizes = c(2, 100),
+          frame = ~Year, 
+          text = ~Country, 
+          hoverinfo = "text",
+          type = 'scatter',
+          mode = 'markers'
+          ) %>%
+  layout(showlegend = FALSE)
+bp
+```
+
+### The Code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+bp <- globalPop %>%
+  plot_ly(x = ~Old, 
+          y = ~Young, 
+          size = ~Population, 
+          color = ~Continent,
+          sizes = c(2, 100),
+          frame = ~Year, 
+          text = ~Country, 
+          hoverinfo = "text",
+          type = 'scatter',
+          mode = 'markers'
+          ) %>%
+  layout(showlegend = FALSE)
+bp
+```
+:::
+
+
+
