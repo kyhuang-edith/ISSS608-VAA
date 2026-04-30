@@ -1,0 +1,17 @@
+/*-- scss:defaults --*/
+
+$primary: #f8a5c2;   // main pink
+$secondary: #ffb3c6; // light pink
+$body-bg: #fff0f6;   // soft background
+$body-color: #4a4a4a;
+
+$link-color: #ff6f91;
+$navbar-bg: #ff6f91;
+$navbar-fg: white;
+
+
+/*-- scss:rules --*/
+
+.navbar {
+  background-color: $primary;
+}

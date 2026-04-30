@@ -780,8 +780,6 @@ pacman::p_load(readxl, gifski, gapminder,
 
 ### Import Data
 
-#### Code 1
-
 ```{r}
 col <- c("Country", "Continent")
 globalPop <- read_xls("data/GlobalPopulation.xls",
