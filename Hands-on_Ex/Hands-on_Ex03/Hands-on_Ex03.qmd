@@ -44,11 +44,17 @@ exam_data <- read_csv("data/Exam_data.csv")
 
 ### Interactive data visualisation - ggiraph method
 
-ggiraph is an htmlwidget and a ggplot2 extension. It allows ggplot graphics to be interactive. Interactive is made with ggplot geometries that can understand three arguments: - Tooltip: a column of data-sets that contain tooltips to be displayed when the mouse is over elements. - Onclick: a column of data-sets that contain a JavaScript function to be executed when elements are clicked. - Data_id: a column of data-sets that contain an id to be associated with elements. If it used within a shiny application, elements associated with an id (data_id) can be selected and manipulated on client and server sides. Refer to this article for more detail explanation.
+ggiraph is an htmlwidget and a ggplot2 extension. It allows ggplot graphics to be interactive. Interactive is made with ggplot geometries that can understand three arguments:
+
+**Tooltip:** a column of data-sets that contain tooltips to be displayed when the mouse is over elements.
+
+**Onclick:** a column of data-sets that contain a JavaScript function to be executed when elements are clicked.
+
+**Data_id:** a column of data-sets that contain an id to be associated with elements. If it used within a shiny application, elements associated with an id (data_id) can be selected and manipulated on client and server sides. Refer to this article for more detail explanation.
 
 ### Tooltip effect with tooltip aesthetic
 
-The code chunk consists of two parts. First, an ggplot object will be created. Next, girafe() of ggiraph will be used to create an interactive svg object.
+The code chunk consists of two parts. First, an ggplot object will be created. Next, `girafe()` of ggiraph will be used to create an interactive svg object.
 
 ::: panel-tabset
 ### The plot
@@ -146,7 +152,7 @@ girafe(
 
 ### Customising Tooltip style
 
-Code chunk below uses opts_tooltip() of ggiraph to customize tooltip rendering by add css declarations.
+Code chunk below uses `opts_tooltip()` of ggiraph to customize tooltip rendering by add css declarations.
 
 ::: panel-tabset
 ###The plot
@@ -272,7 +278,7 @@ girafe(ggobj = gg_point,
 
 ### Hover effect with data_id aesthetic
 
-Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. Important note: the default value of the hover css is hover_css = “fill:orange;”.
+Interactivity: Elements associated with a `data_id` (i.e CLASS) will be highlighted upon mouse over. Important note: the default value of the hover css is `hover_css = “fill:orange;”`.
 
 ::: panel-tabset
 ### The plot
@@ -322,7 +328,9 @@ girafe(
 
 ### Styling hover effect
 
-Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. Important note: different from previous example, in this example the ccs customisation request are encoded directly.
+Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over.
+
+Important note: different from previous example, in this example the ccs customisation request are encoded directly.
 
 ::: panel-tabset
 ### The plot
@@ -440,7 +448,11 @@ girafe(
 
 ### Click effect with onclick
 
-onclick argument of ggiraph provides hotlink interactivity on the web. Interactivity: Web document link with a data object will be displayed on the webbrowser upon mouse click. Note: Click actions must be a string column in the dataset containing valid javascript instructions.
+`onclick` argument of ggiraph provides hotlink interactivity on the web.
+
+Interactivity: Web document link with a data object will be displayed on the webbrowser upon mouse click.
+
+Note: Click actions must be a string column in the dataset containing valid javascript instructions.
 
 ::: panel-tabset
 ### The plot
@@ -574,7 +586,7 @@ girafe(code = print(p1 + p2),
 
 ### Interactive data visualisation - plotly methods
 
-There are two ways to create interactive graph by using plotly, they are: by using plot_ly(), and by using ggplotly()
+There are two ways to create interactive graph by using plotly, they are: by using `plot_ly()`, and by using `ggplotly()`
 
 ### Creating an interactive scatter plot: plot_ly() method vs. ggplotly() method
 
@@ -670,9 +682,9 @@ plot_ly(data = exam_data,
 
 The creation of a coordinated linked plot by using plotly involves three steps:
 
-- highlight_key() of plotly package is used as shared data. two scatterplots will be created by using ggplot2 functions. lastly, subplot() of plotly package is used to place them next to each other side-by-side.
+- `highlight_key()` of plotly package is used as shared data. two scatterplots will be created by using ggplot2 functions. lastly, `subplot()` of plotly package is used to place them next to each other side-by-side.
 
-- Lesson learned from the code chunk: highlight_key() simply creates an object of class [crosstalk::SharedData.](https://rdrr.io/cran/crosstalk/man/SharedData.html)
+- Lesson learned from the code chunk: `highlight_key()` simply creates an object of class [crosstalk::SharedData.](https://rdrr.io/cran/crosstalk/man/SharedData.html)
 
 ::: panel-tabset
 ### The Plot
@@ -791,15 +803,15 @@ glimpse(globalPop)
 
 gganimate extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.
 
-- transition\_\*() defines how the data should be spread out and how it relates to itself across time.\*
+- `transition_*()` defines how the data should be spread out and how it relates to itself across time.\*
 
-- view\_\*() *defines how the positional scales should change along the animation.*
+- `view_*()` *defines how the positional scales should change along the animation.*
 
-- shadow\_\*() *defines how data from other points in time should be presented in the given point in time.*
+- `shadow_*()` *defines how data from other points in time should be presented in the given point in time.*
 
-- enter\_\*()/exit\_\*() *defines how new data should appear and how old data should disappear during the course of the animation.*
+- `enter_*()/exit_*()` *defines how new data should appear and how old data should disappear during the course of the animation.*
 
-- ease_aes() *defines how different aesthetics should be eased during transitions.*
+- `ease_aes()` *defines how different aesthetics should be eased during transitions.*
 
 ### Building a static population bubble plot
 
@@ -843,9 +855,9 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 ### Building a animated bubble plot
 
-- [transition_time()](https://gganimate.com/reference/transition_time.html) of **gganimate** is used to create transition through distinct states in time (i.e. Year).
+- [`transition_time()`](https://gganimate.com/reference/transition_time.html) of **gganimate** is used to create transition through distinct states in time (i.e. Year).
 
-- ease_aes() is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
+- `ease_aes()` is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
 
 ::: panel-tabset
 ### The Plot
@@ -891,7 +903,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 ### Animated data visualisation: plotly()
 
-In **Plotly R** package, both ggplotly() and plot_ly() support key frame animations through the frame argument/aesthetic. They also support an ids argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
+In **Plotly R** package, both `ggplotly()` and `plot_ly()` support key frame animations through the `frame` argument/aesthetic. They also support an `ids` argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
 
 ### Building an animated bubble plot: ggplotly() method
 
@@ -941,7 +953,7 @@ ggplotly(gg)
 ```
 :::
 
-To remove the legend and provide better visualisation, theme(legend.position='none') should be used as shown in the plot and code chunk below.
+To remove the legend and provide better visualisation, `theme(legend.position='none')` should be used as shown in the plot and code chunk below.
 
 ::: panel-tabset
 ### The Plot
