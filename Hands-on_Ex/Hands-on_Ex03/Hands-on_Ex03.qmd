@@ -1,7 +1,18 @@
 ---
-title: "Hands-on Exercise 3" author: "Huang Kuan Yu" date: "2026-04-27"
-date-modified: "last-modified" format: html: toc: true toc-expand: 4 execute:
-echo: true eval: true warning: false freeze: true
+title: "Hands-on Exercise 3" 
+author: "Huang Kuan Yu" 
+date: "2026-04-27"
+date-modified: "last-modified" 
+  
+format: 
+  html: 
+    toc: true 
+    toc-expand: 4 
+execute:
+  echo: true 
+  eval: true 
+  warning: false 
+  freeze: true
 ---
 
 ## Chapter 3: Programming Interactive Data Visualisation with R
@@ -780,15 +791,15 @@ glimpse(globalPop)
 
 gganimate extends the grammar of graphics as implemented by ggplot2 to include the description of animation. It does this by providing a range of new grammar classes that can be added to the plot object in order to customise how it should change with time.
 
-- `transition_*()` defines how the data should be spread out and how it relates to itself across time.\*
+- transition\_\*() defines how the data should be spread out and how it relates to itself across time.\*
 
-- `view_*()` *defines how the positional scales should change along the animation.*
+- view\_\*() *defines how the positional scales should change along the animation.*
 
-- `shadow_*()` *defines how data from other points in time should be presented in the given point in time.*
+- shadow\_\*() *defines how data from other points in time should be presented in the given point in time.*
 
-- `enter_*()/exit_*()` *defines how new data should appear and how old data should disappear during the course of the animation.*
+- enter\_\*()/exit\_\*() *defines how new data should appear and how old data should disappear during the course of the animation.*
 
-- `ease_aes()` *defines how different aesthetics should be eased during transitions.*
+- ease_aes() *defines how different aesthetics should be eased during transitions.*
 
 ### Building a static population bubble plot
 
@@ -832,9 +843,9 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 ### Building a animated bubble plot
 
-- [`transition_time()`](https://gganimate.com/reference/transition_time.html) of **gganimate** is used to create transition through distinct states in time (i.e. Year).
+- [transition_time()](https://gganimate.com/reference/transition_time.html) of **gganimate** is used to create transition through distinct states in time (i.e. Year).
 
-- `ease_aes()` is used to control easing of aesthetics. The default is `linear`. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
+- ease_aes() is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
 
 ::: panel-tabset
 ### The Plot
@@ -880,7 +891,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 
 ### Animated data visualisation: plotly()
 
-In **Plotly R** package, both `ggplotly()` and `plot_ly()` support key frame animations through the `frame` argument/aesthetic. They also support an `ids` argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
+In **Plotly R** package, both ggplotly() and plot_ly() support key frame animations through the frame argument/aesthetic. They also support an ids argument/aesthetic to ensure smooth transitions between objects with the same id (which helps facilitate object constancy).
 
 ### Building an animated bubble plot: ggplotly() method
 
@@ -930,7 +941,7 @@ ggplotly(gg)
 ```
 :::
 
-To remove the legend and provide better visualisation, `theme(legend.position='none')` should be used as shown in the plot and code chunk below.
+To remove the legend and provide better visualisation, theme(legend.position='none') should be used as shown in the plot and code chunk below.
 
 ::: panel-tabset
 ### The Plot
