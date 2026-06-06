@@ -427,8 +427,7 @@ usenet_words %>%
   count(word, sort = TRUE)
 ```
 
-
-Use below codes to count words within by newsgroup 
+Use below codes to count words within by newsgroup
 
 ```{r}
 words_by_newsgroup <- usenet_words %>%
@@ -515,6 +514,7 @@ newsgroup_cors %>%
 ```
 
 #### Bigram
+
 ```{r}
 bigrams <- cleaned_text %>%
   unnest_tokens(bigram, 
