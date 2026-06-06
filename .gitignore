@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto
+.positai
+
+/.quarto/
+**/*.quarto_ipynb
+.RDataTmp2
+.RData
+.Rhistory

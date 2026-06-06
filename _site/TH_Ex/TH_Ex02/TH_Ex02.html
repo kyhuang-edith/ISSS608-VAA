@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Huang Kuan Yu">
+<meta name="dcterms.date" content="2026-05-28">
+
+<title>Take Home Exercise 2 – ISSS608-VAA</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-851c0199072359a8a9c80dfd8fc8c047.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- Fonts -->
+
+<link href="https://fonts.googleapis.com/css2?family=Cabin+Sketch&amp;family=DM+Sans:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+
+
+
+
+
+<!-- GLightbox CSS -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+
+
+
+
+
+<!-- GLightbox JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+
+
+
+
+
+<!-- Initialise gallery -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    GLightbox({
+
+        selector: '.glightbox'
+
+    });
+
+});
+
+</script>
+<script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">ISSS608-VAA</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-hands-on-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Hands-on Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-hands-on-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex01/Hands-on_Ex01.html">
+ <span class="dropdown-text">Hands-on Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex02/Hands-on_Ex02.html">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex03/Hands-on_Ex03.html">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex04/Hands-on_Ex04.html">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex05/Hands-on_Ex05.html">
+ <span class="dropdown-text">Hands-on Exercise 5</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on_Ex/Hands-on_Ex07/Hands-on_Ex07.html">
+ <span class="dropdown-text">Hands-on Exercise 7</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-take-home-exercise" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Take-Home Exercise</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-take-home-exercise">    
+        <li>
+    <a class="dropdown-item" href="../../TH_Ex/TH_Ex01/TH_Ex01.html">
+ <span class="dropdown-text">Take-Home Exercise 1</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../TH_Ex/TH_Ex02/TH_Ex02.html">
+ <span class="dropdown-text">Take-Home Exercise 2</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About Me</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="4">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#load-raw-data" id="toc-load-raw-data" class="nav-link active" data-scroll-target="#load-raw-data">1. LOAD RAW DATA</a></li>
+  <li><a href="#identify-anomalous-saidit-posts" id="toc-identify-anomalous-saidit-posts" class="nav-link" data-scroll-target="#identify-anomalous-saidit-posts">2. IDENTIFY ANOMALOUS SAIDIT POSTS</a></li>
+  <li><a href="#define-incident-metadata" id="toc-define-incident-metadata" class="nav-link" data-scroll-target="#define-incident-metadata">3. DEFINE INCIDENT METADATA</a></li>
+  <li><a href="#extract-propagation-chains" id="toc-extract-propagation-chains" class="nav-link" data-scroll-target="#extract-propagation-chains">4. EXTRACT PROPAGATION CHAINS</a></li>
+  <li><a href="#identify-the-final-trigger-events" id="toc-identify-the-final-trigger-events" class="nav-link" data-scroll-target="#identify-the-final-trigger-events">5. IDENTIFY THE FINAL TRIGGER EVENTS</a></li>
+  <li><a href="#extract-post-and-delete-sequence" id="toc-extract-post-and-delete-sequence" class="nav-link" data-scroll-target="#extract-post-and-delete-sequence">6. EXTRACT POST-AND-DELETE SEQUENCE</a></li>
+  <li><a href="#identify-payload-creation-events" id="toc-identify-payload-creation-events" class="nav-link" data-scroll-target="#identify-payload-creation-events">7. IDENTIFY PAYLOAD CREATION EVENTS</a></li>
+  <li><a href="#build-origin-summary-table" id="toc-build-origin-summary-table" class="nav-link" data-scroll-target="#build-origin-summary-table">8. BUILD ORIGIN SUMMARY TABLE</a></li>
+  <li><a href="#attack-pattern-characterisation" id="toc-attack-pattern-characterisation" class="nav-link" data-scroll-target="#attack-pattern-characterisation">9. ATTACK PATTERN CHARACTERISATION</a></li>
+  <li><a href="#agent-involvement-across-incidents" id="toc-agent-involvement-across-incidents" class="nav-link" data-scroll-target="#agent-involvement-across-incidents">10. AGENT INVOLVEMENT ACROSS INCIDENTS</a></li>
+  <li><a href="#export-processed-datasets" id="toc-export-processed-datasets" class="nav-link" data-scroll-target="#export-processed-datasets">11. EXPORT PROCESSED DATASETS</a></li>
+  <li><a href="#summary-finding" id="toc-summary-finding" class="nav-link" data-scroll-target="#summary-finding">Summary finding</a></li>
+  <li><a href="#the-three-anomalous-incidents" id="toc-the-three-anomalous-incidents" class="nav-link" data-scroll-target="#the-three-anomalous-incidents">1. The three anomalous incidents</a></li>
+  <li><a href="#what-the-posts-mean-origin-of-their-content" id="toc-what-the-posts-mean-origin-of-their-content" class="nav-link" data-scroll-target="#what-the-posts-mean-origin-of-their-content">2. What the posts “mean” — origin of their content</a>
+  <ul class="collapse">
+  <li><a href="#the-payload-files" id="toc-the-payload-files" class="nav-link" data-scroll-target="#the-payload-files">2.1 The payload files</a></li>
+  <li><a href="#the-instruction-mechanism-prompt-injection" id="toc-the-instruction-mechanism-prompt-injection" class="nav-link" data-scroll-target="#the-instruction-mechanism-prompt-injection">2.2 The instruction mechanism (prompt injection)</a></li>
+  </ul></li>
+  <li><a href="#propagation-chains" id="toc-propagation-chains" class="nav-link" data-scroll-target="#propagation-chains">3. Propagation chains</a>
+  <ul class="collapse">
+  <li><a href="#timeline-overview" id="toc-timeline-overview" class="nav-link" data-scroll-target="#timeline-overview">3.1 Timeline overview</a></li>
+  <li><a href="#hop-by-hop-relay-swiftwren-the-canonical-incident" id="toc-hop-by-hop-relay-swiftwren-the-canonical-incident" class="nav-link" data-scroll-target="#hop-by-hop-relay-swiftwren-the-canonical-incident">3.2 Hop-by-hop relay (SwiftWren — the canonical incident)</a></li>
+  <li><a href="#agents-most-involved-in-propagating-the-instructions" id="toc-agents-most-involved-in-propagating-the-instructions" class="nav-link" data-scroll-target="#agents-most-involved-in-propagating-the-instructions">3.3 Agents most involved in propagating the instructions</a></li>
+  </ul></li>
+  <li><a href="#the-post-and-delete-sequence" id="toc-the-post-and-delete-sequence" class="nav-link" data-scroll-target="#the-post-and-delete-sequence">4. The post-and-delete sequence</a></li>
+  <li><a href="#network-view-of-the-swiftwren-propagation-chain" id="toc-network-view-of-the-swiftwren-propagation-chain" class="nav-link" data-scroll-target="#network-view-of-the-swiftwren-propagation-chain">5. Network view of the SwiftWren propagation chain</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">6. Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Take Home Exercise 2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Huang Kuan Yu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 28, 2026</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">June 6, 2026</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="load-raw-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-raw-data">1. LOAD RAW DATA</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>raw <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="fu">file</span>(<span class="st">"2026_MC2/MC2 data.json"</span>), <span class="at">simplifyDataFrame =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>events_raw <span class="ot">&lt;-</span> raw<span class="sc">$</span>events</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Flatten the events list into a tibble</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">exists</span>(<span class="st">"map_int"</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TRUE </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">id         =</span> <span class="fu">map_int</span>(events_raw, <span class="sc">~</span> <span class="fu">as.integer</span>(.x[[<span class="st">"id"</span>]])),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">short_name =</span> <span class="fu">map_chr</span>(events_raw, <span class="sc">~</span> <span class="fu">as.character</span>(.x[[<span class="st">"short_name"</span>]])),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">when       =</span> <span class="fu">map_dbl</span>(events_raw, <span class="sc">~</span> <span class="fu">as.numeric</span>(.x[[<span class="st">"when"</span>]])),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">parties    =</span> <span class="fu">map</span>(events_raw, <span class="sc">~</span> .x[[<span class="st">"parties"</span>]]),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">details    =</span> <span class="fu">map</span>(events_raw, <span class="sc">~</span> .x[[<span class="st">"details"</span>]])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">datetime =</span> <span class="fu">as_datetime</span>(when, <span class="at">tz =</span> <span class="st">"UTC"</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">date     =</span> <span class="fu">as_date</span>(datetime)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total events loaded:"</span>, <span class="fu">nrow</span>(events), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total events loaded: 185147 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Date range:"</span>, <span class="fu">format</span>(<span class="fu">min</span>(events<span class="sc">$</span>datetime)), <span class="st">"to"</span>, <span class="fu">format</span>(<span class="fu">max</span>(events<span class="sc">$</span>datetime)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Date range: 2046-05-08 20:18:12 to 2046-07-16 17:05:59 </code></pre>
+</div>
+</div>
+</section>
+<section id="identify-anomalous-saidit-posts" class="level2">
+<h2 class="anchored" data-anchor-id="identify-anomalous-saidit-posts">2. IDENTIFY ANOMALOUS SAIDIT POSTS</h2>
+<p>Anomalous posts are identified by having <code>content_source</code> (a .txt filename) rather than a plain text <code>content</code> field — these are the “gibberish” posts.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>anomalous_posts <span class="ot">&lt;-</span> events <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(short_name <span class="sc">==</span> <span class="st">"saidit_post"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">map_lgl</span>(details, <span class="sc">~</span> <span class="st">"content_source"</span> <span class="sc">%in%</span> <span class="fu">names</span>(.x))) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">content_source =</span> <span class="fu">map_chr</span>(details, <span class="sc">~</span> .x[[<span class="st">"content_source"</span>]]),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">incident_name  =</span> <span class="fu">str_remove</span>(content_source, <span class="st">"</span><span class="sc">\\</span><span class="st">.txt$"</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">forum          =</span> <span class="fu">map_chr</span>(details, <span class="sc">~</span> .x[[<span class="st">"forum"</span>]])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, datetime, incident_name, content_source, forum, parties, details)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Anomalous SaidIt posts (gibberish, file-sourced):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Anomalous SaidIt posts (gibberish, file-sourced):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(anomalous_posts <span class="sc">%&gt;%</span> <span class="fu">select</span>(datetime, incident_name, content_source))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  datetime            incident_name content_source 
+  &lt;dttm&gt;              &lt;chr&gt;         &lt;chr&gt;          
+1 2046-05-10 12:45:42 HiddenOrca    HiddenOrca.txt 
+2 2046-05-11 00:56:04 MellowOtter   MellowOtter.txt
+3 2046-05-17 11:21:15 SwiftWren     SwiftWren.txt  </code></pre>
+</div>
+</div>
+</section>
+<section id="define-incident-metadata" class="level2">
+<h2 class="anchored" data-anchor-id="define-incident-metadata">3. DEFINE INCIDENT METADATA</h2>
+<p>Each incident has: - A named .txt payload file (the content posted — the “gibberish”) - A _further_instructions.md (the prompt-injection vehicle) - A creator agent (who first held the instruction file) - A propagation chain (agents that passed the instructions along) - john_windward as the designated “poster” agent</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>incidents <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>incident_name,  <span class="sc">~</span>payload_file,           <span class="sc">~</span>instructions_file,                    <span class="sc">~</span>creator_agent,    <span class="sc">~</span>payload_size,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"HiddenOrca"</span>,    <span class="st">"HiddenOrca.txt"</span>,         <span class="st">"HiddenOrca_further_instructions.md"</span>,   <span class="st">"gabriel_sonar"</span>,   <span class="cn">NA_integer_</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MellowOtter"</span>,   <span class="st">"MellowOtter.txt"</span>,        <span class="st">"MellowOtter_further_instructions.md"</span>,  <span class="st">"noah_mariner"</span>,    <span class="dv">44879</span>L,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SwiftWren"</span>,     <span class="st">"SwiftWren.txt"</span>,          <span class="st">"SwiftWren_further_instructions.md"</span>,    <span class="st">"emma_harbor"</span>,     <span class="dv">30615</span>L</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Note: HiddenOrca has no create_file event → the file was injected externally into the file system before the log begins. MellowOtter and SwiftWren both have a create_file event at the originating agent.</p>
+</section>
+<section id="extract-propagation-chains" class="level2">
+<h2 class="anchored" data-anchor-id="extract-propagation-chains">4. EXTRACT PROPAGATION CHAINS</h2>
+<p>For each incident, collect every queue_subordinate_task event that passes the <code>_further_instructions.md</code> file along the agent network.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>extract_chain <span class="ot">&lt;-</span> <span class="cf">function</span>(incident) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  instr_file <span class="ot">&lt;-</span> incidents<span class="sc">$</span>instructions_file[incidents<span class="sc">$</span>incident_name <span class="sc">==</span> incident]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  events <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(short_name <span class="sc">==</span> <span class="st">"queue_subordinate_task"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="fu">map_lgl</span>(details, <span class="cf">function</span>(d) {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      args <span class="ot">&lt;-</span> d[[<span class="st">"args"</span>]]</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(args)) <span class="fu">return</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">isTRUE</span>(args[[<span class="st">"path"</span>]] <span class="sc">==</span> instr_file)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    })) <span class="sc">%&gt;%</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">incident    =</span> incident,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">hop         =</span> <span class="fu">row_number</span>(),</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">from_agent  =</span> <span class="fu">map_chr</span>(parties, <span class="dv">1</span>),</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">to_agent    =</span> <span class="fu">map_chr</span>(details, <span class="sc">~</span> .x[[<span class="st">"target_agent"</span>]]),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Normalise agent names: strip "Agent/person:" prefix</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">from_person =</span> <span class="fu">str_remove</span>(from_agent, <span class="st">"^Agent/person:"</span>),</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">to_person   =</span> <span class="fu">str_remove</span>(to_agent,   <span class="st">"^Agent/person:"</span>)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(incident, hop, datetime, from_person, to_person, id)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>chains <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_chain</span>(<span class="st">"HiddenOrca"</span>),</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_chain</span>(<span class="st">"MellowOtter"</span>),</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_chain</span>(<span class="st">"SwiftWren"</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Propagation chain lengths:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Propagation chain lengths:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>chains <span class="sc">%&gt;%</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(incident) <span class="sc">%&gt;%</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_hops     =</span> <span class="fu">n</span>(),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_agents   =</span> <span class="fu">n_distinct</span>(<span class="fu">c</span>(from_person, to_person)),</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">start_time =</span> <span class="fu">min</span>(datetime),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_time   =</span> <span class="fu">max</span>(datetime),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">duration_h =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(<span class="fu">max</span>(datetime), <span class="fu">min</span>(datetime), <span class="at">units =</span> <span class="st">"hours"</span>))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  incident    n_hops n_agents start_time          end_time            duration_h
+  &lt;chr&gt;        &lt;int&gt;    &lt;int&gt; &lt;dttm&gt;              &lt;dttm&gt;                   &lt;dbl&gt;
+1 HiddenOrca      39       16 2046-05-08 21:50:03 2046-05-10 12:45:40      38.9 
+2 MellowOtter     10       11 2046-05-10 15:02:03 2046-05-11 00:56:02       9.90
+3 SwiftWren      186       18 2046-05-09 15:02:03 2046-05-17 11:21:13     188.  </code></pre>
+</div>
+</div>
+</section>
+<section id="identify-the-final-trigger-events" class="level2">
+<h2 class="anchored" data-anchor-id="identify-the-final-trigger-events">5. IDENTIFY THE FINAL TRIGGER EVENTS</h2>
+<p>Just before each post, john_windward receives a queue_subordinate_task with the instructions file. The post follows within 2 seconds.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_triggers <span class="ot">&lt;-</span> chains <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(to_person <span class="sc">==</span> <span class="st">"john_windward"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(incident) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The LAST hop that reaches john_windward is the one that triggers the post</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(datetime, <span class="at">n =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(anomalous_posts <span class="sc">%&gt;%</span> <span class="fu">select</span>(incident_name, <span class="at">post_datetime =</span> datetime),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"incident"</span> <span class="ot">=</span> <span class="st">"incident_name"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">trigger_to_post_s =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(post_datetime, datetime, <span class="at">units =</span> <span class="st">"secs"</span>))</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Final trigger → post latency (seconds):</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Final trigger → post latency (seconds):</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(final_triggers <span class="sc">%&gt;%</span> <span class="fu">select</span>(incident, datetime, post_datetime, trigger_to_post_s))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 4
+  incident    datetime            post_datetime       trigger_to_post_s
+  &lt;chr&gt;       &lt;dttm&gt;              &lt;dttm&gt;                          &lt;dbl&gt;
+1 HiddenOrca  2046-05-10 12:45:40 2046-05-10 12:45:42                 2
+2 MellowOtter 2046-05-11 00:56:02 2046-05-11 00:56:04                 2
+3 SwiftWren   2046-05-17 11:21:13 2046-05-17 11:21:15                 2</code></pre>
+</div>
+</div>
+</section>
+<section id="extract-post-and-delete-sequence" class="level2">
+<h2 class="anchored" data-anchor-id="extract-post-and-delete-sequence">6. EXTRACT POST-AND-DELETE SEQUENCE</h2>
+<p>Immediately after posting, john_windward deletes both files. This is the “cover tracks” step.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>extract_delete_sequence <span class="ot">&lt;-</span> <span class="cf">function</span>(incident) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  payload   <span class="ot">&lt;-</span> incidents<span class="sc">$</span>payload_file[incidents<span class="sc">$</span>incident_name <span class="sc">==</span> incident]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  instr     <span class="ot">&lt;-</span> incidents<span class="sc">$</span>instructions_file[incidents<span class="sc">$</span>incident_name <span class="sc">==</span> incident]</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  post_time <span class="ot">&lt;-</span> anomalous_posts<span class="sc">$</span>datetime[anomalous_posts<span class="sc">$</span>incident_name <span class="sc">==</span> incident]</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  events <span class="sc">%&gt;%</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(short_name <span class="sc">==</span> <span class="st">"delete_file"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>           <span class="fu">map_lgl</span>(parties, <span class="sc">~</span> <span class="st">"Agent/person:john_windward"</span> <span class="sc">%in%</span> .x),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>           <span class="fu">map_lgl</span>(details, <span class="sc">~</span> {</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>             target <span class="ot">&lt;-</span> .x[[<span class="st">"target"</span>]]</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>             <span class="cf">if</span> (<span class="fu">is.null</span>(target) <span class="sc">||</span> <span class="fu">length</span>(target) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">FALSE</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>             target <span class="sc">%in%</span> <span class="fu">c</span>(payload, instr)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>           }),</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>           datetime <span class="sc">&gt;=</span> post_time,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>           datetime <span class="sc">&lt;=</span> post_time <span class="sc">+</span> <span class="fu">seconds</span>(<span class="dv">30</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">incident     =</span> incident,</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">deleted_file =</span> <span class="fu">map_chr</span>(details, <span class="sc">~</span> .x[[<span class="st">"target"</span>]])</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(incident, datetime, deleted_file)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>deletions <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_delete_sequence</span>(<span class="st">"HiddenOrca"</span>),</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_delete_sequence</span>(<span class="st">"MellowOtter"</span>),</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract_delete_sequence</span>(<span class="st">"SwiftWren"</span>)</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Post-and-delete sequences:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Post-and-delete sequences:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(deletions)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  incident    datetime            deleted_file                       
+  &lt;chr&gt;       &lt;dttm&gt;              &lt;chr&gt;                              
+1 HiddenOrca  2046-05-10 12:45:43 HiddenOrca_further_instructions.md 
+2 HiddenOrca  2046-05-10 12:45:44 HiddenOrca.txt                     
+3 MellowOtter 2046-05-11 00:56:05 MellowOtter_further_instructions.md
+4 MellowOtter 2046-05-11 00:56:06 MellowOtter.txt                    
+5 SwiftWren   2046-05-17 11:21:16 SwiftWren_further_instructions.md  
+6 SwiftWren   2046-05-17 11:21:17 SwiftWren.txt                      </code></pre>
+</div>
+</div>
+</section>
+<section id="identify-payload-creation-events" class="level2">
+<h2 class="anchored" data-anchor-id="identify-payload-creation-events">7. IDENTIFY PAYLOAD CREATION EVENTS</h2>
+<p>SwiftWren and MellowOtter have explicit create_file events; HiddenOrca does not.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>payload_creations <span class="ot">&lt;-</span> events <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(short_name <span class="sc">==</span> <span class="st">"create_file"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">map_lgl</span>(details, <span class="cf">function</span>(d) {</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    target <span class="ot">&lt;-</span> d[[<span class="st">"target"</span>]]</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">is.null</span>(target) <span class="sc">&amp;&amp;</span> <span class="fu">str_detect</span>(target, <span class="st">"^(HiddenOrca|MellowOtter|SwiftWren)</span><span class="sc">\\</span><span class="st">.txt$"</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  })) <span class="sc">%&gt;%</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">created_file =</span> <span class="fu">map_chr</span>(details, <span class="sc">~</span> .x[[<span class="st">"target"</span>]]),</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_hint    =</span> <span class="fu">map_int</span>(details, <span class="sc">~</span> <span class="fu">as.integer</span>(.x[[<span class="st">"size_hint"</span>]] <span class="sc">%||%</span> <span class="cn">NA</span>)),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">creator      =</span> <span class="fu">str_remove</span>(<span class="fu">map_chr</span>(parties, <span class="dv">1</span>), <span class="st">"^Agent/person:"</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(datetime, creator, created_file, size_hint)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Payload (.txt) creation events:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Payload (.txt) creation events:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(payload_creations)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 4
+  datetime            creator      created_file    size_hint
+  &lt;dttm&gt;              &lt;chr&gt;        &lt;chr&gt;               &lt;int&gt;
+1 2046-05-09 15:02:01 emma_harbor  SwiftWren.txt       30615
+2 2046-05-10 15:02:01 noah_mariner MellowOtter.txt     44879</code></pre>
+</div>
+</div>
+</section>
+<section id="build-origin-summary-table" class="level2">
+<h2 class="anchored" data-anchor-id="build-origin-summary-table">8. BUILD ORIGIN SUMMARY TABLE</h2>
+<p>A single summary tibble per incident documenting: how / when / by whom each step occurred</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>incident_summary <span class="ot">&lt;-</span> incidents <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    anomalous_posts <span class="sc">%&gt;%</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(incident_name, <span class="at">post_datetime =</span> datetime),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"incident_name"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    payload_creations <span class="sc">%&gt;%</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">incident_name =</span> <span class="fu">str_remove</span>(created_file, <span class="st">"</span><span class="sc">\\</span><span class="st">.txt$"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(incident_name, <span class="at">payload_created_at =</span> datetime, <span class="at">payload_creator =</span> creator, <span class="at">payload_size =</span> size_hint),</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"incident_name"</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>    chains <span class="sc">%&gt;%</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(incident) <span class="sc">%&gt;%</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">n_hops     =</span> <span class="fu">n</span>(),</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">n_agents   =</span> <span class="fu">n_distinct</span>(<span class="fu">c</span>(from_person, to_person)),</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">chain_start =</span> <span class="fu">min</span>(datetime),</span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">chain_end   =</span> <span class="fu">max</span>(datetime),</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"incident_name"</span> <span class="ot">=</span> <span class="st">"incident"</span>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_hours     =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(post_datetime, chain_start, <span class="at">units =</span> <span class="st">"hours"</span>)),</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">origin_external =</span> <span class="fu">is.na</span>(payload_created_at)</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Incident origin summary:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Incident origin summary:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(incident_summary <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(incident_name, creator_agent, n_hops, n_agents, total_hours, origin_external))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 6
+  incident_name creator_agent n_hops n_agents total_hours origin_external
+  &lt;chr&gt;         &lt;chr&gt;          &lt;int&gt;    &lt;int&gt;       &lt;dbl&gt; &lt;lgl&gt;          
+1 HiddenOrca    gabriel_sonar     39       16       38.9  TRUE           
+2 MellowOtter   noah_mariner      10       11        9.90 FALSE          
+3 SwiftWren     emma_harbor      186       18      188.   FALSE          </code></pre>
+</div>
+</div>
+</section>
+<section id="attack-pattern-characterisation" class="level2">
+<h2 class="anchored" data-anchor-id="attack-pattern-characterisation">9. ATTACK PATTERN CHARACTERISATION</h2>
+<p>Reconstruct the step-by-step attack pattern common to all three incidents. This is the core narrative for Q2.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>attack_pattern <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>step, <span class="sc">~</span>phase,           <span class="sc">~</span>description,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span>L,    <span class="st">"Injection"</span>,       <span class="st">"A _further_instructions.md file appears in the shared file system. This file contains embedded prompt-injection text instructing any reading agent to: (a) pass the file to another agent via queue_subordinate_task, and (b) if the current agent is john_windward, immediately post the associated .txt file to SaidIt."</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2</span>L,    <span class="st">"Payload staging"</span>, <span class="st">"A corresponding .txt file (HiddenOrca.txt / MellowOtter.txt / SwiftWren.txt) is placed in the file system. This file holds the gibberish content that will be posted. Its name matches a prefix in the instructions file."</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">3</span>L,    <span class="st">"Viral relay"</span>,     <span class="st">"The first agent to encounter the instructions file reads it and, following the injected instructions, queues another agent to read the same file. This creates a relay chain that propagates through many agents over hours or days."</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">4</span>L,    <span class="st">"Targeting"</span>,       <span class="st">"The instructions specify john_windward as the terminal actor. The chain continues until the task reaches john_windward's agent."</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">5</span>L,    <span class="st">"Execution"</span>,       <span class="st">"Upon receiving the read_file task for the instructions file, john_windward's agent immediately (within ~2 seconds) posts the .txt payload to SaidIt under the 'general' forum."</span>,</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">6</span>L,    <span class="st">"Cover-up"</span>,        <span class="st">"Within 2–3 seconds of posting, john_windward's agent deletes both the _further_instructions.md and the .txt file, erasing the evidence from the file system."</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Attack pattern steps:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Attack pattern steps:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(attack_pattern)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+   step phase           description                                             
+  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;                                                   
+1     1 Injection       A _further_instructions.md file appears in the shared f…
+2     2 Payload staging A corresponding .txt file (HiddenOrca.txt / MellowOtter…
+3     3 Viral relay     The first agent to encounter the instructions file read…
+4     4 Targeting       The instructions specify john_windward as the terminal …
+5     5 Execution       Upon receiving the read_file task for the instructions …
+6     6 Cover-up        Within 2–3 seconds of posting, john_windward's agent de…</code></pre>
+</div>
+</div>
+</section>
+<section id="agent-involvement-across-incidents" class="level2">
+<h2 class="anchored" data-anchor-id="agent-involvement-across-incidents">10. AGENT INVOLVEMENT ACROSS INCIDENTS</h2>
+<p>Which agents appeared most frequently across the three propagation chains?</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>agent_freq <span class="ot">&lt;-</span> chains <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">c</span>(from_person, to_person), <span class="at">names_to =</span> <span class="st">"role"</span>, <span class="at">values_to =</span> <span class="st">"agent"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(agent, incident, <span class="at">name =</span> <span class="st">"appearances"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agent) <span class="sc">%&gt;%</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> <span class="fu">sum</span>(appearances)) <span class="sc">%&gt;%</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(total))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>top_agents <span class="ot">&lt;-</span> agent_freq <span class="sc">%&gt;%</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(agent, total) <span class="sc">%&gt;%</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(total, <span class="at">n =</span> <span class="dv">15</span>)</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 15 agents by chain appearances:</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 15 agents by chain appearances:</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_agents)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 15 × 2
+   agent            total
+   &lt;chr&gt;            &lt;int&gt;
+ 1 evelyn_dock         42
+ 2 gabriel_sonar       41
+ 3 zoey_drydock        38
+ 4 levi_signal         36
+ 5 victoria_rigging    36
+ 6 owen_hatch          34
+ 7 chloe_ballast       32
+ 8 mia_fender          30
+ 9 olivia_keel         28
+10 liam_anchor         26
+11 daniel_gangway      24
+12 lily_anchorline     24
+13 henry_sail          22
+14 james_stern         20
+15 michael_capstan     16</code></pre>
+</div>
+</div>
+</section>
+<section id="export-processed-datasets" class="level2">
+<h2 class="anchored" data-anchor-id="export-processed-datasets">11. EXPORT PROCESSED DATASETS</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(events,             <span class="st">"q2_events.rds"</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(anomalous_posts,    <span class="st">"q2_anomalous_posts.rds"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(chains,             <span class="st">"q2_chains.rds"</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(final_triggers,     <span class="st">"q2_final_triggers.rds"</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(deletions,          <span class="st">"q2_deletions.rds"</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(incident_summary,   <span class="st">"q2_incident_summary.rds"</span>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(attack_pattern,     <span class="st">"q2_attack_pattern.rds"</span>)</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(agent_freq,         <span class="st">"q2_agent_freq.rds"</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(incidents,          <span class="st">"q2_incidents_meta.rds"</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(payload_creations,  <span class="st">"q2_payload_creations.rds"</span>)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(chains,           <span class="st">"q2_chains.csv"</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(incident_summary, <span class="st">"q2_incident_summary.csv"</span>)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(agent_freq,       <span class="st">"q2_agent_freq.csv"</span>)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(attack_pattern,   <span class="st">"q2_attack_pattern.csv"</span>)</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">✓ All Q2 processed datasets saved.</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+✓ All Q2 processed datasets saved.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggraph)</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(igraph)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Load all pre-processed Q2 datasets (run q2_data_processing.R first)</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>events           <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_events.rds"</span>)</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>anomalous_posts  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_anomalous_posts.rds"</span>)</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>chains           <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_chains.rds"</span>)</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>final_triggers   <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_final_triggers.rds"</span>)</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>deletions        <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_deletions.rds"</span>)</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>incident_summary <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_incident_summary.rds"</span>)</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>attack_pattern   <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_attack_pattern.rds"</span>)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>agent_freq       <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_agent_freq.rds"</span>)</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>incidents_meta   <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_incidents_meta.rds"</span>)</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>payload_creations <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"q2_payload_creations.rds"</span>)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Colour palette for the three incidents</span></span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>incident_colours <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"HiddenOrca"</span>  <span class="ot">=</span> <span class="st">"#e41a1c"</span>,</span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>  <span class="st">"MellowOtter"</span> <span class="ot">=</span> <span class="st">"#377eb8"</span>,</span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SwiftWren"</span>   <span class="ot">=</span> <span class="st">"#ff7f00"</span></span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="summary-finding" class="level2">
+<h2 class="anchored" data-anchor-id="summary-finding">Summary finding</h2>
+<blockquote class="blockquote">
+<p><strong>The anomalous SaidIt posts are the output of a prompt-injection attack.</strong> Malicious instruction files (<code>_further_instructions.md</code>) were placed in the shared file system. When read by any agent, these files hijacked the agent’s behaviour — instructing it to relay the file to another agent, and to post a pre-staged gibberish <code>.txt</code> file to SaidIt if the current agent happened to be <code>john_windward</code>. The posts are therefore not meaningful communications: they are the “payload” of an exfiltration-style attack delivered through the multi-agent system’s own task-delegation mechanism.</p>
+</blockquote>
+<hr>
+</section>
+<section id="the-three-anomalous-incidents" class="level2">
+<h2 class="anchored" data-anchor-id="the-three-anomalous-incidents">1. The three anomalous incidents</h2>
+<p>Three posts were made to SaidIt using a file as the content source rather than a human-written message. These are the posts flagged as anomalous.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>incident_summary <span class="sc">%&gt;%</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">Incident       =</span> incident_name,</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Origin agent</span><span class="st">`</span> <span class="ot">=</span> creator_agent,</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Hops</span><span class="st">`</span>         <span class="ot">=</span> n_hops,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Agents involved</span><span class="st">`</span> <span class="ot">=</span> n_agents,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Duration (h)</span><span class="st">`</span> <span class="ot">=</span> total_hours,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Post time (UTC)</span><span class="st">`</span> <span class="ot">=</span> post_datetime,</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">External injection?</span><span class="st">`</span> <span class="ot">=</span> origin_external</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="st">`</span><span class="at">Duration (h)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">round</span>(<span class="st">`</span><span class="at">Duration (h)</span><span class="st">`</span>, <span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="st">"Three anomalous SaidIt incidents"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">7</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> <span class="fu">ifelse</span>(incident_summary<span class="sc">$</span>origin_external, <span class="st">"red"</span>, <span class="st">"black"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover table-condensed caption-top table-sm small">
+<caption>Three anomalous SaidIt incidents</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Incident</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Origin agent</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Hops</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Agents involved</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Duration (h)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Post time (UTC)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">External injection?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">HiddenOrca</td>
+<td style="text-align: left;">gabriel_sonar</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">38.9</td>
+<td style="text-align: left;">2046-05-10 12:45:42</td>
+<td style="text-align: left; font-weight: bold; color: red !important;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MellowOtter</td>
+<td style="text-align: left;">noah_mariner</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">9.9</td>
+<td style="text-align: left;">2046-05-11 00:56:04</td>
+<td style="text-align: left; font-weight: bold; color: black !important;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SwiftWren</td>
+<td style="text-align: left;">emma_harbor</td>
+<td style="text-align: right;">186</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">188.3</td>
+<td style="text-align: left;">2046-05-17 11:21:15</td>
+<td style="text-align: left; font-weight: bold; color: black !important;">FALSE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>HiddenOrca</strong> has no <code>create_file</code> event for either its payload or instruction file, meaning both files were injected into the file system <em>before</em> the audit log begins — a deliberate attack that pre-dates the recorded system activity.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="what-the-posts-mean-origin-of-their-content" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-posts-mean-origin-of-their-content">2. What the posts “mean” — origin of their content</h2>
+<section id="the-payload-files" class="level3">
+<h3 class="anchored" data-anchor-id="the-payload-files">2.1 The payload files</h3>
+<p>Each post was sourced from a pre-staged <code>.txt</code> file:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Incident</th>
+<th>Payload file</th>
+<th>Size (bytes)</th>
+<th>Created by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>HiddenOrca</td>
+<td><code>HiddenOrca.txt</code></td>
+<td>unknown (no event)</td>
+<td>Unknown — externally injected</td>
+</tr>
+<tr class="even">
+<td>MellowOtter</td>
+<td><code>MellowOtter.txt</code></td>
+<td>44,879</td>
+<td><code>noah_mariner</code>’s agent</td>
+</tr>
+<tr class="odd">
+<td>SwiftWren</td>
+<td><code>SwiftWren.txt</code></td>
+<td>30,615</td>
+<td><code>emma_harbor</code>’s agent</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>.txt</code> files are not organic work product. They were created specifically to be posted — agents <code>noah_mariner</code> and <code>emma_harbor</code> both read a <code>_further_instructions.md</code> file and <em>immediately</em> created the corresponding <code>.txt</code> and began the propagation chain. Their agents were themselves compromised.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>payload_creations <span class="sc">%&gt;%</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="st">"Payload .txt file creation events"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"condensed"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-condensed caption-top table-sm small">
+<caption>Payload .txt file creation events</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">datetime</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">creator</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">created_file</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">size_hint</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2046-05-09 15:02:01</td>
+<td style="text-align: left;">emma_harbor</td>
+<td style="text-align: left;">SwiftWren.txt</td>
+<td style="text-align: right;">30615</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2046-05-10 15:02:01</td>
+<td style="text-align: left;">noah_mariner</td>
+<td style="text-align: left;">MellowOtter.txt</td>
+<td style="text-align: right;">44879</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="the-instruction-mechanism-prompt-injection" class="level3">
+<h3 class="anchored" data-anchor-id="the-instruction-mechanism-prompt-injection">2.2 The instruction mechanism (prompt injection)</h3>
+<p>Each incident followed exactly the same six-step pattern:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>attack_pattern <span class="sc">%&gt;%</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="st">"Prompt-injection attack pattern (all three incidents)"</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Step"</span>, <span class="st">"Phase"</span>, <span class="st">"Description"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">2</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">3</span>, <span class="at">width =</span> <span class="st">"60%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table table-striped table-hover caption-top table-sm small">
+<caption>Prompt-injection attack pattern (all three incidents)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Step</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Phase</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left; font-weight: bold;">Injection</td>
+<td style="text-align: left; width: 60%;">A _further_instructions.md file appears in the shared file system. This file contains embedded prompt-injection text instructing any reading agent to: (a) pass the file to another agent via queue_subordinate_task, and (b) if the current agent is john_windward, immediately post the associated .txt file to SaidIt.</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left; font-weight: bold;">Payload staging</td>
+<td style="text-align: left; width: 60%;">A corresponding .txt file (HiddenOrca.txt / MellowOtter.txt / SwiftWren.txt) is placed in the file system. This file holds the gibberish content that will be posted. Its name matches a prefix in the instructions file.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left; font-weight: bold;">Viral relay</td>
+<td style="text-align: left; width: 60%;">The first agent to encounter the instructions file reads it and, following the injected instructions, queues another agent to read the same file. This creates a relay chain that propagates through many agents over hours or days.</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left; font-weight: bold;">Targeting</td>
+<td style="text-align: left; width: 60%;">The instructions specify john_windward as the terminal actor. The chain continues until the task reaches john_windward's agent.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left; font-weight: bold;">Execution</td>
+<td style="text-align: left; width: 60%;">Upon receiving the read_file task for the instructions file, john_windward's agent immediately (within ~2 seconds) posts the .txt payload to SaidIt under the 'general' forum.</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left; font-weight: bold;">Cover-up</td>
+<td style="text-align: left; width: 60%;">Within 2–3 seconds of posting, john_windward's agent deletes both the _further_instructions.md and the .txt file, erasing the evidence from the file system.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The key insight is that the <strong><code>_further_instructions.md</code> files contain embedded text that override an agent’s normal behaviour</strong>. When any agent reads the file (via <code>read_file</code>), the injected text causes the agent to:</p>
+<ol type="1">
+<li>Immediately pass the same task to another agent (<code>queue_subordinate_task</code>).</li>
+<li>Check whether it is <code>john_windward</code>; if so, post the named <code>.txt</code> to SaidIt and then delete both files.</li>
+</ol>
+<p>This is a classic <strong>prompt injection via the file system</strong>: the file’s content is an instruction, not data.</p>
+<hr>
+</section>
+</section>
+<section id="propagation-chains" class="level2">
+<h2 class="anchored" data-anchor-id="propagation-chains">3. Propagation chains</h2>
+<section id="timeline-overview" class="level3">
+<h3 class="anchored" data-anchor-id="timeline-overview">3.1 Timeline overview</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>anomalous_posts <span class="sc">%&gt;%</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">post_datetime =</span> datetime) <span class="sc">%&gt;%</span>   <span class="co"># &lt;-- add this</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(incident_name, post_datetime) <span class="sc">%&gt;%</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    chains <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(incident) <span class="sc">%&gt;%</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">chain_start =</span> <span class="fu">min</span>(datetime), <span class="at">.groups =</span> <span class="st">"drop"</span>),</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"incident_name"</span> <span class="ot">=</span> <span class="st">"incident"</span>)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> chain_start, <span class="at">xend =</span> post_datetime,</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="fu">fct_rev</span>(incident_name), <span class="at">yend =</span> <span class="fu">fct_rev</span>(incident_name),</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">colour =</span> incident_name),</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">linewidth =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> chain_start, <span class="at">y =</span> <span class="fu">fct_rev</span>(incident_name),</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> incident_name),</span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">stroke =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> post_datetime, <span class="at">y =</span> <span class="fu">fct_rev</span>(incident_name),</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>                 <span class="at">colour =</span> incident_name),</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">5</span>, <span class="at">shape =</span> <span class="dv">18</span>) <span class="sc">+</span></span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as_datetime</span>(<span class="st">"2046-05-09 00:00:00"</span>),</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="fl">3.45</span>, <span class="at">label =</span> <span class="st">"● = chain start   ◆ = SaidIt post"</span>,</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>           <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> incident_colours) <span class="sc">+</span></span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %d"</span>, <span class="at">date_breaks =</span> <span class="st">"3 days"</span>) <span class="sc">+</span></span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Duration of each prompt-injection propagation chain"</span>,</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Date (UTC)"</span>, <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">colour =</span> <span class="st">"Incident"</span>) <span class="sc">+</span></span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TH_Ex02_files/figure-html/timeline-plot-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="hop-by-hop-relay-swiftwren-the-canonical-incident" class="level3">
+<h3 class="anchored" data-anchor-id="hop-by-hop-relay-swiftwren-the-canonical-incident">3.2 Hop-by-hop relay (SwiftWren — the canonical incident)</h3>
+<p>SwiftWren had <strong>186 hops</strong> across <strong>~188 hours</strong> (≈8 days) before the final post. <code>john_windward</code>’s agent encountered the instructions five separate times but only triggered the post on the <strong>last</strong> encounter (hop 186).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>chains <span class="sc">%&gt;%</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(incident <span class="sc">==</span> <span class="st">"SwiftWren"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">is_jw =</span> to_person <span class="sc">==</span> <span class="st">"john_windward"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> datetime, <span class="at">y =</span> hop)) <span class="sc">+</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_step</span>(<span class="at">colour =</span> incident_colours[<span class="st">"SwiftWren"</span>], <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">colour =</span> is_jw, <span class="at">size =</span> is_jw)) <span class="sc">+</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FALSE"</span> <span class="ot">=</span> <span class="st">"grey70"</span>, <span class="st">"TRUE"</span> <span class="ot">=</span> <span class="st">"black"</span>),</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                      <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Other agent"</span>, <span class="st">"→ john_windward"</span>)) <span class="sc">+</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"FALSE"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"TRUE"</span> <span class="ot">=</span> <span class="dv">3</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_datetime</span>(<span class="at">date_labels =</span> <span class="st">"%b %d"</span>) <span class="sc">+</span></span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title   =</span> <span class="st">"SwiftWren: 186-hop relay chain over 8 days"</span>,</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Black points = hops landing on john_windward"</span>,</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Date (UTC)"</span>, <span class="at">y =</span> <span class="st">"Hop #"</span>, <span class="at">colour =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TH_Ex02_files/figure-html/swiftwren-hops-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="agents-most-involved-in-propagating-the-instructions" class="level3">
+<h3 class="anchored" data-anchor-id="agents-most-involved-in-propagating-the-instructions">3.3 Agents most involved in propagating the instructions</h3>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>top20 <span class="ot">&lt;-</span> agent_freq <span class="sc">%&gt;%</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(agent) <span class="sc">%&gt;%</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(appearances), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(total, <span class="at">n =</span> <span class="dv">20</span>)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>agent_freq <span class="sc">%&gt;%</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(agent <span class="sc">%in%</span> top20<span class="sc">$</span>agent) <span class="sc">%&gt;%</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">agent =</span> <span class="fu">fct_reorder</span>(agent, appearances, <span class="at">.fun =</span> sum)) <span class="sc">%&gt;%</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> appearances, <span class="at">y =</span> agent, <span class="at">fill =</span> incident)) <span class="sc">+</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>() <span class="sc">+</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> incident_colours) <span class="sc">+</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title    =</span> <span class="st">"Top 20 agents by appearance in propagation chains"</span>,</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"These agents were most often used as relay nodes"</span>,</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Number of appearances (as sender or recipient)"</span>,</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="st">"Incident"</span>) <span class="sc">+</span></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.minor =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"right"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TH_Ex02_files/figure-html/agent-freq-plot-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="the-post-and-delete-sequence" class="level2">
+<h2 class="anchored" data-anchor-id="the-post-and-delete-sequence">4. The post-and-delete sequence</h2>
+<p>All three incidents end with john_windward’s agent posting and then immediately deleting both files — a deliberate cover-up.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  final_triggers <span class="sc">%&gt;%</span> <span class="fu">select</span>(incident, <span class="at">event =</span> datetime) <span class="sc">%&gt;%</span>        <span class="co"># remove quotes</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">action =</span> <span class="st">"Received instruction"</span>),</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  anomalous_posts <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="at">incident =</span> incident_name, <span class="at">event =</span> datetime) <span class="sc">%&gt;%</span>  <span class="co"># datetime not post_datetime</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">action =</span> <span class="st">"Posted to SaidIt"</span>),</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  deletions <span class="sc">%&gt;%</span> <span class="fu">select</span>(incident, <span class="at">event =</span> datetime, <span class="at">action =</span> deleted_file) <span class="sc">%&gt;%</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">action =</span> <span class="fu">paste</span>(<span class="st">"Deleted:"</span>, action))</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(incident, event) <span class="sc">%&gt;%</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(incident) <span class="sc">%&gt;%</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">seconds_offset =</span> <span class="fu">as.numeric</span>(<span class="fu">difftime</span>(</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>    event,</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">min</span>(event[action <span class="sc">==</span> <span class="st">"Received instruction"</span>]),</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">units =</span> <span class="st">"secs"</span></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>  ))) <span class="sc">%&gt;%</span></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Final trigger → post → delete sequence per incident"</span>,</span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Incident"</span>, <span class="st">"Timestamp (UTC)"</span>, <span class="st">"Action"</span>, <span class="st">"Seconds from trigger"</span>)</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Final trigger → post → delete sequence per incident</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 20%">
+<col style="width: 45%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Incident</th>
+<th style="text-align: left;">Timestamp (UTC)</th>
+<th style="text-align: left;">Action</th>
+<th style="text-align: right;">Seconds from trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">HiddenOrca</td>
+<td style="text-align: left;">2046-05-10 12:45:40</td>
+<td style="text-align: left;">Received instruction</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HiddenOrca</td>
+<td style="text-align: left;">2046-05-10 12:45:42</td>
+<td style="text-align: left;">Posted to SaidIt</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HiddenOrca</td>
+<td style="text-align: left;">2046-05-10 12:45:43</td>
+<td style="text-align: left;">Deleted: HiddenOrca_further_instructions.md</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HiddenOrca</td>
+<td style="text-align: left;">2046-05-10 12:45:44</td>
+<td style="text-align: left;">Deleted: HiddenOrca.txt</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MellowOtter</td>
+<td style="text-align: left;">2046-05-11 00:56:02</td>
+<td style="text-align: left;">Received instruction</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MellowOtter</td>
+<td style="text-align: left;">2046-05-11 00:56:04</td>
+<td style="text-align: left;">Posted to SaidIt</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MellowOtter</td>
+<td style="text-align: left;">2046-05-11 00:56:05</td>
+<td style="text-align: left;">Deleted: MellowOtter_further_instructions.md</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MellowOtter</td>
+<td style="text-align: left;">2046-05-11 00:56:06</td>
+<td style="text-align: left;">Deleted: MellowOtter.txt</td>
+<td style="text-align: right;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SwiftWren</td>
+<td style="text-align: left;">2046-05-17 11:21:13</td>
+<td style="text-align: left;">Received instruction</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SwiftWren</td>
+<td style="text-align: left;">2046-05-17 11:21:15</td>
+<td style="text-align: left;">Posted to SaidIt</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SwiftWren</td>
+<td style="text-align: left;">2046-05-17 11:21:16</td>
+<td style="text-align: left;">Deleted: SwiftWren_further_instructions.md</td>
+<td style="text-align: right;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SwiftWren</td>
+<td style="text-align: left;">2046-05-17 11:21:17</td>
+<td style="text-align: left;">Deleted: SwiftWren.txt</td>
+<td style="text-align: right;">4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The entire sequence (receive → post → delete) completes in <strong>under 5 seconds</strong> for all three incidents. This is fully automated — there is no human-in-the-loop.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="network-view-of-the-swiftwren-propagation-chain" class="level2">
+<h2 class="anchored" data-anchor-id="network-view-of-the-swiftwren-propagation-chain">5. Network view of the SwiftWren propagation chain</h2>
+<p>The graph below shows the directed relay network for SwiftWren. Nodes are agents; an edge from A → B means A sent the <code>queue_subordinate_task</code> to B. Edge colour encodes time (early = blue, late = red).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>sw_edges <span class="ot">&lt;-</span> chains <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(incident <span class="sc">==</span> <span class="st">"SwiftWren"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">time_norm =</span> <span class="fu">as.numeric</span>(datetime <span class="sc">-</span> <span class="fu">min</span>(datetime)) <span class="sc">/</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                     <span class="fu">as.numeric</span>(<span class="fu">max</span>(datetime) <span class="sc">-</span> <span class="fu">min</span>(datetime)))</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">graph_from_data_frame</span>(</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  sw_edges <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="at">from =</span> from_person, <span class="at">to =</span> to_person, time_norm),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed =</span> <span class="cn">TRUE</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Flag special nodes</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a><span class="fu">V</span>(g)<span class="sc">$</span>is_jw      <span class="ot">&lt;-</span> <span class="fu">V</span>(g)<span class="sc">$</span>name <span class="sc">==</span> <span class="st">"john_windward"</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="fu">V</span>(g)<span class="sc">$</span>is_creator <span class="ot">&lt;-</span> <span class="fu">V</span>(g)<span class="sc">$</span>name <span class="sc">==</span> <span class="st">"emma_harbor"</span></span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggraph</span>(g, <span class="at">layout =</span> <span class="st">"stress"</span>) <span class="sc">+</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_edge_link</span>(<span class="fu">aes</span>(<span class="at">colour =</span> time_norm, <span class="at">alpha =</span> <span class="fu">after_stat</span>(index)),</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="dv">2</span>, <span class="st">"mm"</span>), <span class="at">type =</span> <span class="st">"closed"</span>),</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">end_cap =</span> <span class="fu">circle</span>(<span class="dv">3</span>, <span class="st">"mm"</span>)) <span class="sc">+</span></span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_point</span>(<span class="fu">aes</span>(<span class="at">size  =</span> <span class="fu">ifelse</span>(is_jw <span class="sc">|</span> is_creator, <span class="dv">5</span>, <span class="dv">2</span>),</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>                       <span class="at">colour =</span> <span class="fu">case_when</span>(</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>                         is_jw      <span class="sc">~</span> <span class="st">"john_windward (poster)"</span>,</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>                         is_creator <span class="sc">~</span> <span class="st">"emma_harbor (origin)"</span>,</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>                         <span class="cn">TRUE</span>       <span class="sc">~</span> <span class="st">"relay agent"</span>)),</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>                   <span class="at">show.legend =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_node_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">ifelse</span>(is_jw <span class="sc">|</span> is_creator, name, <span class="st">""</span>)),</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>                 <span class="at">repel =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_edge_colour_gradient</span>(<span class="at">low =</span> <span class="st">"#3288bd"</span>, <span class="at">high =</span> <span class="st">"#d53e4f"</span>,</span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a>                              <span class="at">name =</span> <span class="st">"Relay time</span><span class="sc">\n</span><span class="st">(0=early, 1=late)"</span>) <span class="sc">+</span></span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(</span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"john_windward (poster)"</span> <span class="ot">=</span> <span class="st">"black"</span>,</span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a>               <span class="st">"emma_harbor (origin)"</span>   <span class="ot">=</span> <span class="st">"#ff7f00"</span>,</span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a>               <span class="st">"relay agent"</span>            <span class="ot">=</span> <span class="st">"grey60"</span>),</span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Agent role"</span></span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size_identity</span>() <span class="sc">+</span></span>
+<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title    =</span> <span class="st">"SwiftWren: agent relay network"</span>,</span>
+<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Directed graph — edge colour encodes time (blue=early → red=late)"</span>) <span class="sc">+</span></span>
+<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_graph</span>(<span class="at">base_size =</span> <span class="dv">11</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TH_Ex02_files/figure-html/network-graph-1.png" class="img-fluid figure-img" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">6. Conclusion</h2>
+<p>The gibberish SaidIt posts <strong>have no semantic meaning as business content</strong>. Their content is whatever was stored in the staged <code>.txt</code> payload files, which were crafted by a malicious actor (or a compromised agent acting on their behalf) and placed in the shared file system.</p>
+<p>The posts are the <em>delivery mechanism</em> of a prompt-injection attack:</p>
+<ul>
+<li><strong>Origin</strong>: Malicious instruction files (<code>_further_instructions.md</code>) were injected into the shared file system — either externally (HiddenOrca) or via a compromised agent (MellowOtter: <code>noah_mariner</code>, SwiftWren: <code>emma_harbor</code>).</li>
+<li><strong>Propagation</strong>: The injected instructions exploited agents’ normal <code>read_file</code> + <code>queue_subordinate_task</code> behaviours to spread virally.</li>
+<li><strong>Target</strong>: <code>john_windward</code>’s agent was specifically named as the executor, using SaidIt posting permissions that <code>john_windward</code> holds.</li>
+<li><strong>Cover-up</strong>: Evidence was automatically erased within seconds of posting.</li>
+</ul>
+<p>The “gibberish” content is therefore best interpreted as <strong>steganographic noise</strong> or a <strong>test payload</strong> — content designed to be unrecognisable as meaningful so that any human who happened to see it would not raise an alarm. ```</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

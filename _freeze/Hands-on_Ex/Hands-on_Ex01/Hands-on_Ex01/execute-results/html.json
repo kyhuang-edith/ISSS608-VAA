@@ -1,0 +1,17 @@
+{
+  "hash": "4a16ce1bd51376e66b73dbfd9dc6420d",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Hands-on Exercise 1\"\nauthor: \"Huang Kuan Yu\"\ndate: \"25/4/2026\"\ndate-modfified: \"last-modified\"\nformat: html\nexecute:\n    echo: true\n    eval: true\n    warning: false\n    freeze: true\n---\n\n# Getting Started\n\n## Install and launching R Packages\n\nThe code chunk below uses p_load() of pacman to check if tidyverse packages are installed in the computer. If ther are, then they will be launched into R.\n\n\n::: {.cell}\n\n```{.r .cell-code}\npacman::p_load(tidyverse)\n```\n:::\n\n\n## Importing the data\n\n\n::: {.cell}\n\n```{.r .cell-code}\nexam_data <- read_csv(\"data/Exam_data.csv\")\n```\n:::\n\n\n# Plotting a simple bar chart\n\n::: panel-tabset\n## The plot\n\n\n::: {.cell}\n::: {.cell-output-display}\n![](Hands-on_Ex01_files/figure-html/unnamed-chunk-3-1.png){width=672}\n:::\n\n::: {.cell-output .cell-output-stdout}\n\n```\ngeom_bar: na.rm = FALSE, just = 0.5, lineend = butt, linejoin = mitre\nstat_count: na.rm = FALSE\nposition_stack \n```\n\n\n:::\n:::\n\n\n## The code\n\n\n::: {.cell}\n\n```{.r .cell-code}\nggplot(data = exam_data, aes(x=RACE))\n  geom_bar()\n```\n:::\n\n:::\n",
+    "supporting": [
+      "Hands-on_Ex01_files"
+    ],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

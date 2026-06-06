@@ -1,0 +1,207 @@
+/* ---------- Overall slide ---------- */
+
+.reveal {
+  font-size: 24px;
+  color: #333333;
+}
+
+/* ---------- Main title ---------- */
+
+.reveal h1 {
+  font-size: 50px;
+  text-align: center;
+}
+
+/* ---------- Slide title ---------- */
+
+.reveal h2 {
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 8px;
+  margin-top: 5px;
+}
+
+/* ---------- Subtitles ---------- */
+
+.reveal h3 {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+
+/* ---------- Body text ---------- */
+
+.reveal p,
+.reveal li {
+  font-size: 20px;
+  line-height: 1.3;
+}
+
+/* ---------- Lists ---------- */
+
+.reveal ul {
+  margin-top: 10px;
+}
+
+.reveal li {
+  margin-bottom: 6px;
+}
+
+/* ---------- Graph title spacing ---------- */
+
+.reveal .figure {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ---------- Graph captions ---------- */
+
+.reveal figcaption {
+  font-size: 14px;
+}
+
+/* ---------- Footnote section ---------- */
+
+.footnote-box {
+
+  position: absolute;
+
+  bottom: 10px;
+
+  left: 60px;
+
+  right: 60px;
+
+  padding-top: 6px;
+
+  border-top: 1px solid #d9d9d9;
+
+  font-size: 15px;
+
+  line-height: 1.15;
+
+  color: #555555;
+
+}
+
+/* ---------- Hyperlinks ---------- */
+
+.footnote-box a {
+
+  color: #2d5be3;
+
+  font-size: 15px;
+
+  text-decoration: none;
+
+}
+
+.footnote-box a:hover {
+
+  text-decoration: underline;
+
+}
+
+/* ---------- Speaker notes unaffected ---------- */
+
+.notes {
+  font-size: 18px;
+}
+
+/* ---------- Two graph layout ---------- */
+
+.two-col .cell-output-display img,
+.two-col img {
+  max-height: 40vh;
+  width: 100%;
+  object-fit: contain;
+}
+
+/* ---------- Graph subtitles ---------- */
+
+.graph-title {
+
+  text-align: center;
+
+  font-size: 18px;
+
+  margin-bottom: 4px;
+
+  font-weight: 500;
+
+}
+
+/* ---------- Tables ---------- */
+
+.reveal table {
+
+  font-size: 18px;
+
+}
+
+/* ---------- Reduce spacing ---------- */
+
+.reveal section {
+
+  padding-top: 5px;
+
+}
+
+/* ---------- Code chunks hidden spacing ---------- */
+
+.cell-output-display {
+
+  margin-bottom: 0;
+
+}
+
+/* ---------- Images / plots ---------- */
+
+.reveal img {
+
+  max-height: 70vh;  
+
+  width: auto;
+
+  object-fit: contain;
+
+}
+
+/* ---------- Slide numbers ---------- */
+
+.slide-number {
+
+  font-size: 12px !important;
+
+}
+
+/* ---------- Prevent overflow ---------- */
+
+.reveal .slides section {
+
+  overflow-y: hidden;
+
+}
+
+/* Bigger text for text-heavy slides */
+.text-slide p,
+.text-slide li {
+  font-size: 28px;
+  line-height: 1.45;
+}
+
+.text-slide h3 {
+  font-size: 28px;
+}
+/* Control normal single-plot slides */
+.reveal .cell-output-display img {
+  max-height: 80vh !important;
+  width: auto !important;
+  object-fit: contain;
+}
+
+/* Keep plot centered */
+.reveal .cell-output-display {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+}
