@@ -661,40 +661,32 @@ Node colour encoding: black is `john_windward` (final poster); red is origin age
 Loading the org chart allows each agent in the relay chains to be enriched with their job title, department, and team. This organisational context is critical for interpreting Q2: knowing that the payload files were created by the CFO and COO, and that the final relay passed through the IT Department Lead, transforms the incident from a technical curiosity into a significant governance concern.
 
 ```{r org-chart-load}
-# Load org chart in networkX node-link format
 org_raw <- read_json("2026_MC2/org_chart.json", simplifyVector = FALSE)
 
-# Extract nodes — each has an id, label, and type (company/department/team/person)
 org_nodes <- tibble(
-  id    = map_chr(org_raw$nodes, ~ .x[["id"]]),
-  label = map_chr(org_raw$nodes, ~ .x[["label"]]),
-  type  = map_chr(org_raw$nodes, ~ .x[["type"]]),
+  id         = map_chr(org_raw$nodes, ~ .x[["id"]]),
+  label      = map_chr(org_raw$nodes, ~ .x[["label"]]),
+  type       = map_chr(org_raw$nodes, ~ .x[["type"]]),
   title_role = map_chr(org_raw$nodes, ~ .x[["title"]] %||% "")
 )
 
-# Extract edges — source/target/relation
 org_edges <- tibble(
   source   = map_chr(org_raw$edges, ~ .x[["source"]]),
   target   = map_chr(org_raw$edges, ~ .x[["target"]]),
   relation = map_chr(org_raw$edges, ~ .x[["relation"]])
 )
 
-# Build a person-level lookup: for each person, find their department and team
-# by tracing the 'contains' edges upward through the hierarchy
 person_nodes <- org_nodes %>% filter(type == "person")
 
-# For each person, find which team or department directly contains them
 person_membership <- org_edges %>%
   filter(relation %in% c("contains", "led_by")) %>%
-  # Normalise: 'led_by' means person -> dept, 'contains' means dept -> person
   mutate(
-    person_id = if_else(relation == "led_by", target, target),
-    parent_id = if_else(relation == "led_by", source, source)
+    person_id = target,
+    parent_id = source
   ) %>%
   filter(str_detect(person_id, "^person:")) %>%
   select(person_id, parent_id)
 
-# Join parent label
 person_org <- person_membership %>%
   left_join(org_nodes %>% select(parent_id = id, parent_label = label,
                                   parent_type = type),
@@ -702,13 +694,11 @@ person_org <- person_membership %>%
   left_join(person_nodes %>% select(person_id = id, person_label = label,
                                      job_title = title_role),
             by = "person_id") %>%
-  mutate(
-    agent = str_remove(person_id, "^person:")
-  ) %>%
+  mutate(agent = str_remove(person_id, "^person:")) %>%
   select(agent, person_label, job_title, parent_label, parent_type)
 
 cat("People in org chart:", nrow(person_org), "\n")
-cat("Key agents found:\n")
+
 person_org %>%
   filter(agent %in% c("john_windward", "emma_harbor", "noah_mariner",
                        "gabriel_sonar", "chloe_ballast")) %>%
@@ -718,15 +708,19 @@ person_org %>%
   )
 ```
 
+::: {.code-tip}
+Code Details
+
+The org chart JSON follows the networkX node-link format described in the data description file. Three wrangling steps are performed. First, the `nodes` array is flattened into a tibble with four fields: `id` (e.g. `person:john_windward`), `label` (display name), `type` (company, department, team, or person), and `title_role` (job title where present). The `%||%` operator returns an empty string when `title` is absent, preventing `map_chr()` from erroring on nodes with no title field. Second, the `edges` array is flattened to a three-column tibble of `source`, `target`, and `relation`. The two relation types used here are `contains` (parent contains child, e.g. a department contains a person) and `led_by` (a department is led by a person). Both are filtered and the `person_id` is always the `target` — the node being placed in the hierarchy. Third, two `left_join()` calls attach the parent label and the person's own label and job title, producing a clean lookup table (`person_org`) keyed on normalised agent name.
+:::
+
 ```{r org-enrich-nodes}
-# Enrich all_nodes with org chart context for richer tooltips
 all_nodes <- all_nodes %>%
   left_join(person_org %>% select(agent, job_title, parent_label),
             by = "agent") %>%
   mutate(
     job_title    = replace_na(job_title, "Unknown"),
     parent_label = replace_na(parent_label, "Unknown"),
-    # Update tooltip to include org context
     title = paste0(
       "<b>", agent, "</b><br>",
       "Title: ", job_title, "<br>",
@@ -1061,8 +1055,6 @@ The org chart below shows the full Tenant Thread company hierarchy. The five age
 **Why the org chart matters:** The relay chain did not pass through random agents — it was routed through the most organisationally significant people in the company. Understanding their positions explains both why the attack was structured the way it was and why it was so difficult to detect.
 
 ```{r org-chart-vis}
-# Build the full org chart as a visNetwork
-# Nodes: all 75 org chart entries
 attack_agents <- c("john_windward", "emma_harbor", "noah_mariner",
                    "gabriel_sonar", "chloe_ballast")
 
@@ -1111,7 +1103,6 @@ org_vis_nodes <- org_nodes %>%
       type == "department" ~ "diamond",
       TRUE                 ~ "star"
     ),
-    # Build tooltip
     tooltip = paste0(
       "<b>", label, "</b><br>",
       "Type: ", type,
@@ -1120,7 +1111,6 @@ org_vis_nodes <- org_nodes %>%
     )
   )
 
-# Enrich key agent nodes with job titles from person_org
 org_vis_nodes <- org_vis_nodes %>%
   left_join(person_org %>% select(agent, job_title, parent_label),
             by = "agent") %>%
@@ -1452,29 +1442,16 @@ The final score for any incident is:
 where w1...w5 are the user-specified weights summing to 100, and F1...F5 are the normalised feature values.
 
 ```{r risk-scoring}
-# ── Feature 1: Chain length score ───────────────────────────────────────────
-# Each incident's hop count is divided by the maximum observed hop count
-# (186 for SwiftWren) to produce a value in [0, 1].
-# SwiftWren scores 1.0, HiddenOrca ~0.21, MellowOtter ~0.05.
 chain_lengths <- chains %>%
   group_by(incident) %>%
   summarise(n_hops = n(), .groups = "drop") %>%
   mutate(f1_chain_length = n_hops / max(n_hops))
 
-# ── Feature 2: File path repetition rate ────────────────────────────────────
-# In all three incidents the same file path appears in every relay hop,
-# so repetition rate equals chain length. Normalised the same way as F1.
-# For a future unknown incident this would be computed as:
-#   (count of identical args.path events) / max_observed_repetitions
 path_repetition <- chains %>%
   group_by(incident) %>%
   summarise(n_hops = n(), .groups = "drop") %>%
   mutate(f2_repetition = n_hops / max(n_hops))
 
-# ── Feature 3: Recipient has posting history ─────────────────────────────────
-# Build the set of all agents who have ever executed a saidit_post or flex_post.
-# Then check whether any recipient (to_person) in each incident's chain
-# is a member of that set. Binary: 1 if yes, 0 if no.
 posters_history <- events %>%
   filter(short_name %in% c("saidit_post", "flex_post")) %>%
   mutate(poster = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:"))) %>%
@@ -1489,10 +1466,6 @@ posting_agents <- chains %>%
   ) %>%
   mutate(f3_poster_reachable = as.numeric(f3_poster_reachable))
 
-# ── Feature 4: Payload file created within 30 min before chain start ─────────
-# For MellowOtter and SwiftWren, payload_creations records the creation time.
-# If that creation occurred 0-30 minutes before the first relay hop, F4 = 1.
-# HiddenOrca has no create_file event (externally injected), so F4 = 0.
 chain_starts <- chains %>%
   group_by(incident) %>%
   summarise(chain_start = min(datetime), .groups = "drop")
@@ -1510,12 +1483,6 @@ f4_all <- tibble(incident = c("HiddenOrca", "MellowOtter", "SwiftWren")) %>%
   left_join(f4_payload_staged, by = "incident") %>%
   mutate(f4_staged = replace_na(f4_staged, 0))
 
-# ── Feature 5: Prior cover-up behaviour ──────────────────────────────────────
-# Identify any agent who has previously deleted a file within 10 seconds of
-# making a post (i.e. a prior cover-up event in the log).
-# The inner_join matches each post event to delete events by the same agent,
-# then filters to those within 10 seconds. Binary: 1 if any chain recipient
-# has this history, 0 otherwise.
 coverup_agents <- events %>%
   filter(short_name == "saidit_post") %>%
   mutate(
@@ -1541,14 +1508,12 @@ f5_coverup <- chains %>%
     .groups = "drop"
   )
 
-# ── Combine all features into one risk feature matrix ────────────────────────
 risk_scores_base <- chain_lengths %>%
   left_join(path_repetition, by = c("incident", "n_hops")) %>%
   left_join(posting_agents,  by = "incident") %>%
   left_join(f4_all,          by = "incident") %>%
   left_join(f5_coverup,      by = "incident")
 
-# Display the raw feature matrix before weighting
 risk_scores_base %>%
   select(
     Incident              = incident,
@@ -1573,8 +1538,6 @@ F1 and F2 are both normalised using the maximum observed value across incidents,
 Enter custom weights for each of the five features in the input boxes below. Weights do not need to sum to 100 — the chart will display scores using the entered values directly so the effect of each weight can be explored independently. The red dashed line marks the flag threshold. The default values reflect the recommended starting configuration derived from the Q1 and Q2 analysis.
 
 ```{r risk-explorer}
-# Precompute scores for a grid of weight combinations for plotly
-# Default weights
 w_default <- c(25, 30, 20, 15, 10)
 
 score_data <- risk_scores_base %>%
@@ -1586,11 +1549,7 @@ score_data <- risk_scores_base %>%
                     w_default[5] * f5_coverup
   )
 
-# Build an interactive bar chart with plotly
-# Since plotly sliders in R are complex, we show a sensitivity table
-# and a bar chart of default scores, then a weight-sensitivity line chart
 
-# Bar chart: default risk scores
 p_risk_bar <- plot_ly(
   score_data,
   x    = ~incident,
