@@ -778,7 +778,11 @@ attack_pattern %>%
 
 ### Visualisation 1 — Final Two Hours Before the Post (Swimlane Timeline)
 
-Each row represents one actor. Each point is one logged event. Colour indicates the attack phase. The red dashed line marks the exact moment of the SaidIt post.
+**Purpose:** This chart answers Q1a directly — it reconstructs the exact sequence of events in the two hours immediately before the anomalous SaidIt post on May 17. It is built as a swimlane timeline using `ggplot2`, where each horizontal row (lane) represents one actor (agent or system) and each point on the row marks a logged event involving that actor. The dotted line connecting points within the same row is a visual guide rather than a continuous activity indicator — it simply makes it easier to follow a single actor across time.
+
+**How it is made:** The SwiftWren event window is filtered to events occurring between two hours before the post and five minutes after. Events are classified into five attack phases (payload staging, injection/read, relay, execution, cover-up) and colour-coded accordingly. Actors are ordered by priority: `john_windward` appears at the top as the terminal actor, `chloe_ballast` second as the final relay sender, and all others below ordered by event frequency. A red dashed vertical line marks the precise moment of the SaidIt post.
+
+**What to look for:** The density and clustering of points in the final 30 minutes before the red line, the sequence of relay points converging on `john_windward`, and the tight cluster of execution and cover-up events that occur simultaneously at the moment of posting.
 
 ```{r swimlane-q1a, fig.height=6}
 actor_order <- sw_focus %>%
@@ -836,7 +840,11 @@ A concentrated burst of relay activity appears in the final 30 minutes before th
 
 ### Visualisation 2 — Full SwiftWren Hop-by-Hop Timeline (Interactive)
 
-Each point represents one relay hop. Hover to see who sent to whom and when. Black diamonds mark each occasion `john_windward`'s agent received the instruction.
+**Purpose:** Visualisation 1 shows only the final two hours. This chart zooms out to show the entire 8-day SwiftWren relay chain from start to finish, making visible patterns in how the instructions spread through the agent network over time. It is built with `plotly` to allow hover interaction on each individual hop.
+
+**How it is made:** The SwiftWren chain is plotted as a step line chart where the x-axis is calendar date and the y-axis is the sequential hop number. The step shape (horizontal then vertical) is chosen deliberately — it makes each relay event visible as a discrete step rather than a smooth progression, which is appropriate since each hop is a distinct timestamped action. A separate trace overlays point markers: grey circles for all hops where the recipient was not `john_windward`, and larger black diamonds for the five occasions where `john_windward` was the recipient. Hovering on any point reveals the hop number, the sending agent, the receiving agent, and the timestamp.
+
+**What to look for:** The three distinct bursts of rapid step activity separated by flat quiet periods — these bursts correspond to windows of high agent activity in the system. The five black diamonds show that `john_windward` was not the final recipient by coincidence — the chain returned to him repeatedly before the last occasion triggered the post.
 
 ```{r swiftwren-hops-plotly, fig.height=8}
 sw_hops <- chains %>%
@@ -900,7 +908,11 @@ The relay chain shows three distinct bursts of activity separated by quiet gaps,
 
 ### Visualisation 3 — All Three Incidents: Propagation Chain Duration
 
-Each bar spans from the first relay hop to the eventual SaidIt post. Bar length represents how long the instruction file circulated before triggering.
+**Purpose:** This chart addresses Q1b by placing all three incidents side by side on a common timeline, enabling direct comparison of when each chain started, how long it ran, and when the post was triggered. It provides the system-level context needed to understand whether the incidents were isolated events or part of a coordinated pattern.
+
+**How it is made:** Built with `plotly` using a combination of `add_segments()` and `add_markers()`. Each incident is rendered as a thick horizontal bar (segment) spanning from the first relay hop to the SaidIt post. The open circle marker at the left end of each bar marks the chain start; the diamond marker at the right end marks the post. Hovering over the diamond shows the exact post timestamp and total duration in hours. Incidents are coloured consistently with the document-wide palette (red for HiddenOrca, blue for MellowOtter, orange for SwiftWren).
+
+**What to look for:** The relative lengths of the three bars reveal how differently each attack propagated. A very short bar suggests a fast, targeted chain; a very long bar suggests the instructions circulated broadly before finding their target. The positions of all three incidents on the calendar axis reveal whether they overlapped in time, which has implications for whether the attacks were coordinated.
 
 ```{r timeline-plotly, fig.height=6}
 timeline_data <- anomalous_posts %>%
@@ -957,7 +969,11 @@ SwiftWren circulated for approximately 188 hours (8 days) before triggering, nea
 
 ### Visualisation 4 — System-Wide Agent Activity Heatmap
 
-Each tile represents the daily event count for a given event type. Red dashed lines mark the days on which anomalous posts were made, contextualising the incidents within broader system activity.
+**Purpose:** This chart establishes the system baseline for Q1b. The anomalous post dates are not meaningful in isolation — they must be understood against the backdrop of normal system activity. If the attack coincided with an unusual spike in activity, that spike would itself be a detection signal. If the attack blended into normal activity levels, it explains why it went undetected. This heatmap answers that question directly.
+
+**How it is made:** Built with `ggplot2` using `geom_tile()`. Daily event counts are computed for each of the six most investigation-relevant event types. Each cell is coloured by count using a blue gradient (light = low activity, dark = high activity). Three red dashed vertical lines mark the calendar dates of the three anomalous posts, added using `geom_vline()` with `xintercept` set to the numeric representation of each date. The six event types are chosen specifically because they are the ones involved in the attack mechanism — `queue_subordinate_task`, `create_file`, `delete_file`, `read_file`, `saidit_post`, and `send_email`.
+
+**What to look for:** Whether the anomalous post dates align with visible changes in tile colour across rows — particularly in the `queue_subordinate_task` and `saidit_post` rows. Also note the baseline colour of `queue_subordinate_task` across the full month, which reveals why the relay chains were invisible in normal monitoring.
 
 ```{r activity-heatmap, fig.height=5}
 daily_activity <- events %>%
@@ -1050,9 +1066,13 @@ John Windward did not author any of the posted content. His agent was the design
 
 ### Visualisation 5 — Organisational Context of Key Agents
 
-The org chart below shows the full Tenant Thread company hierarchy. The five agents directly involved in the anomalous incidents are highlighted by their attack role. All other staff are shown in grey. Hover over any node to see the agent's name, job title, and department.
+**Purpose:** The relay chain did not pass through random agents. This chart maps the five key agents onto the Tenant Thread organisational hierarchy to reveal their seniority and departmental positions, adding critical context for interpreting Q2. It answers the question: who, in terms of organisational authority, was involved in this attack?
 
-**Why the org chart matters:** The relay chain did not pass through random agents — it was routed through the most organisationally significant people in the company. Understanding their positions explains both why the attack was structured the way it was and why it was so difficult to detect.
+**How it is made:** Built with `visNetwork` using the `org_chart.json` data loaded in Step 10. The full company hierarchy is rendered as a top-down directed graph using `visLayout(hierarchical = TRUE, direction = "UD")`. Node shapes encode entity type: a star for the company, diamonds for departments, squares for teams, and circles for individual people. Node size encodes hierarchy level — larger nodes sit higher in the org chart. The five key agents are highlighted with distinct colours (see legend); all other staff are shown in grey. Edges run from parent to child following the `contains` and `led_by` relations in the data. Hovering over any coloured node shows the agent's full name, job title, department, and their specific role in the attack.
+
+**How to interact:** Use the dropdown at the top to select and highlight any specific person or department. Clicking a node highlights all nodes within two degrees of connection. Navigation buttons allow zooming and panning across the hierarchy.
+
+**What to look for:** The vertical positions of the five highlighted nodes relative to each other — do the origin agents sit above or below the poster and relay agent in the hierarchy? This spatial relationship in the chart directly represents organisational authority and is the key insight this visualisation is designed to surface.
 
 ```{r org-chart-vis}
 attack_agents <- c("john_windward", "emma_harbor", "noah_mariner",
@@ -1180,7 +1200,13 @@ The org chart reveals that the attack traversed the full vertical span of the or
 
 ### Visualisation 6 — Interactive Relay Network (All Incidents)
 
-Each node is an agent. Each edge is one relay hop. Hover over nodes to see role, incident membership, job title, and total relay degree. Use the dropdown to isolate individual agents or filter by role group.
+**Purpose:** While Visualisation 5 shows organisational structure, this chart shows the actual communication structure — who passed instructions to whom, and across which incidents. It reveals whether the three incidents shared relay agents (indicating systemic vulnerabilities) or each used entirely separate paths (indicating targeted, incident-specific design).
+
+**How it is made:** Built with `visNetwork` using the combined edge list from all three incidents' `queue_subordinate_task` chains. Each node is an agent; each directed edge is one relay hop. Node colour encodes attack role: black for `john_windward` (poster), red for origin agents, purple for agents appearing in more than one incident's chain (cross-incident hubs), and blue for single-incident relay agents. Node size scales with importance. Edge colour encodes which incident the hop belongs to, using the document-wide palette. The physics layout uses the ForceAtlas2 algorithm, which naturally clusters densely connected agents together. This means agents appearing many times across incidents will gravitate toward the centre of the graph.
+
+**How to interact:** Use the "Select an agent" dropdown to isolate any individual agent and immediately highlight all their direct connections. Use the "Select by group" filter to highlight all agents of a given role at once. Clicking any node highlights its immediate relay neighbours. Navigation buttons allow zooming and panning.
+
+**What to look for:** Purple nodes (cross-incident hubs) and how centrally they sit in the graph. Agents appearing in the centre with many edges connecting to multiple coloured (multi-incident) edges are the most structurally critical nodes in the attack network.
 
 ```{r network-all-interactive}
 vis_nodes <- all_nodes %>%
@@ -1243,7 +1269,11 @@ Agents marked as cross-incident hubs were exploited across multiple separate inc
 
 ### Visualisation 7 — SwiftWren Network (Time-Encoded)
 
-Edge colour encodes propagation time. Blue edges are early in the chain; red edges are late. This reveals which agents were reached first and which only at the end of the 8-day propagation.
+**Purpose:** Visualisation 6 shows which agents were involved across all incidents. This chart focuses exclusively on SwiftWren and adds a temporal dimension — revealing not just who was connected to whom, but in what order those connections were made. It makes the directional flow of the attack visible as a spatial and colour gradient across the graph.
+
+**How it is made:** Built with `ggraph` and `igraph`. The SwiftWren chain edges are extracted and a `time_norm` variable is computed for each edge, normalising the relay timestamp to a [0, 1] scale where 0 is the first hop and 1 is the last hop before the post. The graph layout uses the `stress` algorithm from `ggraph`, which minimises edge crossings and distributes nodes evenly — suitable for directed graphs with many relay connections. Edge colour is mapped to `time_norm` using a blue-to-red gradient (early = blue, late = red), and edge alpha fades along the edge direction using `after_stat(index)` to give each arrow a visual sense of directionality. Only `john_windward` and `emma_harbor` are labelled to keep the chart readable.
+
+**What to look for:** Clusters of blue edges in one region of the graph (where the attack started) versus clusters of red edges converging toward `john_windward` (where the attack ended). Agents that have both blue incoming and red outgoing edges were mid-chain relay hubs that received the instruction early and passed it along later.
 
 ```{r network-swiftwren, fig.height=7}
 sw_edges_plot <- chains %>%
@@ -1306,7 +1336,11 @@ ggraph(g_sw, layout = "stress") +
 
 ### Visualisation 8 — Agent Degree Distribution
 
-Agents with bars in multiple colours were exploited across more than one incident.
+**Purpose:** Network graphs show structure but make it difficult to quantify which agents were most involved. This chart ranks all agents by their total number of appearances across the propagation chains (as either sender or recipient of a relay hop), making it immediately clear which agents the attack depended on most heavily. It is the quantitative complement to the network visualisations.
+
+**How it is made:** Built with `plotly` as a horizontal stacked bar chart. Agent appearances are counted separately per incident using `pivot_longer()` to treat both `from_person` and `to_person` as appearances, then grouped by agent and incident. The top 20 agents by total appearances are selected using `slice_max()`. Bars are stacked by incident colour so the reader can see both total involvement and which incidents each agent participated in. Agents are ordered by total appearances using `fct_reorder()` so the most involved agent always appears at the top. Hovering over any bar segment shows the exact agent name, incident, and appearance count.
+
+**What to look for:** Agents with bars in multiple colours (multi-coloured stacked bars) — these appeared across more than one incident and represent structural vulnerabilities in the agent network. The absolute length of each agent's total bar indicates how many times the instructions passed through them, which correlates with how critical they were to the attack's ability to propagate.
 
 ```{r agent-degree-plotly, fig.height=6}
 top20 <- agent_freq %>%
@@ -1345,6 +1379,12 @@ Agents with multi-coloured bars appeared across more than one incident, meaning 
 :::
 
 ### Visualisation 9 — Post-and-Delete Cover-up Sequence
+
+**Purpose:** This table documents the final moments of each incident — from the moment John Windward's agent received the triggering instruction through the post and the immediate deletion of both files. Its purpose is to establish the automated cover-up as a forensic fact, using precise timestamps from the event log. The seconds-from-trigger column makes the speed of the cover-up immediately legible without requiring the reader to calculate time differences manually.
+
+**How it is made:** Three event sources are combined using `bind_rows()`: the final trigger events from `final_triggers`, the post events from `anomalous_posts`, and the deletion events from `deletions`. A `seconds_offset` column is calculated within each incident group by taking the difference between each event's timestamp and the first event in that group (the trigger). The result is rendered as a searchable `DT` table with `filter = "top"` so the reader can filter by incident or action type. Incidents and actions with few unique values benefit from the native select-style filter that DT auto-generates for low-cardinality columns.
+
+**What to look for:** The `Seconds from trigger` column for each row. The entire sequence — receive, post, delete both files — completing in under 5 seconds for every incident is the key finding this table communicates. Any gap larger than a few seconds would suggest human involvement; the absence of such gaps confirms full automation.
 
 ```{r delete-timeline}
 cover_up <- bind_rows(
@@ -1535,7 +1575,11 @@ F1 and F2 are both normalised using the maximum observed value across incidents,
 
 ### Visualisation 10 — Risk Score Calculator
 
-Enter custom weights for each of the five features in the input boxes below. Weights do not need to sum to 100 — the chart will display scores using the entered values directly so the effect of each weight can be explored independently. The red dashed line marks the flag threshold. The default values reflect the recommended starting configuration derived from the Q1 and Q2 analysis.
+**Purpose:** This bar chart applies the five-feature scoring model to the three known historical incidents under the default weight configuration (W1 = 25, W2 = 30, W3 = 20, W4 = 15, W5 = 10). Its purpose is to validate the model: if the model is well-calibrated, all three known incidents should score above the flag threshold. It also makes the relative riskiness of each incident immediately visible.
+
+**How it is made:** Built with `plotly` as a vertical bar chart. The five weighted feature scores are summed for each incident to produce a single total score. Bars are coloured by incident using the document-wide palette. The red dashed horizontal line at y = 60 marks the flag threshold, added via the `shapes` argument in `layout()`. Hovering over a bar shows the incident name and its exact score. The chart deliberately uses no interactivity beyond hover — weight adjustments are the purpose of Visualisation 11, keeping each chart focused on a single analytical task.
+
+To explore how the scores respond to different weight assumptions, refer to Visualisation 11 below, which pre-computes scores across the full range of weight values for each feature and provides a dropdown to switch between features. The scores shown here represent the baseline derived directly from the Q1 and Q2 analysis.
 
 ```{r risk-explorer}
 w_default <- c(25, 30, 20, 15, 10)
@@ -1587,7 +1631,17 @@ Under default weights, all three incidents score above the 60-point flag thresho
 
 ### Visualisation 11 — Weight Sensitivity Analysis
 
-This chart shows how each incident's risk score changes as a single feature weight is varied from 0 to 50, with the remaining weight budget redistributed equally across the other four features. It reveals which features exert the most influence over whether a chain crosses the flag threshold.
+**Purpose:** Visualisation 10 shows scores under one fixed weight configuration. This chart answers the follow-up question: how stable are those scores? If a small change to one feature's weight causes an incident to drop below the threshold, that feature is critical to detection. If scores remain above the threshold across a wide range of weights, the model is robust to miscalibration. This chart is designed to help practitioners tune the model to their organisational context.
+
+**How it is made:** Built with `plotly`. For each of the five features, the feature's weight is varied from 0 to 50 in steps of 5. At each step, the remaining weight budget (100 minus the varied weight) is redistributed equally across the other four features. This produces a grid of weight combinations, and the risk score is computed for each incident at each combination. The result is rendered as a line chart with one line per incident per feature, with a dropdown menu (using `updatemenus` in `layout()`) allowing the reader to switch between features without re-rendering the chart.
+
+**How to use this chart:**
+
+1. Use the dropdown menu at the top left of the chart to select which of the five features to examine: F1 Chain length, F2 File repetition, F3 Poster reachable, F4 Payload staged, or F5 Prior cover-up.
+2. Three coloured lines appear — one per incident. The x-axis shows the weight assigned to the selected feature from 0 to 50. The y-axis shows the resulting risk score.
+3. The red dashed horizontal line marks the flag threshold of 60. A line that drops below this threshold indicates that reducing this feature's weight to that value would cause that incident to go undetected.
+4. Hover over any point to see the exact incident, feature, weight value, and score.
+5. To compare two features, note the slope and threshold-crossing behaviour for one feature, then switch the dropdown and compare.
 
 ```{r sensitivity-plotly, fig.height=10}
 feature_names <- c("F1: Chain length", "F2: File repetition",
