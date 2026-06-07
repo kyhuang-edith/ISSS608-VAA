@@ -654,6 +654,102 @@ Code Details
 Node colour encoding: black is `john_windward` (final poster); red is origin agents who created or first held the instruction files; purple is agents appearing in more than one incident's chain (cross-incident relay hubs); blue is single-incident relay agents. Node size scales with importance: poster is largest, followed by origin agents, cross-incident hubs, and relay agents.
 :::
 
+### Step 10 — Load and Prepare Org Chart Data
+
+**Rationale:** The org chart (`org_chart.json`) is stored in networkX node-link format — the same structure used by `igraph::graph_from_data_frame()`. It contains 75 nodes representing the company, its departments, teams, and individual people, connected by 74 edges with `contains` and `led_by` relations that encode the organisational hierarchy.
+
+Loading the org chart allows each agent in the relay chains to be enriched with their job title, department, and team. This organisational context is critical for interpreting Q2: knowing that the payload files were created by the CFO and COO, and that the final relay passed through the IT Department Lead, transforms the incident from a technical curiosity into a significant governance concern.
+
+```{r org-chart-load}
+# Load org chart in networkX node-link format
+org_raw <- read_json("2026_MC2/org_chart.json", simplifyVector = FALSE)
+
+# Extract nodes — each has an id, label, and type (company/department/team/person)
+org_nodes <- tibble(
+  id    = map_chr(org_raw$nodes, ~ .x[["id"]]),
+  label = map_chr(org_raw$nodes, ~ .x[["label"]]),
+  type  = map_chr(org_raw$nodes, ~ .x[["type"]]),
+  title_role = map_chr(org_raw$nodes, ~ .x[["title"]] %||% "")
+)
+
+# Extract edges — source/target/relation
+org_edges <- tibble(
+  source   = map_chr(org_raw$edges, ~ .x[["source"]]),
+  target   = map_chr(org_raw$edges, ~ .x[["target"]]),
+  relation = map_chr(org_raw$edges, ~ .x[["relation"]])
+)
+
+# Build a person-level lookup: for each person, find their department and team
+# by tracing the 'contains' edges upward through the hierarchy
+person_nodes <- org_nodes %>% filter(type == "person")
+
+# For each person, find which team or department directly contains them
+person_membership <- org_edges %>%
+  filter(relation %in% c("contains", "led_by")) %>%
+  # Normalise: 'led_by' means person -> dept, 'contains' means dept -> person
+  mutate(
+    person_id = if_else(relation == "led_by", target, target),
+    parent_id = if_else(relation == "led_by", source, source)
+  ) %>%
+  filter(str_detect(person_id, "^person:")) %>%
+  select(person_id, parent_id)
+
+# Join parent label
+person_org <- person_membership %>%
+  left_join(org_nodes %>% select(parent_id = id, parent_label = label,
+                                  parent_type = type),
+            by = "parent_id") %>%
+  left_join(person_nodes %>% select(person_id = id, person_label = label,
+                                     job_title = title_role),
+            by = "person_id") %>%
+  mutate(
+    agent = str_remove(person_id, "^person:")
+  ) %>%
+  select(agent, person_label, job_title, parent_label, parent_type)
+
+cat("People in org chart:", nrow(person_org), "\n")
+cat("Key agents found:\n")
+person_org %>%
+  filter(agent %in% c("john_windward", "emma_harbor", "noah_mariner",
+                       "gabriel_sonar", "chloe_ballast")) %>%
+  knitr::kable(
+    col.names = c("Agent", "Full name", "Job title",
+                  "Department / Team", "Node type")
+  )
+```
+
+```{r org-enrich-nodes}
+# Enrich all_nodes with org chart context for richer tooltips
+all_nodes <- all_nodes %>%
+  left_join(person_org %>% select(agent, job_title, parent_label),
+            by = "agent") %>%
+  mutate(
+    job_title    = replace_na(job_title, "Unknown"),
+    parent_label = replace_na(parent_label, "Unknown"),
+    # Update tooltip to include org context
+    title = paste0(
+      "<b>", agent, "</b><br>",
+      "Title: ", job_title, "<br>",
+      "Dept/Team: ", parent_label, "<br>",
+      "Attack role: ", role, "<br>",
+      "Incidents: ", incidents_involved, "<br>",
+      "Relay degree: ", degree
+    )
+  )
+```
+
+::: {.obsv-box}
+Observations
+
+The five key agents span three organisational levels. Emma Harbor (CFO) and Noah Mariner (COO) are C-suite executives in the Executive Suite — they created the payload files. Chloe Ballast (IT Department Lead) was the final relay agent who triggered the post. John Windward (Customer Support Department Lead) was the designated poster. Gabriel Sonar sits in the Helpdesk team, the likely external injection entry point due to its lower access controls. The attack was therefore designed to exploit the most senior agents in the organisation as unwitting payload creators, routing through IT leadership to reach a department lead with legitimate posting rights.
+:::
+
+::: {.biz-box}
+Implications
+
+The involvement of C-suite agents (CFO and COO) as origin agents is the most alarming finding from the org chart. Whether their agents were compromised or they were deceived into creating the payload files, this represents a failure at the highest level of the organisation's agentic system. Any remediation strategy must include specific controls on what senior executive agents are permitted to create and relay in the file system.
+:::
+
 ---
 
 ## Q1a — The Exact Chain of Events (SwiftWren, May 17)
@@ -958,9 +1054,143 @@ Observations
 John Windward did not author any of the posted content. His agent was the designated executor, the final node in a carefully engineered relay chain, not the originator. The gibberish content has no meaning as business communication. It functions as a proof-of-concept payload confirming the injection mechanism works end-to-end without leaking sensitive data that would be obviously flagged.
 :::
 
-### Visualisation 5 — Interactive Relay Network (All Incidents)
+### Visualisation 5 — Organisational Context of Key Agents
 
-Each node is an agent. Each edge is one relay hop. Hover over nodes to see role, incident membership, and total relay degree. Use the dropdown to isolate individual agents or filter by role group.
+The org chart below shows the full Tenant Thread company hierarchy. The five agents directly involved in the anomalous incidents are highlighted by their attack role. All other staff are shown in grey. Hover over any node to see the agent's name, job title, and department.
+
+**Why the org chart matters:** The relay chain did not pass through random agents — it was routed through the most organisationally significant people in the company. Understanding their positions explains both why the attack was structured the way it was and why it was so difficult to detect.
+
+```{r org-chart-vis}
+# Build the full org chart as a visNetwork
+# Nodes: all 75 org chart entries
+attack_agents <- c("john_windward", "emma_harbor", "noah_mariner",
+                   "gabriel_sonar", "chloe_ballast")
+
+attack_role_map <- c(
+  john_windward = "Poster",
+  emma_harbor   = "Origin (SwiftWren payload)",
+  noah_mariner  = "Origin (MellowOtter payload)",
+  gabriel_sonar = "Origin (HiddenOrca — external)",
+  chloe_ballast = "Final relay to poster"
+)
+
+attack_colours <- c(
+  "Poster"                          = "#2d2d2d",
+  "Origin (SwiftWren payload)"      = "#e41a1c",
+  "Origin (MellowOtter payload)"    = "#377eb8",
+  "Origin (HiddenOrca — external)"  = "#ff7f00",
+  "Final relay to poster"           = "#9b59b6",
+  "Staff"                           = "#cccccc",
+  "Department"                      = "#e8e8e8",
+  "Team"                            = "#f2f2f2",
+  "Company"                         = "#f9f9f9"
+)
+
+org_vis_nodes <- org_nodes %>%
+  mutate(
+    agent       = str_remove(id, "^person:"),
+    attack_role = if_else(agent %in% names(attack_role_map),
+                          attack_role_map[agent], NA_character_),
+    node_colour = case_when(
+      !is.na(attack_role)  ~ attack_colours[attack_role],
+      type == "person"     ~ attack_colours["Staff"],
+      type == "department" ~ attack_colours["Department"],
+      type == "team"       ~ attack_colours["Team"],
+      TRUE                 ~ attack_colours["Company"]
+    ),
+    node_size = case_when(
+      !is.na(attack_role) ~ 28,
+      type == "person"    ~ 12,
+      type == "team"      ~ 18,
+      type == "department"~ 22,
+      TRUE                ~ 30
+    ),
+    node_shape = case_when(
+      type == "person"     ~ "dot",
+      type == "team"       ~ "square",
+      type == "department" ~ "diamond",
+      TRUE                 ~ "star"
+    ),
+    # Build tooltip
+    tooltip = paste0(
+      "<b>", label, "</b><br>",
+      "Type: ", type,
+      if_else(!is.na(attack_role),
+              paste0("<br>Attack role: <b>", attack_role, "</b>"), "")
+    )
+  )
+
+# Enrich key agent nodes with job titles from person_org
+org_vis_nodes <- org_vis_nodes %>%
+  left_join(person_org %>% select(agent, job_title, parent_label),
+            by = "agent") %>%
+  mutate(
+    tooltip = if_else(
+      !is.na(job_title),
+      paste0("<b>", label, "</b><br>",
+             "Title: ", job_title, "<br>",
+             "Dept: ", replace_na(parent_label, ""), "<br>",
+             if_else(!is.na(attack_role),
+                     paste0("Attack role: <b>", attack_role, "</b>"), "")),
+      tooltip
+    )
+  )
+
+org_vis_edges <- org_edges %>%
+  mutate(
+    arrows = "to",
+    color  = "#dddddd",
+    width  = 1
+  ) %>%
+  rename(from = source, to = target)
+
+visNetwork(
+  org_vis_nodes %>%
+    select(id, label, color = node_colour, size = node_size,
+           shape = node_shape, title = tooltip),
+  org_vis_edges,
+  height = "650px", width = "100%"
+) %>%
+  visOptions(
+    highlightNearest = list(enabled = TRUE, degree = 2, hover = TRUE),
+    nodesIdSelection = list(enabled = TRUE, useLabels = TRUE,
+                            main = "Select a person or department:")
+  ) %>%
+  visLayout(
+    hierarchical = list(
+      enabled    = TRUE,
+      direction  = "UD",
+      sortMethod = "directed",
+      levelSeparation = 120,
+      nodeSpacing     = 80
+    )
+  ) %>%
+  visLegend(
+    addNodes = data.frame(
+      label = c("Poster (john_windward)", "SwiftWren origin",
+                "MellowOtter origin", "HiddenOrca origin",
+                "Final relay agent", "Other staff",
+                "Department", "Team"),
+      color = c("#2d2d2d", "#e41a1c", "#377eb8", "#ff7f00",
+                "#9b59b6", "#cccccc", "#e8e8e8", "#f2f2f2"),
+      shape = c("dot","dot","dot","dot","dot","dot","diamond","square"),
+      size  = c(20,20,20,20,20,12,18,15)
+    ),
+    useGroups = FALSE,
+    main      = "Node Role"
+  ) %>%
+  visInteraction(navigationButtons = TRUE, tooltipDelay = 80)
+```
+
+::: {.obsv-box}
+Observations
+
+The org chart reveals that the attack traversed the full vertical span of the organisation. The payload files originated from C-suite executives (CFO and COO) in the Executive Suite, propagated through the broader agent network, passed through the IT Department Lead at the final stage, and terminated at the Customer Support Department Lead who held the posting rights. The Helpdesk entry point (gabriel_sonar) sits at the opposite end of the hierarchy, suggesting the external injector deliberately chose the lowest-access entry point to introduce the HiddenOrca payload before logs began.
+:::
+
+### Visualisation 6 — Interactive Relay Network (All Incidents)
+
+Each node is an agent. Each edge is one relay hop. Hover over nodes to see role, incident membership, job title, and total relay degree. Use the dropdown to isolate individual agents or filter by role group.
 
 ```{r network-all-interactive}
 vis_nodes <- all_nodes %>%
@@ -1021,7 +1251,7 @@ Implications
 Agents marked as cross-incident hubs were exploited across multiple separate incidents, indicating the attacker had knowledge of the agent network's topology and deliberately routed instructions through its most connected nodes. Restricting these agents' ability to accept arbitrary `queue_subordinate_task` requests from unknown senders would disrupt all three known attack patterns simultaneously.
 :::
 
-### Visualisation 6 — SwiftWren Network (Time-Encoded)
+### Visualisation 7 — SwiftWren Network (Time-Encoded)
 
 Edge colour encodes propagation time. Blue edges are early in the chain; red edges are late. This reveals which agents were reached first and which only at the end of the 8-day propagation.
 
@@ -1084,7 +1314,7 @@ ggraph(g_sw, layout = "stress") +
   )
 ```
 
-### Visualisation 7 — Agent Degree Distribution
+### Visualisation 8 — Agent Degree Distribution
 
 Agents with bars in multiple colours were exploited across more than one incident.
 
@@ -1124,7 +1354,7 @@ Implications
 Agents with multi-coloured bars appeared across more than one incident, meaning the attacker's relay chain deliberately re-used the same structural hubs. This is evidence of intentional network-topology knowledge. Monitoring or restricting these specific high-degree agents would disrupt all three known attack patterns simultaneously.
 :::
 
-### Visualisation 8 — Post-and-Delete Cover-up Sequence
+### Visualisation 9 — Post-and-Delete Cover-up Sequence
 
 ```{r delete-timeline}
 cover_up <- bind_rows(
@@ -1338,7 +1568,7 @@ Code Details
 F1 and F2 are both normalised using the maximum observed value across incidents, making them relative rather than absolute measures. This means if a future incident has a longer chain than any seen before, the historical scores would be re-normalised downward — the model is designed to be recalibrated as new incidents are observed. F3, F4, and F5 are binary flags: the weight is either fully applied or not applied at all.
 :::
 
-### Visualisation 9 — Risk Score Calculator
+### Visualisation 10 — Risk Score Calculator
 
 Enter custom weights for each of the five features in the input boxes below. Weights do not need to sum to 100 — the chart will display scores using the entered values directly so the effect of each weight can be explored independently. The red dashed line marks the flag threshold. The default values reflect the recommended starting configuration derived from the Q1 and Q2 analysis.
 
@@ -1396,7 +1626,7 @@ Observations
 Under default weights, all three incidents score above the 60-point flag threshold, validating the model against the known historical cases. The file repetition rate (weight 30) and chain length (weight 25) together account for 55 points of the maximum score. Reducing either below 10 causes MellowOtter — the shortest chain — to fall below the threshold, suggesting these two features are essential for catching shorter, faster attacks.
 :::
 
-### Visualisation 10 — Weight Sensitivity Analysis
+### Visualisation 11 — Weight Sensitivity Analysis
 
 This chart shows how each incident's risk score changes as a single feature weight is varied from 0 to 50, with the remaining weight budget redistributed equally across the other four features. It reveals which features exert the most influence over whether a chain crosses the flag threshold.
 
