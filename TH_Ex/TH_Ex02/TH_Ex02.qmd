@@ -21,6 +21,7 @@ execute:
   echo: true
   eval: true
   warning: false
+  freeze: true
 ---
 
 ## Overview
@@ -747,7 +748,7 @@ A concentrated burst of relay activity appears in the final 30 minutes before th
 
 Each point represents one relay hop. Hover to see who sent to whom and when. Black diamonds mark each occasion `john_windward`'s agent received the instruction.
 
-```{r swiftwren-hops-plotly, fig.height=5}
+```{r swiftwren-hops-plotly, fig.height=8}
 sw_hops <- chains %>%
   filter(incident == "SwiftWren") %>%
   mutate(
@@ -811,7 +812,7 @@ The relay chain shows three distinct bursts of activity separated by quiet gaps,
 
 Each bar spans from the first relay hop to the eventual SaidIt post. Bar length represents how long the instruction file circulated before triggering.
 
-```{r timeline-plotly, fig.height=4}
+```{r timeline-plotly, fig.height=6}
 timeline_data <- anomalous_posts %>%
   rename(post_datetime = datetime) %>%
   select(incident_name, post_datetime) %>%
@@ -1399,7 +1400,7 @@ Under default weights, all three incidents score above the 60-point flag thresho
 
 This chart shows how each incident's risk score changes as a single feature weight is varied from 0 to 50, with the remaining weight budget redistributed equally across the other four features. It reveals which features exert the most influence over whether a chain crosses the flag threshold.
 
-```{r sensitivity-plotly, fig.height=5}
+```{r sensitivity-plotly, fig.height=8}
 feature_names <- c("F1: Chain length", "F2: File repetition",
                    "F3: Poster reachable", "F4: Payload staged",
                    "F5: Prior cover-up")
