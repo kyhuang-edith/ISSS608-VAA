@@ -1400,7 +1400,7 @@ Under default weights, all three incidents score above the 60-point flag thresho
 
 This chart shows how each incident's risk score changes as a single feature weight is varied from 0 to 50, with the remaining weight budget redistributed equally across the other four features. It reveals which features exert the most influence over whether a chain crosses the flag threshold.
 
-```{r sensitivity-plotly, fig.height=8}
+```{r sensitivity-plotly, fig.height=10}
 feature_names <- c("F1: Chain length", "F2: File repetition",
                    "F3: Poster reachable", "F4: Payload staged",
                    "F5: Prior cover-up")
@@ -1465,7 +1465,12 @@ for (inc in incidents_list) {
 p_sensitivity <- p_sensitivity %>%
   layout(
     title      = list(text = "Score Sensitivity: How Each Feature Weight Affects the Final Score",
-                      font = list(size = 15)),
+                      font = list(size = 15),
+                      y    = 0.97,
+                      x    = 0.5,
+                      xanchor = "center",
+                      yanchor = "top"),
+    margin     = list(t = 120),
     xaxis      = list(title = "Feature weight (0-50, others redistributed equally)"),
     yaxis      = list(title = "Risk score (0-100)", range = c(0, 105)),
     legend     = list(title = list(text = "Incident")),
@@ -1475,10 +1480,14 @@ p_sensitivity <- p_sensitivity %>%
       y0 = 60, y1 = 60,
       line = list(color = "#e41a1c", dash = "dash", width = 1.5)
     )),
-    annotations = list(list(
-      x = 48, y = 62, text = "Flag threshold (60)",
-      showarrow = FALSE, font = list(color = "#e41a1c", size = 10)
-    )),
+    annotations = list(
+      list(x = 48, y = 62, text = "Flag threshold (60)",
+           showarrow = FALSE, font = list(color = "#e41a1c", size = 10)),
+      list(x = 0, y = 1.18, text = "Select feature:",
+           showarrow = FALSE, xref = "paper", yref = "paper",
+           font = list(size = 12, color = "#444"),
+           xanchor = "left")
+    ),
     updatemenus = list(list(
       type    = "dropdown",
       active  = 0,
@@ -1487,11 +1496,14 @@ p_sensitivity <- p_sensitivity %>%
         visible_vec <- unlist(lapply(incidents_list, function(inc) {
           lapply(feature_names, function(f) f == feat)
         }))
-        list(method  = "restyle",
-             args    = list("visible", as.list(visible_vec)),
-             label   = feat)
+        list(method = "restyle",
+             args   = list("visible", as.list(visible_vec)),
+             label  = feat)
       }),
-      x = 0, xanchor = "left", y = 1.15, yanchor = "top"
+      x       = 0.18,
+      xanchor = "left",
+      y       = 1.22,
+      yanchor = "top"
     ))
   )
 
