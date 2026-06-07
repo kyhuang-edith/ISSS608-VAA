@@ -1453,8 +1453,8 @@ Each of the five features maps directly to a finding from Q1 or Q2:
 
 | Feature | Derived from | Rationale |
 |---|---|---|
-| F1: Chain length score | Q1a — SwiftWren ran 186 hops; MellowOtter 10; HiddenOrca 39 | Legitimate task delegation rarely chains the same file through dozens of agents. Chain length, normalised against the longest observed chain, is a strong structural indicator. |
-| F2: File path repetition rate | Q1a — the same `args.path` appeared in every relay hop | In all three incidents, a single file path was passed identically through every `queue_subordinate_task` event. This repetition pattern does not occur in normal operation. |
+| F1: Chain length score | Q1a — SwiftWren ran 186 hops; MellowOtter 10; HiddenOrca 39 | Legitimate task delegation rarely chains the same file through dozens of agents. Chain length is log-normalised against the longest observed chain, compressing the extreme range while preserving ordering. Shorter attacks like MellowOtter still score meaningfully rather than being compressed near zero. |
+| F2: File path repetition rate | Q1a — the same `args.path` appeared in every relay hop | In all three incidents, a single file path was passed identically through every `queue_subordinate_task` event. Log-normalised the same way as F1 since repetition count equals chain length in these incidents. |
 | F3: Recipient has posting history | Q2 — john_windward held `saidit_post` permissions | The instructions specifically targeted an agent capable of posting externally. Any chain that routes toward a known posting-capable agent carries elevated risk regardless of who that agent is. |
 | F4: Payload file created immediately before chain | Q2 — emma_harbor created SwiftWren.txt minutes before the first relay hop | In MellowOtter and SwiftWren, the payload `.txt` was created by the same origin agent within 30 minutes of the chain starting. This co-occurrence distinguishes staged attacks from organic file sharing. |
 | F5: Prior cover-up behaviour | Q2 — john_windward deleted both files within 5 seconds of posting | All three incidents ended with immediate deletion. Any agent with a prior history of deleting files within seconds of a post event is a high-risk relay target in future chains. |
@@ -1485,12 +1485,12 @@ where w1...w5 are the user-specified weights summing to 100, and F1...F5 are the
 chain_lengths <- chains %>%
   group_by(incident) %>%
   summarise(n_hops = n(), .groups = "drop") %>%
-  mutate(f1_chain_length = n_hops / max(n_hops))
+  mutate(f1_chain_length = log(n_hops) / log(max(n_hops)))
 
 path_repetition <- chains %>%
   group_by(incident) %>%
   summarise(n_hops = n(), .groups = "drop") %>%
-  mutate(f2_repetition = n_hops / max(n_hops))
+  mutate(f2_repetition = log(n_hops) / log(max(n_hops)))
 
 posters_history <- events %>%
   filter(short_name %in% c("saidit_post", "flex_post")) %>%
@@ -1564,13 +1564,13 @@ risk_scores_base %>%
     `F5: Cover-up history`= f5_coverup
   ) %>%
   mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
-  knitr::kable(caption = "Raw feature values per incident before weighting (continuous features in [0,1], binary features 0 or 1)")
+  knitr::kable(caption = "Raw feature values per incident before weighting (F1 and F2 log-normalised to [0,1]; F3, F4, F5 binary)")
 ```
 
 ::: {.code-tip}
 Code Details
 
-F1 and F2 are both normalised using the maximum observed value across incidents, making them relative rather than absolute measures. This means if a future incident has a longer chain than any seen before, the historical scores would be re-normalised downward — the model is designed to be recalibrated as new incidents are observed. F3, F4, and F5 are binary flags: the weight is either fully applied or not applied at all.
+F1 and F2 use logarithmic normalisation: `log(n_hops) / log(max_hops)`. This compresses the extreme range between MellowOtter (10 hops) and SwiftWren (186 hops) so that shorter attacks are not penalised as severely as with linear normalisation, while still preserving the ordering. Under log normalisation, HiddenOrca scores ~0.70, MellowOtter ~0.44, and SwiftWren 1.00 — all three are meaningfully separated and all three incidents produce total scores above the 60-point threshold. F3, F4, and F5 remain binary flags contributing either their full weight or nothing.
 :::
 
 ### Visualisation 10 — Risk Score Calculator
@@ -1626,22 +1626,24 @@ p_risk_bar
 ::: {.obsv-box}
 Observations
 
-Under default weights, all three incidents score above the 60-point flag threshold, validating the model against the known historical cases. The file repetition rate (weight 30) and chain length (weight 25) together account for 55 points of the maximum score. Reducing either below 10 causes MellowOtter — the shortest chain — to fall below the threshold, suggesting these two features are essential for catching shorter, faster attacks.
+Under log normalisation with default weights, all three incidents score above the 60-point flag threshold, validating the model. HiddenOrca scores ~68.6, MellowOtter ~69.2, and SwiftWren 100. Log normalisation separates all three lines meaningfully in Visualisation 11 — unlike linear normalisation (which compresses MellowOtter near zero) or binary scoring (where MellowOtter and SwiftWren are indistinguishable). The three scores are now distinct and interpretable.
 :::
 
 ### Visualisation 11 — Weight Sensitivity Analysis
 
-**Purpose:** Visualisation 10 shows scores under one fixed weight configuration. This chart answers the follow-up question: how stable are those scores? If a small change to one feature's weight causes an incident to drop below the threshold, that feature is critical to detection. If scores remain above the threshold across a wide range of weights, the model is robust to miscalibration. This chart is designed to help practitioners tune the model to their organisational context.
+**Purpose:** Visualisation 10 shows scores under one fixed weight configuration. This chart answers the follow-up question: how stable are those scores as weights change? With log normalisation, all three incidents produce distinct scores — the lines are naturally separated without any visual tricks — making it easy to see which incident is most sensitive to each feature's weight.
 
-**How it is made:** Built with `plotly`. For each of the five features, the feature's weight is varied from 0 to 50 in steps of 5. At each step, the remaining weight budget (100 minus the varied weight) is redistributed equally across the other four features. This produces a grid of weight combinations, and the risk score is computed for each incident at each combination. The result is rendered as a line chart with one line per incident per feature, with a dropdown menu (using `updatemenus` in `layout()`) allowing the reader to switch between features without re-rendering the chart.
+**How it is made:** Built with `plotly`. For each of the five features, the feature's weight is varied from 0 to 50 in steps of 5, with the remaining weight budget redistributed equally across the other four features. The risk score is recomputed for each incident at each weight value using the log-normalised F1 and F2 values alongside binary F3, F4, and F5. The result is a line chart with one line per incident and a dropdown menu allowing the reader to switch between the five features without re-rendering.
+
+**Understanding the line behaviour:** For F1 and F2 (log-normalised), all three lines will slope — but at different steepness depending on each incident's log-normalised hop count. SwiftWren's line slopes most steeply since it has the highest F1/F2 value (1.0). For F3, F4, and F5 (binary), a flat line means that incident does not have that feature; a sloped line means it does.
 
 **How to use this chart:**
 
-1. Use the dropdown menu at the top left of the chart to select which of the five features to examine: F1 Chain length, F2 File repetition, F3 Poster reachable, F4 Payload staged, or F5 Prior cover-up.
-2. Three coloured lines appear — one per incident. The x-axis shows the weight assigned to the selected feature from 0 to 50. The y-axis shows the resulting risk score.
-3. The red dashed horizontal line marks the flag threshold of 60. A line that drops below this threshold indicates that reducing this feature's weight to that value would cause that incident to go undetected.
-4. Hover over any point to see the exact incident, feature, weight value, and score.
-5. To compare two features, note the slope and threshold-crossing behaviour for one feature, then switch the dropdown and compare.
+1. Use the dropdown menu at the top left to select which feature to examine: F1 Chain length, F2 File repetition, F3 Poster reachable, F4 Payload staged, or F5 Prior cover-up.
+2. Three coloured lines appear — red for HiddenOrca, blue for MellowOtter, orange for SwiftWren. The x-axis is the weight assigned to the selected feature (0 to 50) and the y-axis is the resulting risk score.
+3. The red dashed line marks the flag threshold of 60. Any line that crosses below this value at a given weight means that incident would not be flagged under that configuration.
+4. Hover over any point to see the exact incident, feature, weight value, and computed score.
+5. Click and drag on the chart area to zoom into any region. Double-click to reset the view.
 
 ```{r sensitivity-plotly, fig.height=10}
 feature_names <- c("F1: Chain length", "F2: File repetition",
