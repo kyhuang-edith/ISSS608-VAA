@@ -72,6 +72,15 @@ main.content {
   background-color: #fff0f6;
 }
 
+/* Hide ### TOC entries by default */
+.sidebar nav[role="doc-toc"] ul ul ul {
+  display: none;
+}
+
+/* Show ### entries when parent ## is active */
+.sidebar nav[role="doc-toc"] li.active > ul {
+  display: block;
+}
 
 // Gallery
 .gallery-grid {

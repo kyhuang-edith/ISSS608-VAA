@@ -23,7 +23,7 @@ execute:
   warning: false
 ---
 
-## 1 Overview
+## Overview
 
 ### Background
 
@@ -53,7 +53,7 @@ The anomalous SaidIt post was not made by John Windward voluntarily. A malicious
 
 ---
 
-## 2 Setup
+## Setup
 
 ### Packages
 
@@ -132,7 +132,7 @@ theme_va <- function() {
 
 ---
 
-## 3 Data Import
+## Data Import
 
 ### Loading the Raw Event Log
 
@@ -200,7 +200,7 @@ The event types most relevant to this investigation are `saidit_post`, `queue_su
 
 ---
 
-## 4 Data Wrangling
+## Data Wrangling
 
 ### Key Variables
 
@@ -655,7 +655,7 @@ Node colour encoding: black is `john_windward` (final poster); red is origin age
 
 ---
 
-## 5 Q1a — The Exact Chain of Events (SwiftWren, May 17)
+## Q1a — The Exact Chain of Events (SwiftWren, May 17)
 
 ### The Six-Step Attack Pattern
 
@@ -805,7 +805,7 @@ The relay chain shows three distinct bursts of activity separated by quiet gaps,
 
 ---
 
-## 6 Q1b — System Overview: The Incident in Context
+## Q1b — System Overview: The Incident in Context
 
 ### Visualisation 3 — All Three Incidents: Propagation Chain Duration
 
@@ -918,7 +918,7 @@ The high baseline volume of `queue_subordinate_task` events means monitoring thi
 
 ---
 
-## 7 Q2 — What the Posts Mean
+## Q2 — What the Posts Mean
 
 ### Incident Overview
 
@@ -1176,7 +1176,7 @@ The complete sequence, from receiving the instruction through posting to deletin
 
 ---
 
-## 8 Further Exploration — Risk Model Detection
+## Further Exploration — Risk Model Detection
 
 ### Motivation
 
@@ -1511,7 +1511,7 @@ Organisations with a high volume of legitimate long relay chains, such as automa
 
 ---
 
-## 9 Conclusion
+## Conclusion
 
 ### What the Posts Mean
 
@@ -1543,7 +1543,7 @@ Five categories of evidence support the prompt-injection conclusion:
 
 ---
 
-## 10 References
+## References
 
 - VAST Challenge 2026 Mini-Challenge 2 problem statement and data.
 - Wickham, H. et al. (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686.
