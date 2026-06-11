@@ -28,8 +28,11 @@ $headings-font-weight: 400;
 .navbar {
   background-color: $primary;
   font-family: "Cabin Sketch", cursive;
-}
 
+  min-height: 60px;
+  padding-top: 0.1rem !important;
+  padding-bottom: 0.1rem !important;
+}
 
 // Navbar links
 .navbar-nav .nav-link {
@@ -44,8 +47,8 @@ $headings-font-weight: 400;
 
 // Navbar icon
 .nav-icon {
-  height: 32px;
-  width: 32px;
+  height: 40px;
+  width: 40px;
   object-fit: contain;
   margin-right: 8px;
   vertical-align: middle;
