@@ -7,7 +7,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 1 
     fig-width: 12
     fig-height: 8
     code-fold: true

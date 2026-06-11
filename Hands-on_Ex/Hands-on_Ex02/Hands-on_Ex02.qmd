@@ -6,7 +6,7 @@ date-modified: "last-modified"
 format: 
   html:
     toc: true
-    toc-expand: 4
+    toc-expand: 2
 execute:
     echo: true
     eval: true
@@ -81,7 +81,7 @@ ggplot(data=exam_data,
   ggtitle("English scores versus Maths scores for Primary 3")
 ```
 
-### ggplot2 Themes
+## ggplot2 Themes
 
 ggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().
 
@@ -146,7 +146,7 @@ ggplot(data=exam_data,
               )
 ```
 
-#### Lesson learned from comparing the code chunk
+ *Lesson learned from comparing the code chunk*
 
 axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
 
@@ -194,7 +194,7 @@ p3 <- ggplot(data=exam_data,
   ggtitle("English scores versus Maths scores for Primary 3")
 ```
 
-### Creating Composite Graphics
+## Creating Composite Graphics
 
 In the section above, I have completed 3 individual graphs, now how can I compose them together?
 
@@ -204,19 +204,19 @@ Patchwork package has a very simple syntax where we can create layouts super eas
 
 Two-Column Layout using the Plus Sign +. Parenthesis () to create a subplot group. Two-Row Layout using the Division Sign /
 
-#### Combining two ggplot2 graphs
+### Combining two ggplot2 graphs
 
 ```{r}
 p1 + p2
 ```
 
-#### Combining three ggplot2 graphs
+### Combining three ggplot2 graphs
 
 ```{r}
 (p1 / p2) | p3
 ```
 
-#### Creating a composite figure with tag
+### Creating a composite figure with tag
 
 To identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.
 
@@ -225,7 +225,7 @@ To identify subplots in text, patchwork also provides auto-tagging capabilities 
   plot_annotation(tag_levels = 'I')
 ```
 
-#### Creating figure with insert
+### Creating figure with insert
 
 With inset_element() of patchwork, we can place one or several plots or graphic elements freely on top or below another plot.
 
@@ -237,7 +237,7 @@ p3 + inset_element(p2,
                    top = 1)
 ```
 
-#### Creating a composite figure by using patchwork and ggtheme
+### Creating a composite figure by using patchwork and ggtheme
 
 ```{r}
 patchwork <- (p1 / p2) | p3

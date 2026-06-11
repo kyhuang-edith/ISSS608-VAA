@@ -7,7 +7,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 2 
 execute:
   echo: true 
   eval: true 
@@ -104,7 +104,7 @@ ggridges package provides two main geom to plot gridgeline plots, they are: [`ge
 The ridgeline plot below is plotted by using `geom_density_ridges()`.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -128,7 +128,7 @@ ggplot(exam,
   theme_ridges()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -164,7 +164,7 @@ Important Notes:
 - For technical reasons, we can have changing fill colors or transparency but not both.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -187,7 +187,7 @@ ggplot(exam,
   theme_ridges()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -222,7 +222,7 @@ Important Notes:
 It is important include the argument `calc_ecdf = TRUE` in `stat_density_ridges()`
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -239,7 +239,7 @@ ggplot(exam,
   theme_ridges()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -262,7 +262,7 @@ ggplot(exam,
 Colour the ridgeline plot by quantile, via the calculated `stat(quantile)` aesthetic as shown in the figure below.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -282,7 +282,7 @@ ggplot(exam,
   theme_ridges()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -306,7 +306,7 @@ ggplot(exam,
 Instead of using number to define the quantiles, specify quantiles by cut points such as 2.5% and 97.5% tails to colour the ridgeline plot as shown in the figure below.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -330,7 +330,7 @@ ggplot(exam,
   theme_ridges()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -366,7 +366,7 @@ Plot a Half-Eye graph by using [`stat_halfeye()`](https://mjskay.github.io/ggdis
 This produces a Half Eye visualization, which is contains a half-density and a slab-interval.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -381,7 +381,7 @@ ggplot(exam,
                point_colour = NA)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -402,7 +402,7 @@ ggplot(exam,
 Add the second geometry layer using [`geom_boxplot()`](https://r4va.netlify.app/chap09) of ggplot2. This produces a narrow boxplot. We reduce the width and adjust the opacity.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -419,7 +419,7 @@ ggplot(exam,
                outlier.shape = NA)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -442,7 +442,7 @@ ggplot(exam,
 Add the third geometry layer using [`stat_dots()`](https://mjskay.github.io/ggdist/reference/stat_dots.html) of ggdist package. This produces a half-dotplot, which is similar to a histogram that indicates the number of samples (number of dots) in each bin. We select side = “left” to indicate we want it on the left-hand side.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -463,7 +463,7 @@ ggplot(exam,
             dotsize = 2)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -490,7 +490,7 @@ ggplot(exam,
 Use the [`coord_flip()`](https://ggplot2.tidyverse.org/reference/coord_flip.html) of ggplot2 package to flip the raincloud chart horizontally to give it the raincloud appearance. At the same time, `theme_economist()` of ggthemes package is used to give the raincloud chart a professional publishing standard look.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -513,7 +513,7 @@ ggplot(exam,
   theme_economist()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -544,7 +544,7 @@ ggplot(exam,
 In the code chunk below, [*gghistostats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/gghistostats.html) is used to to build an visual of one-sample test on English scores.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -561,7 +561,7 @@ gghistostats(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -588,7 +588,7 @@ Important Notes:
 Default information: - statistical details - Bayes Factor - sample sizes - distribution summary
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -603,7 +603,7 @@ ggbetweenstats(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -632,7 +632,7 @@ Important Notes:
 - “all” → everything
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -651,7 +651,7 @@ ggbetweenstats(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -676,7 +676,7 @@ ggbetweenstats(
 In the code chunk below, [*ggscatterstats()*](https://indrajeetpatil.github.io/ggstatsplot/reference/ggscatterstats.html) is used to build a visual for Significant Test of Correlation between Maths scores and English scores.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -690,7 +690,7 @@ ggscatterstats(
   )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -710,7 +710,7 @@ ggscatterstats(
 See The code for instruction
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -730,7 +730,7 @@ ggbarstats(exam1,
            y = GENDER)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -789,7 +789,7 @@ my_sum <- exam %>%
 Next, the code chunk below will be used to display my_sum tibble data frame in an html table format.
 
 ::: panel-tabset
-### The table
+#### The table
 
 ```{r}
 #| echo: false
@@ -798,7 +798,7 @@ Next, the code chunk below will be used to display my_sum tibble data frame in a
 knitr::kable(head(my_sum), format = 'html')
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -811,7 +811,7 @@ knitr::kable(head(my_sum), format = 'html')
 ### Plotting standard error bars of point estimates
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -836,7 +836,7 @@ ggplot(my_sum) +
   ggtitle("Standard error of mean maths score by rac")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -867,7 +867,7 @@ ggplot(my_sum) +
 Instead of plotting the standard error bar of point estimates, we can also plot the confidence intervals of mean maths score by race.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -893,7 +893,7 @@ ggplot(my_sum) +
        title = "95% confidence interval of mean maths score by race")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -925,7 +925,7 @@ ggplot(my_sum) +
 In this section, you will learn how to plot interactive error bars for the 99% confidence interval of mean maths score by race as shown in the figure below.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -977,7 +977,7 @@ bscols(widths = c(4,8),
                      digits=2))
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1045,7 +1045,7 @@ bscols(widths = c(4,8),
 In the code chunk below, [`stat_pointinterval()`](https://mjskay.github.io/ggdist/reference/stat_pointinterval.html) of **ggdist** is used to build a visual for displaying distribution of maths scores by race.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1060,7 +1060,7 @@ exam %>%
     subtitle = "Mean Point + Multiple-interval plot")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1077,7 +1077,7 @@ exam %>%
 :::
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1093,7 +1093,7 @@ exam %>%
     subtitle = "Median Point + Multiple-interval plot")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1115,7 +1115,7 @@ exam %>%
 In the code chunk below, [`stat_gradientinterval()`](https://mjskay.github.io/ggdist/reference/stat_gradientinterval.html) of **ggdist** is used to build a visual for displaying distribution of maths scores by race.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1131,7 +1131,7 @@ exam %>%
     subtitle = "Mean Point + Multiple-interval plot")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1151,7 +1151,7 @@ exam %>%
 ### Visualizing the uncertainty of point estimates: ggdist methods
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1169,7 +1169,7 @@ exam %>%
     subtitle = "Gradient + interval plot")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1198,7 +1198,7 @@ library(ungeviz)
 ```
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1221,7 +1221,7 @@ ggplot(data = exam,
   transition_states(.draw, 1, 3)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1259,7 +1259,7 @@ covid19 <- read_csv("data/COVID-19_DKI_Jakarta.csv") %>%
 ### FunnelPlotR methods: The basic plot
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1273,7 +1273,7 @@ funnel_plot(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1291,7 +1291,7 @@ funnel_plot(
 ### FunnelPlotR methods: Makeover 1
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1308,7 +1308,7 @@ funnel_plot(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1329,7 +1329,7 @@ funnel_plot(
 ### FunnelPlotR methods: Makeover 2
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1350,7 +1350,7 @@ funnel_plot(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1403,7 +1403,7 @@ dfCI <- data.frame(number.ll95, number.ul95, number.ll999,
 ### Plotting a static funnel plot
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1454,7 +1454,7 @@ p <- ggplot(df, aes(x = Positive, y = rate)) +
 p
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1509,7 +1509,7 @@ p
 ### Interactive Funnel Plot: plotly + ggplot2
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -1522,7 +1522,7 @@ fp_ggplotly <- ggplotly(p,
 fp_ggplotly
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false

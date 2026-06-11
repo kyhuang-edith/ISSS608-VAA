@@ -7,7 +7,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 1 
     fig-width: 12
     fig-height: 8
     code-fold: true
@@ -20,4 +20,121 @@ execute:
 
 ## Chapter 17
 
-###
+### Getting started
+
+Import the necessary packages
+
+```{r}
+pacman::p_load(scales, viridis, lubridate, ggthemes,
+               gridExtra, readxl, knitr, data.table,
+               CGPfunctions, ggHoriPlot, tidyverse)
+```
+
+### Import data
+
+```{r}
+attacks <- read_csv("data/eventlog.csv")
+```
+
+Before data processing, examine the raw data pattern
+
+```{r}
+kable(head(attacks))
+```
+
+### Data processing
+
+#### Step 1: Deriving weekday and hour of day fields
+
+```{r}
+make_hr_wkday <- function(ts, sc, tz) {
+  real_times <- ymd_hms(ts, 
+                        tz = tz[1], 
+                        quiet = TRUE)
+  dt <- data.table(source_country = sc,
+                   wkday = weekdays(real_times),
+                   hour = hour(real_times))
+  return(dt)
+  }
+```
+
+::: code-tip
+*Code Details*
+
+- [`ymd_hms()`](https://lubridate.tidyverse.org/reference/ymd_hms.html) and [`hour()`](https://lubridate.tidyverse.org/reference/hour.html) are from [**lubridate**](https://lubridate.tidyverse.org/) package, and
+
+- [`weekdays()`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/weekdays) is a **base** R function.
+:::
+
+#### Step 2: Deriving the attacks tibble data frame
+
+```{r}
+wkday_levels <- c('Saturday', 'Friday', 
+                  'Thursday', 'Wednesday', 
+                  'Tuesday', 'Monday', 
+                  'Sunday')
+
+attacks <- attacks %>%
+  group_by(tz) %>%
+  do(make_hr_wkday(.$timestamp, 
+                   .$source_country, 
+                   .$tz)) %>% 
+  ungroup() %>% 
+  mutate(wkday = factor(
+    wkday, levels = wkday_levels),
+    hour  = factor(
+      hour, levels = 0:23))
+```
+
+Then we see the tibble table.
+
+```{r}
+kable(head(attacks))
+```
+
+### Build the Calendar Heatmaps
+
+```{r}
+grouped <- attacks %>% 
+  count(wkday, hour) %>% 
+  ungroup() %>%
+  na.omit()
+
+ggplot(grouped, 
+       aes(hour, 
+           wkday, 
+           fill = n)) + 
+geom_tile(color = "white", 
+          size = 0.1) + 
+theme_tufte(base_family = "Helvetica") + 
+coord_equal() +
+scale_fill_gradient(name = "# of attacks",
+                    low = "sky blue", 
+                    high = "dark blue") +
+labs(x = NULL, 
+     y = NULL, 
+     title = "Attacks by weekday and time of day") +
+theme(axis.ticks = element_blank(),
+      plot.title = element_text(hjust = 0.5),
+      legend.title = element_text(size = 8),
+      legend.text = element_text(size = 6) )
+```
+
+::: obsv-box
+
+*Lesson Learned*
+
+- a tibble data table called *grouped* is derived by aggregating the attack by *wkday* and *hour* fields.
+
+- a new field called *n* is derived by using `group_by()` and `count()` functions.
+
+- `na.omit()` is used to exclude missing value.
+
+- `geom_tile()` is used to plot tiles (grids) at each x and y position. `color` and `size` arguments are used to specify the border color and line size of the tiles.
+
+- [`theme_tufte()`](https://jrnold.github.io/ggthemes/reference/theme_tufte.html) of [**ggthemes**](https://jrnold.github.io/ggthemes/reference/index.html) package is used to remove unnecessary chart junk. To learn which visual components of default ggplot2 have been excluded, you are encouraged to comment out this line to examine the default plot.
+
+- `coord_equal()` is used to ensure the plot will have an aspect ratio of 1:1.
+
+- `scale_fill_gradient()` function is used to creates a two colour gradient (low-high).
+:::

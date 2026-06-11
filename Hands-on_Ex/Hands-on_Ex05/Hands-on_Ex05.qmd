@@ -7,7 +7,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 1 
 execute:
   echo: true 
   eval: true 
@@ -61,7 +61,7 @@ agpop_mutated <- pop_data %>%
 ### Plotting a static ternary diagram
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -71,7 +71,7 @@ ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
   geom_point()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -83,7 +83,7 @@ ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
 :::
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -95,7 +95,7 @@ ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
   theme_rgbw()
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -111,7 +111,7 @@ ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
 ### Plotting an interactive ternary diagram
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -158,7 +158,7 @@ plot_ly(
   )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -216,7 +216,7 @@ wine <- read_csv("data/wine_quality.csv")
 ### Building correlation matrix: pairs() method
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -241,7 +241,7 @@ pairs(wine[,2:12],
       upper.panel = panel.cor)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -270,7 +270,7 @@ pairs(wine[,2:12],
 ### Visualising correlation matrix: ggcormat()
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -292,7 +292,7 @@ ggplot.component = list(
       axis.text.y = element_text(size = 8)))
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -318,7 +318,7 @@ ggplot.component = list(
 ### Building multiple plots
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -343,7 +343,7 @@ grouped_ggcorrmat(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -374,7 +374,7 @@ grouped_ggcorrmat(
 See intruction in code
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -390,7 +390,7 @@ corrplot.mixed(wine.cor,
                tl.col = "black")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -409,7 +409,7 @@ corrplot.mixed(wine.cor,
 ### Combining corrgram with the significant test
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -430,7 +430,7 @@ corrplot(wine.cor,
          sig.level = .05)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -455,7 +455,7 @@ corrplot(wine.cor,
 ### Reorder a corrgram
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -470,7 +470,7 @@ corrplot.mixed(wine.cor,
                tl.col = "black")
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -489,7 +489,7 @@ corrplot.mixed(wine.cor,
 ### Reorder using hclust
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -504,7 +504,7 @@ corrplot(wine.cor,
          addrect = 3)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -547,7 +547,7 @@ wh_matrix <- data.matrix(wh1)
 ### Static heatmap
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -560,7 +560,7 @@ wh_heatmap <- heatmap(wh_matrix,
                       margins = c(10, 4))
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -577,7 +577,7 @@ wh_heatmap <- heatmap(wh_matrix,
 ### Creating interactive heatmap
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -586,7 +586,7 @@ wh_heatmap <- heatmap(wh_matrix,
 heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
 ```
 
-### The code
+#### The code
 
 ```{r}
 #|eval: false
@@ -709,7 +709,7 @@ heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
 ### Finishing touch:
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -729,7 +729,7 @@ heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
           )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -811,7 +811,7 @@ ggparcoord(data = wh,
 ### Rotate and adjust the x-axis label
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false 
@@ -828,7 +828,7 @@ ggparcoord(data = wh,
   theme(axis.text.x = element_text(angle = 30, hjust=1))
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| echo: false 
@@ -940,7 +940,7 @@ realis2018_summarised <- realis2018 %>%
   - The column must not contain negative values. This is because it’s vaues will be used to map the sizes of the rectangles of the treemaps.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -959,7 +959,7 @@ treemap(realis2018_selected,
         )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -1059,7 +1059,7 @@ treemap(realis2018_selected,
 ### Design basic treemap
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #|echo: false
@@ -1077,7 +1077,7 @@ treemap(realis2018_selected,
         )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false

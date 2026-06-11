@@ -6,7 +6,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 1 
 execute:
   echo: true 
   eval: true 

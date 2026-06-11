@@ -7,7 +7,7 @@ date-modified: "last-modified"
 format: 
   html: 
     toc: true 
-    toc-expand: 4 
+    toc-expand: 1 
 execute:
   echo: true 
   eval: true 
@@ -57,7 +57,7 @@ ggiraph is an htmlwidget and a ggplot2 extension. It allows ggplot graphics to b
 The code chunk consists of two parts. First, an ggplot object will be created. Next, `girafe()` of ggiraph will be used to create an interactive svg object.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -77,7 +77,7 @@ girafe(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -103,7 +103,7 @@ girafe(
 The first three lines of codes in the code chunk create a new field called tooltip. At the same time, it populates text in ID and CLASS fields into the newly created field. Next, this newly created field is used as tooltip field as shown in the code of line 7. So when the mouse pointer hover on an data point of interest, the student’s ID and Class will be displayed.
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -126,7 +126,7 @@ girafe(
 )
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -155,7 +155,7 @@ girafe(
 Code chunk below uses `opts_tooltip()` of ggiraph to customize tooltip rendering by add css declarations.
 
 ::: panel-tabset
-###The plot
+####The plot
 
 ```{r}
 #| echo: false
@@ -182,7 +182,7 @@ girafe(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -215,7 +215,7 @@ Refer to [Customizing girafe objects](https://www.ardata.fr/ggiraph-book/customi
 ### Displaying statistics on tooltip
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -245,7 +245,7 @@ girafe(ggobj = gg_point,
        height_svg = 8*0.618)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -281,7 +281,7 @@ girafe(ggobj = gg_point,
 Interactivity: Elements associated with a `data_id` (i.e CLASS) will be highlighted upon mouse over. Important note: the default value of the hover css is `hover_css = “fill:orange;”`.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -303,7 +303,7 @@ girafe(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -333,7 +333,7 @@ Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighte
 Important note: different from previous example, in this example the ccs customisation request are encoded directly.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -359,7 +359,7 @@ girafe(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -391,7 +391,7 @@ girafe(
 Interactivity: Elements associated with a data_id (i.e CLASS) will be highlighted upon mouse over. At the same time, the tooltip will show the CLASS.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -418,7 +418,7 @@ girafe(
 )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -455,7 +455,7 @@ Interactivity: Web document link with a data object will be displayed on the web
 Note: Click actions must be a string column in the dataset containing valid javascript instructions.
 
 ::: panel-tabset
-### The plot
+#### The plot
 
 ```{r}
 #| echo: false
@@ -479,7 +479,7 @@ girafe(
   height_svg = 6*0.618)
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -511,7 +511,7 @@ Interactivity: When a data point of one of the dotplot is selected, the correspo
 In order to build a coordinated multiple views as shown in the example below, the following programming strategy will be used: Appropriate interactive functions of ggiraph will be used to create the multiple views. patchwork function of patchwork package will be used inside girafe function to create the interactive coordinated multiple views.
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -547,7 +547,7 @@ girafe(code = print(p1 + p2),
        )
 ```
 
-### The code
+#### The code
 
 ```{r}
 #| eval: false
@@ -653,7 +653,7 @@ ggplotly(p)
 ### Working with visual variable: plot_ly() method
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -665,7 +665,7 @@ plot_ly(data = exam_data,
         color = ~RACE)
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -687,7 +687,7 @@ The creation of a coordinated linked plot by using plotly involves three steps:
 - Lesson learned from the code chunk: `highlight_key()` simply creates an object of class [crosstalk::SharedData.](https://rdrr.io/cran/crosstalk/man/SharedData.html)
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -710,7 +710,7 @@ subplot(ggplotly(p1),
         ggplotly(p2))
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -816,7 +816,7 @@ gganimate extends the grammar of graphics as implemented by ggplot2 to include t
 ### Building a static population bubble plot
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -834,7 +834,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
        y = '% Young')
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -860,7 +860,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
 - `ease_aes()` is used to control easing of aesthetics. The default is linear. Other methods are: quadratic, cubic, quartic, quintic, sine, circular, exponential, elastic, back, and bounce.
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -880,7 +880,7 @@ ggplot(globalPop, aes(x = Old, y = Young,
   ease_aes('linear')
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -908,7 +908,7 @@ In **Plotly R** package, both `ggplotly()` and `plot_ly()` support key fra
 ### Building an animated bubble plot: ggplotly() method
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -930,7 +930,7 @@ gg <- ggplot(globalPop,
 ggplotly(gg)
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -956,7 +956,7 @@ ggplotly(gg)
 To remove the legend and provide better visualisation, `theme(legend.position='none')` should be used as shown in the plot and code chunk below.
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -978,7 +978,7 @@ gg <- ggplot(globalPop,
 ggplotly(gg)
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
@@ -1004,7 +1004,7 @@ ggplotly(gg)
 ### Building an animated bubble plot: plot_ly() method
 
 ::: panel-tabset
-### The Plot
+#### The Plot
 
 ```{r}
 #| echo: false
@@ -1026,7 +1026,7 @@ bp <- globalPop %>%
 bp
 ```
 
-### The Code
+#### The Code
 
 ```{r}
 #| eval: false
