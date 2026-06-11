@@ -42,6 +42,19 @@ $headings-font-weight: 400;
   font-family: "Cabin Sketch", cursive;
 }
 
+// Navbar icon
+.nav-icon {
+  height: 22px;
+  width: 22px;
+  object-fit: contain;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.navbar-logo {
+  max-height: 32px;
+  width: auto;
+}
 
 // Main content
 main.content {
