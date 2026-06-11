@@ -85,38 +85,22 @@ main.content {
 
 // Optional: whole sidebar wrapper
 .sidebar {
-  position: sticky;
-  top: 0;
-  background-color: #fff0f6;
-  min-height: calc(100vh - 70px);
-  padding-bottom: 180px;
+  background-image:
+    linear-gradient(
+      rgba(255,240,246,0.5),
+      rgba(255,240,246,0.5)
+    ),
+    url("images/toc-cat.png");
+
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 220px auto;
 }
 
-/* Keep TOC text above cat */
+/* Keep TOC text above background */
 .sidebar nav[role="doc-toc"] {
   position: relative;
   z-index: 2;
-}
-
-// Sidebar decoration
-.sidebar::after {
-  content: "";
-  position: absolute;
-
-  bottom: 10px;
-  left: 0;
-
-  width: 200px;
-  height: 200px;
-
-  background-image: url("images/toc-cat.png");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: left bottom;
-
-  z-index: 1;
-  opacity: 0.5;
-  pointer-events: none;
 }
 // Gallery
 .gallery-grid {
