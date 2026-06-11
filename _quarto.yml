@@ -30,9 +30,11 @@ website:
         - text: "Take-Home Exercise 2"
           href: "TH_Ex/TH_Ex02/TH_Ex02.html"
     right:
-      - href: index.qmd
-        text: Home
-      - about.qmd
+        - href: index.qmd
+          text: "<img src='/images/home.png' class='nav-icon'> Home"
+
+        - href: about.qmd
+          text: "<img src='/images/about me.png' class='nav-icon'> About Me"
 
 format:
   html:

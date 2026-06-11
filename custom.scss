@@ -37,7 +37,6 @@ $headings-font-weight: 400;
 // Navbar links
 .navbar-nav .nav-link {
   font-family: "Cabin Sketch", cursive;
-  font-size: 1.4rem;
 }
 
 
@@ -86,7 +85,10 @@ main.content {
 
 // Optional: whole sidebar wrapper
 .sidebar {
+  position: sticky;
+  top: 0;
   background-color: #fff0f6;
+  min-height: calc(100vh - 70px);
 }
 
 /* Hide ### TOC entries by default */
@@ -99,6 +101,25 @@ main.content {
   display: block;
 }
 
+// Sidebar decoration
+.sidebar::after {
+  content: "";
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+
+  width: 200px;
+  height: 200px;
+
+  background-image: url("images/toc-cat.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+
+  pointer-events: none;
+  z-index: 10;
+}
 // Gallery
 .gallery-grid {
   display: grid;
