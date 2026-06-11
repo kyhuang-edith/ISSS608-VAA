@@ -55,7 +55,7 @@ $headings-font-weight: 400;
 }
 
 .navbar-logo {
-  max-height: 32px;
+  max-height: 48px;
   width: auto;
 }
 
@@ -89,16 +89,13 @@ main.content {
   top: 0;
   background-color: #fff0f6;
   min-height: calc(100vh - 70px);
+  overflow: hidden;
 }
 
-/* Hide ### TOC entries by default */
-.sidebar nav[role="doc-toc"] ul ul ul {
-  display: none;
-}
-
-/* Show ### entries when parent ## is active */
-.sidebar nav[role="doc-toc"] li.active > ul {
-  display: block;
+/* Keep TOC text above cat */
+.sidebar nav[role="doc-toc"] {
+  position: relative;
+  z-index: 2;
 }
 
 // Sidebar decoration
@@ -109,8 +106,8 @@ main.content {
   bottom: 0;
   left: 0;
 
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
 
   background-image: url("images/toc-cat.png");
   background-size: contain;
@@ -118,7 +115,8 @@ main.content {
   background-position: left bottom;
 
   pointer-events: none;
-  z-index: 10;
+  z-index: 1;      // lower than TOC text
+  opacity: 0.5;   // optional watermark effect
 }
 // Gallery
 .gallery-grid {
