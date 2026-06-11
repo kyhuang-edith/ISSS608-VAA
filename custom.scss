@@ -29,9 +29,9 @@ $headings-font-weight: 400;
   background-color: $primary;
   font-family: "Cabin Sketch", cursive;
 
-  min-height: 60px;
-  padding-top: 0.1rem !important;
-  padding-bottom: 0.1rem !important;
+  min-height: 50px;
+  padding-top: 0.2rem !important;
+  padding-bottom: 0.2rem !important;
 }
 
 // Navbar links
@@ -47,10 +47,10 @@ $headings-font-weight: 400;
 
 // Navbar icon
 .nav-icon {
-  height: 40px;
-  width: 40px;
+  height: 48px;
+  width: 48px;
   object-fit: contain;
-  margin-right: 8px;
+  margin-right: 10px;
   vertical-align: middle;
 }
 
