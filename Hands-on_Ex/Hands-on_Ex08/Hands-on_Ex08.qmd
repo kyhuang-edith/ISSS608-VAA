@@ -11,7 +11,7 @@ format:
     toc-title: "Contents"
     fig-width: 12
     fig-height: 8
-    code-fold: true
+    code-fold: false
     code-summary: "Show code"
     css: custom.scss
     number-sections: true
@@ -127,7 +127,6 @@ theme(axis.ticks = element_blank(),
 ```
 
 ::: obsv-box
-
 *Lesson Learned*
 
 - a tibble data table called *grouped* is derived by aggregating the attack by *wkday* and *hour* fields.
@@ -149,15 +148,16 @@ theme(axis.ticks = element_blank(),
 
 #### Step 1: Deriving attack by country object
 
-````{r}
+```{r}
 attacks_by_country <- count(
   attacks, source_country) %>%
   mutate(percent = percent(n/sum(n))) %>%
   arrange(desc(n))
-````
+```
 
 #### Step 2: Preparing the tidy data frame
-````{r}
+
+```{r}
 top4 <- attacks_by_country$source_country[1:4]
 top4_attacks <- attacks %>%
   filter(source_country %in% top4) %>%
@@ -166,10 +166,11 @@ top4_attacks <- attacks %>%
   mutate(source_country = factor(
     source_country, levels = top4)) %>%
   na.omit()
-````
+```
+
 #### Step 3: Plotting the Multiple Calender Heatmap by using ggplot2 package.
 
-````{r}
+```{r}
 #| code-fold: true
 ggplot(top4_attacks, 
        aes(hour, 
@@ -190,46 +191,47 @@ ggplot(top4_attacks,
         plot.title = element_text(hjust = 0.5),
         legend.title = element_text(size = 8),
         legend.text = element_text(size = 6) )
-````
+```
 
 ### Plotting Cycle Plot
 
 #### Step 1: Data Import
-````{r}
+
+```{r}
 air <- read_excel("data/arrivals_by_air.xlsx")
-````
+```
 
 #### Step 2: Deriving month and year fields
 
-````{r}
+```{r}
 air$month <- factor(month(air$`Month-Year`), 
                     levels=1:12, 
                     labels=month.abb, 
                     ordered=TRUE) 
 air$year <- year(ymd(air$`Month-Year`))
-````
+```
 
 #### Step 3: Extracting the target country
 
-````{r}
+```{r}
 Vietnam <- air %>% 
   select(`Vietnam`, 
          month, 
          year) %>%
   filter(year >= 2010)
-````
+```
 
 #### Step 4: Computing year average arrivals by month
 
-````{r}
+```{r}
 hline.data <- Vietnam %>% 
   group_by(month) %>%
   summarise(avgvalue = mean(`Vietnam`))
-````
+```
 
 #### Step 5: Plotting the cycle plot
 
-````{r}
+```{r}
 #| code-fold: true
 ggplot() + 
   geom_line(data=Vietnam,
@@ -248,18 +250,19 @@ ggplot() +
   xlab("") +
   ylab("No. of Visitors") +
   theme_tufte(base_family = "Helvetica")
-````
+```
 
 ### Plotting Slopegraph
 
 #### Step 1: Data Import
-````{r}
+
+```{r}
 rice <- read_csv("data/rice.csv")
-````
+```
 
 #### Step 2: Plotting the slopegraph
 
-````{r}
+```{r}
 #| code-fold: true
 
 rice %>% 
@@ -268,5 +271,5 @@ rice %>%
   newggslopegraph(Year, Yield, Country,
                 Title = "Rice Yield of Top 11 Asian Counties",
                 SubTitle = "1961-1980",
-                Caption = "Prepared by: Dr. Kam Tin Seong")
-````
+                Caption = "Prepared by: Huang Kuan Yu")
+```

@@ -3,10 +3,13 @@ title: "Hands on Exercise 2"
 author: "Huang Kuan Yu"
 date: "2026-04-25"
 date-modified: "last-modified"
-format: 
+format:
   html:
     toc: true
-    toc-expand: 2
+    toc-expand: 1
+    toc-title: "Contents"
+    css: custom.scss
+    number-sections: true 
 execute:
     echo: true
     eval: true
@@ -146,7 +149,7 @@ ggplot(data=exam_data,
               )
 ```
 
- *Lesson learned from comparing the code chunk*
+*Lesson learned from comparing the code chunk*
 
 axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.
 

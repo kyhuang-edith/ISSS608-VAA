@@ -4,10 +4,14 @@ author: "Huang Kuan Yu"
 date: "2026-05-05"
 date-modified: "last-modified" 
   
-format: 
-  html: 
-    toc: true 
-    toc-expand: 2 
+format:
+  html:
+    toc: true
+    toc-expand: 1
+    toc-title: "Contents"
+    css: custom.scss
+    number-sections: true 
+    
 execute:
   echo: true 
   eval: true 

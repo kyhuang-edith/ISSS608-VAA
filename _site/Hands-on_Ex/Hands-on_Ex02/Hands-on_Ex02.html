@@ -149,6 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 <link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="custom.scss">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -240,29 +241,29 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2">
-    <h2 id="toc-title">On this page</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started"><span class="header-section-number">1</span> Getting Started</a>
   <ul class="collapse">
-  <li><a href="#installing-and-loading-the-required-libraries" id="toc-installing-and-loading-the-required-libraries" class="nav-link" data-scroll-target="#installing-and-loading-the-required-libraries">Installing and loading the required libraries</a></li>
-  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data">Importing data</a></li>
-  <li><a href="#beyond-ggplot2-annotationggrepel" id="toc-beyond-ggplot2-annotationggrepel" class="nav-link" data-scroll-target="#beyond-ggplot2-annotationggrepel">Beyond ggplot2 Annotation:ggrepel</a></li>
+  <li><a href="#installing-and-loading-the-required-libraries" id="toc-installing-and-loading-the-required-libraries" class="nav-link" data-scroll-target="#installing-and-loading-the-required-libraries"><span class="header-section-number">1.1</span> Installing and loading the required libraries</a></li>
+  <li><a href="#importing-data" id="toc-importing-data" class="nav-link" data-scroll-target="#importing-data"><span class="header-section-number">1.2</span> Importing data</a></li>
+  <li><a href="#beyond-ggplot2-annotationggrepel" id="toc-beyond-ggplot2-annotationggrepel" class="nav-link" data-scroll-target="#beyond-ggplot2-annotationggrepel"><span class="header-section-number">1.3</span> Beyond ggplot2 Annotation:ggrepel</a></li>
   </ul></li>
-  <li><a href="#ggplot2-themes" id="toc-ggplot2-themes" class="nav-link" data-scroll-target="#ggplot2-themes">ggplot2 Themes</a>
+  <li><a href="#ggplot2-themes" id="toc-ggplot2-themes" class="nav-link" data-scroll-target="#ggplot2-themes"><span class="header-section-number">2</span> ggplot2 Themes</a>
   <ul class="collapse">
-  <li><a href="#about-ggthemes-package" id="toc-about-ggthemes-package" class="nav-link" data-scroll-target="#about-ggthemes-package">About ggthemes package</a></li>
-  <li><a href="#about-the-hrbthems-package" id="toc-about-the-hrbthems-package" class="nav-link" data-scroll-target="#about-the-hrbthems-package">About the hrbthems package</a></li>
-  <li><a href="#beyond-single-graphs" id="toc-beyond-single-graphs" class="nav-link" data-scroll-target="#beyond-single-graphs">Beyond single graphs</a></li>
+  <li><a href="#about-ggthemes-package" id="toc-about-ggthemes-package" class="nav-link" data-scroll-target="#about-ggthemes-package"><span class="header-section-number">2.1</span> About ggthemes package</a></li>
+  <li><a href="#about-the-hrbthems-package" id="toc-about-the-hrbthems-package" class="nav-link" data-scroll-target="#about-the-hrbthems-package"><span class="header-section-number">2.2</span> About the hrbthems package</a></li>
+  <li><a href="#beyond-single-graphs" id="toc-beyond-single-graphs" class="nav-link" data-scroll-target="#beyond-single-graphs"><span class="header-section-number">2.3</span> Beyond single graphs</a></li>
   </ul></li>
-  <li><a href="#creating-composite-graphics" id="toc-creating-composite-graphics" class="nav-link" data-scroll-target="#creating-composite-graphics">Creating Composite Graphics</a>
+  <li><a href="#creating-composite-graphics" id="toc-creating-composite-graphics" class="nav-link" data-scroll-target="#creating-composite-graphics"><span class="header-section-number">3</span> Creating Composite Graphics</a>
   <ul class="collapse">
-  <li><a href="#combining-two-ggplot2-graphs" id="toc-combining-two-ggplot2-graphs" class="nav-link" data-scroll-target="#combining-two-ggplot2-graphs">Combining two ggplot2 graphs</a></li>
-  <li><a href="#combining-three-ggplot2-graphs" id="toc-combining-three-ggplot2-graphs" class="nav-link" data-scroll-target="#combining-three-ggplot2-graphs">Combining three ggplot2 graphs</a></li>
-  <li><a href="#creating-a-composite-figure-with-tag" id="toc-creating-a-composite-figure-with-tag" class="nav-link" data-scroll-target="#creating-a-composite-figure-with-tag">Creating a composite figure with tag</a></li>
-  <li><a href="#creating-figure-with-insert" id="toc-creating-figure-with-insert" class="nav-link" data-scroll-target="#creating-figure-with-insert">Creating figure with insert</a></li>
-  <li><a href="#creating-a-composite-figure-by-using-patchwork-and-ggtheme" id="toc-creating-a-composite-figure-by-using-patchwork-and-ggtheme" class="nav-link" data-scroll-target="#creating-a-composite-figure-by-using-patchwork-and-ggtheme">Creating a composite figure by using patchwork and ggtheme</a></li>
+  <li><a href="#combining-two-ggplot2-graphs" id="toc-combining-two-ggplot2-graphs" class="nav-link" data-scroll-target="#combining-two-ggplot2-graphs"><span class="header-section-number">3.1</span> Combining two ggplot2 graphs</a></li>
+  <li><a href="#combining-three-ggplot2-graphs" id="toc-combining-three-ggplot2-graphs" class="nav-link" data-scroll-target="#combining-three-ggplot2-graphs"><span class="header-section-number">3.2</span> Combining three ggplot2 graphs</a></li>
+  <li><a href="#creating-a-composite-figure-with-tag" id="toc-creating-a-composite-figure-with-tag" class="nav-link" data-scroll-target="#creating-a-composite-figure-with-tag"><span class="header-section-number">3.3</span> Creating a composite figure with tag</a></li>
+  <li><a href="#creating-figure-with-insert" id="toc-creating-figure-with-insert" class="nav-link" data-scroll-target="#creating-figure-with-insert"><span class="header-section-number">3.4</span> Creating figure with insert</a></li>
+  <li><a href="#creating-a-composite-figure-by-using-patchwork-and-ggtheme" id="toc-creating-a-composite-figure-by-using-patchwork-and-ggtheme" class="nav-link" data-scroll-target="#creating-a-composite-figure-by-using-patchwork-and-ggtheme"><span class="header-section-number">3.5</span> Creating a composite figure by using patchwork and ggtheme</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -307,10 +308,10 @@ document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
-<section id="installing-and-loading-the-required-libraries" class="level3">
-<h3 class="anchored" data-anchor-id="installing-and-loading-the-required-libraries">Installing and loading the required libraries</h3>
+<section id="getting-started" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">1</span> Getting Started</h2>
+<section id="installing-and-loading-the-required-libraries" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="installing-and-loading-the-required-libraries"><span class="header-section-number">1.1</span> Installing and loading the required libraries</h3>
 <p>In this exercise, beside tidyverse, four R packages will be used. They are:</p>
 <p>ggrepel: an R package provides geoms for ggplot2 to repel overlapping text labels. ggthemes: an R package provides some extra themes, geoms, and scales for ‘ggplot2’. hrbrthemes: an R package provides typography-centric themes and theme components for ggplot2. patchwork: an R package for preparing composite figure created using ggplot2. Code chunk below will be used to check if these packages have been installed and also will load them onto your working R environment.</p>
 <div class="cell">
@@ -319,8 +320,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               tidyverse) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="importing-data" class="level3">
-<h3 class="anchored" data-anchor-id="importing-data">Importing data</h3>
+<section id="importing-data" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="importing-data"><span class="header-section-number">1.2</span> Importing data</h3>
 <p>For the purpose of this exercise, a data file called Exam_data will be used. It consists of year end examination grades of a cohort of primary 3 students from a local school. It is in csv file format.</p>
 <p>The code chunk below imports exam_data.csv into R environment by using read_csv() function of readr package. readr is one of the tidyverse package.</p>
 <div class="cell">
@@ -329,12 +330,12 @@ document.addEventListener("DOMContentLoaded", function () {
 <p>There are a total of seven attributes in the exam_data tibble data frame. Four of them are categorical data type and the other three are in continuous data type.</p>
 <p>The categorical attributes are: ID, CLASS, GENDER and RACE. The continuous attributes are: MATHS, ENGLISH and SCIENCE.</p>
 </section>
-<section id="beyond-ggplot2-annotationggrepel" class="level3">
-<h3 class="anchored" data-anchor-id="beyond-ggplot2-annotationggrepel">Beyond ggplot2 Annotation:ggrepel</h3>
+<section id="beyond-ggplot2-annotationggrepel" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="beyond-ggplot2-annotationggrepel"><span class="header-section-number">1.3</span> Beyond ggplot2 Annotation:ggrepel</h3>
 <p>ggrepel is an extension of ggplot2 package which provides geoms for ggplot2 to repel overlapping text as in our examples on the right. This is to solve the challenge in plotting statistical graph with large number of data points requiring annotation.</p>
 <p>Compare the below two graphs and you can see the difference.</p>
-<section id="the-ggplot-graph" class="level4">
-<h4 class="anchored" data-anchor-id="the-ggplot-graph">The ggplot Graph</h4>
+<section id="the-ggplot-graph" class="level4" data-number="1.3.1">
+<h4 data-number="1.3.1" class="anchored" data-anchor-id="the-ggplot-graph"><span class="header-section-number">1.3.1</span> The ggplot Graph</h4>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>exam_data, </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span> MATHS, </span>
@@ -357,8 +358,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="the-ggrepel-graph" class="level4">
-<h4 class="anchored" data-anchor-id="the-ggrepel-graph">The ggrepel Graph</h4>
+<section id="the-ggrepel-graph" class="level4" data-number="1.3.2">
+<h4 data-number="1.3.2" class="anchored" data-anchor-id="the-ggrepel-graph"><span class="header-section-number">1.3.2</span> The ggrepel Graph</h4>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>exam_data, </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x=</span> MATHS, </span>
@@ -382,8 +383,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </section>
 </section>
 </section>
-<section id="ggplot2-themes" class="level2">
-<h2 class="anchored" data-anchor-id="ggplot2-themes">ggplot2 Themes</h2>
+<section id="ggplot2-themes" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="ggplot2-themes"><span class="header-section-number">2</span> ggplot2 Themes</h2>
 <p>ggplot2 comes with eight built-in themes, they are: theme_gray(), theme_bw(), theme_classic(), theme_dark(), theme_light(), theme_linedraw(), theme_minimal(), and theme_void().</p>
 <p>In the example below theme_gray() is used.</p>
 <div class="cell">
@@ -403,8 +404,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </div>
-<section id="about-ggthemes-package" class="level3">
-<h3 class="anchored" data-anchor-id="about-ggthemes-package">About ggthemes package</h3>
+<section id="about-ggthemes-package" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="about-ggthemes-package"><span class="header-section-number">2.1</span> About ggthemes package</h3>
 <p>ggthemes provides ‘ggplot2’ themes that replicate the look of plots by Edward Tufte, Stephen Few, Fivethirtyeight, The Economist, ‘Stata’, ‘Excel’, and The Wall Street Journal, among others.</p>
 <p>In the example below, The Economist theme is used.</p>
 <div class="cell">
@@ -425,8 +426,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="about-the-hrbthems-package" class="level3">
-<h3 class="anchored" data-anchor-id="about-the-hrbthems-package">About the hrbthems package</h3>
+<section id="about-the-hrbthems-package" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="about-the-hrbthems-package"><span class="header-section-number">2.2</span> About the hrbthems package</h3>
 <p>hrbrthemes package provides a base theme that focuses on typographic elements, including where various labels are placed as well as the fonts that are used.</p>
 <p>Compare the two code chunks and how they impact the graph display.</p>
 <div class="cell">
@@ -469,8 +470,8 @@ document.addEventListener("DOMContentLoaded", function () {
 <p><em>Lesson learned from comparing the code chunk</em></p>
 <p>axis_title_size argument is used to increase the font size of the axis title to 18, base_size argument is used to increase the default axis label to 15, and grid argument is used to remove the x-axis grid lines.</p>
 </section>
-<section id="beyond-single-graphs" class="level3">
-<h3 class="anchored" data-anchor-id="beyond-single-graphs">Beyond single graphs</h3>
+<section id="beyond-single-graphs" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="beyond-single-graphs"><span class="header-section-number">2.3</span> Beyond single graphs</h3>
 <p>In this section, I will display how to create composite plot by combining multiple graphs. First, I will have to create three statistical graphics by using the code chunk below.</p>
 <p>Graph 1: Distribution of Math scores</p>
 <div class="cell">
@@ -508,14 +509,14 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </section>
 </section>
-<section id="creating-composite-graphics" class="level2">
-<h2 class="anchored" data-anchor-id="creating-composite-graphics">Creating Composite Graphics</h2>
+<section id="creating-composite-graphics" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="creating-composite-graphics"><span class="header-section-number">3</span> Creating Composite Graphics</h2>
 <p>In the section above, I have completed 3 individual graphs, now how can I compose them together?</p>
 <p>There are several ggplot2 extension’s functions support the needs to prepare composite figure by combining several graphs such as grid.arrange() of gridExtra package and plot_grid() of cowplot package. In this section, I am going to shared with you an ggplot2 extension called patchwork which is specially designed for combining separate ggplot2 graphs into a single figure.</p>
 <p>Patchwork package has a very simple syntax where we can create layouts super easily. Here’s the general syntax that combines:</p>
 <p>Two-Column Layout using the Plus Sign +. Parenthesis () to create a subplot group. Two-Row Layout using the Division Sign /</p>
-<section id="combining-two-ggplot2-graphs" class="level3">
-<h3 class="anchored" data-anchor-id="combining-two-ggplot2-graphs">Combining two ggplot2 graphs</h3>
+<section id="combining-two-ggplot2-graphs" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="combining-two-ggplot2-graphs"><span class="header-section-number">3.1</span> Combining two ggplot2 graphs</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">+</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -527,8 +528,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="combining-three-ggplot2-graphs" class="level3">
-<h3 class="anchored" data-anchor-id="combining-three-ggplot2-graphs">Combining three ggplot2 graphs</h3>
+<section id="combining-three-ggplot2-graphs" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="combining-three-ggplot2-graphs"><span class="header-section-number">3.2</span> Combining three ggplot2 graphs</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">/</span> p2) <span class="sc">|</span> p3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
@@ -540,8 +541,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="creating-a-composite-figure-with-tag" class="level3">
-<h3 class="anchored" data-anchor-id="creating-a-composite-figure-with-tag">Creating a composite figure with tag</h3>
+<section id="creating-a-composite-figure-with-tag" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="creating-a-composite-figure-with-tag"><span class="header-section-number">3.3</span> Creating a composite figure with tag</h3>
 <p>To identify subplots in text, patchwork also provides auto-tagging capabilities as shown in the figure below.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>((p1 <span class="sc">/</span> p2) <span class="sc">|</span> p3) <span class="sc">+</span> </span>
@@ -555,8 +556,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="creating-figure-with-insert" class="level3">
-<h3 class="anchored" data-anchor-id="creating-figure-with-insert">Creating figure with insert</h3>
+<section id="creating-figure-with-insert" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="creating-figure-with-insert"><span class="header-section-number">3.4</span> Creating figure with insert</h3>
 <p>With inset_element() of patchwork, we can place one or several plots or graphic elements freely on top or below another plot.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="sc">+</span> <span class="fu">inset_element</span>(p2, </span>
@@ -573,8 +574,8 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 </div>
 </section>
-<section id="creating-a-composite-figure-by-using-patchwork-and-ggtheme" class="level3">
-<h3 class="anchored" data-anchor-id="creating-a-composite-figure-by-using-patchwork-and-ggtheme">Creating a composite figure by using patchwork and ggtheme</h3>
+<section id="creating-a-composite-figure-by-using-patchwork-and-ggtheme" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="creating-a-composite-figure-by-using-patchwork-and-ggtheme"><span class="header-section-number">3.5</span> Creating a composite figure by using patchwork and ggtheme</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>patchwork <span class="ot">&lt;-</span> (p1 <span class="sc">/</span> p2) <span class="sc">|</span> p3</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>patchwork <span class="sc">&amp;</span> <span class="fu">theme_economist</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
