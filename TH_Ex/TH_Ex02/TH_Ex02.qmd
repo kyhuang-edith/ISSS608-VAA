@@ -1,0 +1,1812 @@
+---
+title: "Take Home Exercise 2"
+subtitle: "VAST Challenge 2026 MC2 — Investigating the Anomalous SaidIt Posts"
+author: "Huang Kuan Yu"
+date: "2026-05-28"
+date-modified: last-modified
+
+format:
+  html:
+    toc: true
+    toc-expand: 1
+    toc-title: "Contents"
+    fig-width: 12
+    fig-height: 8
+    code-fold: true
+    code-summary: "Show code"
+    css: custom.scss
+    number-sections: true
+
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: true
+---
+
+## Overview
+
+### Background
+
+This document is submitted for **VAST Challenge 2026 Mini-Challenge 2 (MC2)**. The challenge presents a complex agentic system at a fictional company, Tenant Thread, in which an anomalous post was made to an internal social platform called SaidIt. Analysts are tasked with determining how the post occurred, what it means, and how to prevent recurrence. The questions addressed in this document are **Question 1 (sub-questions a and b)** and **Question 2**.
+
+On 17 May 2046 at 4:21am, a post attributed to **John Windward** appeared on SaidIt containing gibberish text published to a random forum. The internal event log (`MC2_data.json`) records every action taken by employees, autonomous agents, and office systems throughout May 2046, and serves as the primary evidence source for this investigation.
+
+### Investigative Scope
+
+Understanding what the anomalous post means requires first understanding how it was made. These two questions are inseparable: the mechanism of delivery directly determines the interpretation of the content. This document therefore addresses both together under a single investigative lens, with **Question 2 as the primary focus**.
+
+| Investigative Goal | Question Addressed |
+|---|---|
+| Reconstruct the exact sequence of events leading to the May 17 post | Q1a — Detailed chain view |
+| Contextualise the incident within the broader system activity | Q1b — System overview |
+| Determine what the posted content means and where it originated | Q2 — Post meaning and origin |
+| Identify the underlying attack mechanism and its implications | Q2 — Attack characterisation |
+| Model configurable risk scores for detecting future anomalous chains | Section 8 — Further Exploration |
+
+### Key Finding
+
+::: {.obsv-box}
+Observations
+
+The anomalous SaidIt post was not made by John Windward voluntarily. A malicious instruction file (`SwiftWren_further_instructions.md`) was placed in the shared file system and propagated virally through 186 agent-to-agent relay hops over 8 days before reaching John Windward's agent, which was specifically named in the instructions as the designated poster. The post was executed automatically within 2 seconds of receiving the instruction. The posted content, `SwiftWren.txt`, is a pre-staged gibberish payload with no meaningful business content, functioning as a proof-of-concept for the injection mechanism. Both files were deleted within 5 seconds of posting.
+:::
+
+---
+
+## Setup
+
+### Packages
+
+```{r}
+#| label: setup
+#| include: false
+
+library(jsonlite)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(lubridate)
+library(stringr)
+library(ggplot2)
+library(ggraph)
+library(igraph)
+library(forcats)
+library(scales)
+library(knitr)
+library(readr)
+library(DT)
+library(plotly)
+library(visNetwork)
+```
+
+| Package | Purpose |
+|---|---|
+| `jsonlite` | Parse the nested JSON structure of `MC2_data.json` |
+| `dplyr`, `tidyr` | Tabular wrangling — filtering, joining, reshaping |
+| `purrr` | Iterating over list-columns extracted from JSON |
+| `lubridate` | Converting Unix timestamps to datetimes |
+| `stringr` | Normalising agent name strings |
+| `ggplot2` | Base plotting layer |
+| `ggraph`, `igraph` | Static network graph construction and layout |
+| `visNetwork` | Interactive network graphs with hover, click, and filter |
+| `plotly` | Interactive charts with tooltips and zoom |
+| `DT` | Interactive searchable and filterable data tables |
+| `forcats` | Factor reordering for sorted bar charts |
+| `knitr` | Static table rendering |
+
+### Visual Theme and Colour Palette
+
+A consistent colour palette and custom ggplot2 theme are applied across all plots so the reader can track each incident by colour throughout the document.
+
+```{r theme}
+incident_colours <- c(
+  "HiddenOrca"  = "#e41a1c",
+  "MellowOtter" = "#377eb8",
+  "SwiftWren"   = "#ff7f00"
+)
+
+text_dark  <- "#4a4a4a"
+grid_light <- "#f0f0f0"
+
+theme_va <- function() {
+  theme_minimal() +
+    theme(
+      plot.title       = element_text(size = 16, face = "bold",
+                                      colour = text_dark, margin = margin(b = 8)),
+      plot.subtitle    = element_text(size = 11, colour = "grey40",
+                                      margin = margin(b = 10)),
+      axis.title       = element_text(size = 11, colour = text_dark),
+      axis.text        = element_text(size = 10, colour = text_dark),
+      legend.title     = element_text(size = 11),
+      legend.text      = element_text(size = 10),
+      panel.grid.major = element_line(colour = grid_light, linewidth = 0.4),
+      panel.grid.minor = element_blank(),
+      plot.background  = element_rect(fill = "white", colour = NA),
+      panel.background = element_rect(fill = "white", colour = NA),
+      legend.position  = "bottom",
+      plot.caption     = element_text(size = 9, colour = "grey55",
+                                      hjust = 0, margin = margin(t = 8))
+    )
+}
+```
+
+---
+
+## Data Import
+
+### Loading the Raw Event Log
+
+The raw data is stored as a deeply nested JSON file. `read_json()` is used with `simplifyVector = FALSE` rather than `fromJSON()` because the `details` field has a variable schema across different event types. Auto-simplification would fail on these heterogeneous structures. Keeping the data as a nested list preserves the full structure for safe extraction with `purrr`.
+
+```{r load-raw}
+raw        <- read_json("2026_MC2/MC2 data.json", simplifyVector = FALSE)
+events_raw <- raw$events
+
+cat("Total events in log:", length(events_raw), "\n")
+cat("Fields in first event:", paste(names(events_raw[[1]]), collapse = ", "), "\n")
+```
+
+### Flattening to a Tibble
+
+The raw list is flattened into a tidy tibble. The `parties` and `details` fields are kept as list-columns using `map()` because their contents vary by event type. They are unpacked selectively in later steps using `map_lgl()`, `map_chr()` and related functions.
+
+The `when` field is a Unix timestamp converted to `datetime` with `lubridate::as_datetime()`, specifying `tz = "UTC"` since all system events are recorded in Coordinated Universal Time.
+
+```{r flatten-events}
+events <- tibble(
+  id         = map_int(events_raw, ~ as.integer(.x[["id"]])),
+  short_name = map_chr(events_raw, ~ as.character(.x[["short_name"]])),
+  when       = map_dbl(events_raw, ~ as.numeric(.x[["when"]])),
+  parties    = map(events_raw, ~ .x[["parties"]]),
+  details    = map(events_raw, ~ .x[["details"]])
+) %>%
+  mutate(
+    datetime = as_datetime(when, tz = "UTC"),
+    date     = as_date(datetime)
+  )
+
+cat("Events loaded:", nrow(events), "\n")
+cat("Date range:", format(min(events$datetime)), "to",
+    format(max(events$datetime)), "\n")
+```
+
+### Understanding Event Types
+
+Before targeting specific events, the full vocabulary of `short_name` values is inspected to understand what action types exist in the log and which are most frequent.
+
+```{r event-types}
+event_type_counts <- events %>%
+  count(short_name, name = "count") %>%
+  arrange(desc(count))
+
+datatable(
+  event_type_counts,
+  colnames = c("Event Type (short_name)", "Count"),
+  caption  = "All event types in the log",
+  options  = list(
+    pageLength = 10,
+    scrollX    = TRUE
+  ),
+  filter   = "top",
+  rownames = FALSE
+)
+```
+
+::: {.code-tip}
+Code Details
+
+The event types most relevant to this investigation are `saidit_post`, `queue_subordinate_task`, `create_file`, `delete_file`, and `read_file`. These five types form the backbone of the attack chain reconstructed below.
+:::
+
+---
+
+## Data Wrangling
+
+### Key Variables
+
+The following variables are derived and used throughout the analysis. Understanding their definitions is essential for interpreting the wrangling steps and visualisations that follow.
+
+| Variable | Source Field | Type | Definition |
+|---|---|---|---|
+| `short_name` | `events.short_name` | Categorical | The action type performed in this event, such as `saidit_post` or `queue_subordinate_task` |
+| `parties` | `events.parties` | List | Agents or systems involved in the event, stored as strings prefixed with `Agent/person:` or `system:` |
+| `details` | `events.details` | Nested list | Additional event-specific information; schema varies by `short_name` |
+| `datetime` | Derived from `events.when` | POSIXct | Human-readable UTC timestamp converted from Unix epoch seconds |
+| `incident_name` | Derived from `content_source` | Character | Name identifying one of the three anomalous post incidents: HiddenOrca, MellowOtter, or SwiftWren |
+| `from_person` | Derived from `parties` | Character | Normalised agent name (stripped of `Agent/person:` prefix) representing the sender of a relay hop |
+| `to_person` | Derived from `details.target_agent` | Character | Normalised agent name representing the recipient of a relay hop |
+| `hop` | Derived as row number within each chain | Integer | Sequential position of a relay event within a single incident's propagation chain |
+| `time_norm` | Derived from `datetime` within each chain | Numeric [0,1] | Normalised relay time: 0 is the first hop in the chain, 1 is the last hop before posting |
+| `content_source` | `details.content_source` | Character | Filename of the `.txt` payload used as the post content; present only in anomalous posts |
+
+### Step 1 — Identify Anomalous SaidIt Posts
+
+**Rationale:** Legitimate posts have a `content` field in their `details` object containing human-readable text generated by an agent. The anomalous posts instead have a `content_source` field pointing to a `.txt` filename, indicating the content was read from the file system rather than authored by an agent performing a legitimate task. This structural difference is the first signal of something wrong.
+
+Events are filtered using `map_lgl()` to test whether each event's `details` list contains a `content_source` key.
+
+```{r anomalous-posts}
+anomalous_posts <- events %>%
+  filter(short_name == "saidit_post") %>%
+  filter(map_lgl(details, ~ "content_source" %in% names(.x))) %>%
+  mutate(
+    content_source = map_chr(details, ~ .x[["content_source"]]),
+    incident_name  = str_remove(content_source, "\\.txt$"),
+    forum          = map_chr(details, ~ .x[["forum"]])
+  ) %>%
+  select(id, datetime, incident_name, content_source, forum, parties, details)
+
+cat("Anomalous posts found:", nrow(anomalous_posts), "\n")
+```
+
+```{r anomalous-posts-dt}
+anomalous_display <- anomalous_posts %>%
+  mutate(
+    datetime = format(datetime, "%Y-%m-%d %H:%M:%S"),
+    poster   = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:"))
+  ) %>%
+  select(
+    `Timestamp (UTC)` = datetime,
+    Incident          = incident_name,
+    `Payload File`    = content_source,
+    Forum             = forum,
+    Poster            = poster
+  )
+
+datatable(
+  anomalous_display,
+  caption  = "Anomalous SaidIt posts identified by file-sourced content",
+  rownames = FALSE,
+  class    = "stripe hover",
+  filter   = "top",
+  options  = list(
+    pageLength = 5,
+    scrollX    = TRUE
+  )
+)
+```
+
+::: {.obsv-box}
+Observations
+
+Three anomalous posts are found, not one. Each corresponds to a separately named payload file: `HiddenOrca.txt`, `MellowOtter.txt`, and `SwiftWren.txt`. All three were posted to the `general` forum, making them visible to the entire organisation. The May 17 post corresponds to the SwiftWren incident.
+:::
+
+### Step 2 — Define Incident Metadata
+
+**Rationale:** Each anomalous post belongs to a distinct incident with its own origin agent, timing, and propagation length. A reference table (`incidents`) is defined to hold the known metadata for each. This serves as a lookup table throughout subsequent wrangling steps, keeping the code DRY and ensuring consistent naming. The `instructions_file` column names the `_further_instructions.md` file that carries the embedded prompt-injection instructions through the agent network.
+
+```{r incident-meta}
+incidents <- tribble(
+  ~incident_name, ~payload_file,       ~instructions_file,                   ~creator_agent, ~payload_size,
+  "HiddenOrca",   "HiddenOrca.txt",    "HiddenOrca_further_instructions.md",  "gabriel_sonar", NA_integer_,
+  "MellowOtter",  "MellowOtter.txt",   "MellowOtter_further_instructions.md", "noah_mariner",  44879L,
+  "SwiftWren",    "SwiftWren.txt",     "SwiftWren_further_instructions.md",   "emma_harbor",   30615L
+)
+
+incidents %>%
+  knitr::kable(
+    caption   = "Incident reference table",
+    col.names = c("Incident", "Payload file", "Instructions file",
+                  "Origin agent", "Payload size (bytes)")
+  )
+```
+
+::: {.biz-box}
+Implications
+
+HiddenOrca has no `create_file` event for either its payload or instruction file. Both appeared in the log without any creation record, meaning they were injected into the file system before the audit log begins. This implies a more sophisticated attacker with prior file-system access, and raises concerns about what else may have been placed in the system before logging started.
+:::
+
+### Step 3 — Extract Propagation Chains
+
+**Rationale:** The key mechanism linking instruction files to the eventual post is `queue_subordinate_task`, where one agent delegates a task to another. When any agent reads a `_further_instructions.md` file, the embedded instructions compel it to relay the same task to another agent, creating a viral relay chain.
+
+A reusable function `extract_chain()` is written to filter all `queue_subordinate_task` events where `details$args$path` matches the incident's instructions file. The `map_lgl()` approach safely navigates the nested list: `args` is checked for `NULL` before accessing `args$path`, preventing errors from events with a different `details` schema. Agent names are normalised by stripping the `Agent/person:` prefix.
+
+```{r extract-chains}
+extract_chain <- function(incident) {
+  instr_file <- incidents$instructions_file[incidents$incident_name == incident]
+
+  events %>%
+    filter(short_name == "queue_subordinate_task") %>%
+    filter(map_lgl(details, function(d) {
+      args <- d[["args"]]
+      if (is.null(args)) return(FALSE)
+      isTRUE(args[["path"]] == instr_file)
+    })) %>%
+    mutate(
+      incident    = incident,
+      hop         = row_number(),
+      from_agent  = map_chr(parties, 1),
+      to_agent    = map_chr(details, ~ .x[["target_agent"]]),
+      from_person = str_remove(from_agent, "^Agent/person:"),
+      to_person   = str_remove(to_agent,   "^Agent/person:")
+    ) %>%
+    select(incident, hop, datetime, from_person, to_person, id)
+}
+
+chains <- bind_rows(
+  extract_chain("HiddenOrca"),
+  extract_chain("MellowOtter"),
+  extract_chain("SwiftWren")
+)
+
+cat("Total relay hops across all incidents:", nrow(chains), "\n")
+```
+
+```{r chains-dt}
+chains_display <- chains %>%
+  mutate(datetime = format(datetime, "%Y-%m-%d %H:%M:%S")) %>%
+  select(
+    Incident     = incident,
+    Hop          = hop,
+    `Time (UTC)` = datetime,
+    From         = from_person,
+    To           = to_person
+  )
+
+datatable(
+  chains_display,
+  caption  = "Full relay chain — search by agent name, incident, or time period",
+  rownames = FALSE,
+  class    = "stripe hover",
+  filter   = "top",
+  options  = list(
+    pageLength = 10,
+    scrollX    = TRUE
+  )
+)
+```
+
+```{r chain-summary}
+chains %>%
+  group_by(incident) %>%
+  summarise(
+    `Hops`             = n(),
+    `Unique agents`    = n_distinct(c(from_person, to_person)),
+    `Chain start`      = format(min(datetime), "%Y-%m-%d %H:%M"),
+    `Chain end`        = format(max(datetime), "%Y-%m-%d %H:%M"),
+    `Duration (hours)` = round(as.numeric(difftime(
+      max(datetime), min(datetime), units = "hours")), 1),
+    .groups = "drop"
+  ) %>%
+  knitr::kable(caption = "Propagation chain statistics per incident")
+```
+
+### Step 4 — Identify Final Trigger Events
+
+**Rationale:** John Windward's agent appears in the SwiftWren chain five times. It received the instructions multiple times but only triggered the post on the final occasion. The last hop that reaches `john_windward` per incident is selected using `slice_max(datetime, n = 1)`, then the latency between this trigger and the actual post is calculated.
+
+```{r final-triggers}
+final_triggers <- chains %>%
+  filter(to_person == "john_windward") %>%
+  group_by(incident) %>%
+  slice_max(datetime, n = 1) %>%
+  ungroup() %>%
+  left_join(
+    anomalous_posts %>% select(incident_name, post_datetime = datetime),
+    by = c("incident" = "incident_name")
+  ) %>%
+  mutate(
+    trigger_to_post_s = as.numeric(difftime(post_datetime, datetime, units = "secs"))
+  )
+
+final_triggers %>%
+  select(incident, datetime, post_datetime, trigger_to_post_s) %>%
+  knitr::kable(
+    caption   = "Final trigger event to SaidIt post latency per incident",
+    col.names = c("Incident", "Trigger time (UTC)", "Post time (UTC)",
+                  "Latency (seconds)")
+  )
+```
+
+::: {.obsv-box}
+Observations
+
+The trigger-to-post latency is exactly 2 seconds for all three incidents. No human can read an instruction file and compose a social media post in 2 seconds, confirming the posting action is fully automated with no human decision point.
+:::
+
+### Step 5 — Extract Post-and-Delete Sequences
+
+**Rationale:** To determine whether the attacker covered their tracks, `delete_file` events attributed to John Windward's agent within 30 seconds of each post are extracted. A 30-second window is used to account for log timestamp variation. The `NULL` guard inside `map_lgl()` handles events where `details` has no `target` key, preventing length-0 errors from events with a different schema.
+
+```{r delete-sequence}
+extract_delete_sequence <- function(incident) {
+  payload   <- incidents$payload_file[incidents$incident_name == incident]
+  instr     <- incidents$instructions_file[incidents$incident_name == incident]
+  post_time <- anomalous_posts$datetime[anomalous_posts$incident_name == incident]
+
+  events %>%
+    filter(
+      short_name == "delete_file",
+      map_lgl(parties, ~ "Agent/person:john_windward" %in% .x),
+      map_lgl(details, ~ {
+        target <- .x[["target"]]
+        if (is.null(target) || length(target) == 0) return(FALSE)
+        target %in% c(payload, instr)
+      }),
+      datetime >= post_time,
+      datetime <= post_time + seconds(30)
+    ) %>%
+    mutate(
+      incident     = incident,
+      deleted_file = map_chr(details, ~ .x[["target"]])
+    ) %>%
+    select(incident, datetime, deleted_file)
+}
+
+deletions <- bind_rows(
+  extract_delete_sequence("HiddenOrca"),
+  extract_delete_sequence("MellowOtter"),
+  extract_delete_sequence("SwiftWren")
+)
+
+deletions %>%
+  knitr::kable(
+    caption   = "Files deleted by john_windward immediately after posting",
+    col.names = c("Incident", "Deletion time (UTC)", "File deleted")
+  )
+```
+
+### Step 6 — Identify Payload Creation Events
+
+**Rationale:** To establish who authored the posted content, `create_file` events are searched where `details$target` matches the three known payload filenames. The `str_detect()` regex is anchored with `^` to avoid partial name matches. This identifies the originating agent for each `.txt` payload and therefore which agent crafted the gibberish content.
+
+```{r payload-creation}
+payload_creations <- events %>%
+  filter(short_name == "create_file") %>%
+  filter(map_lgl(details, function(d) {
+    target <- d[["target"]]
+    !is.null(target) &&
+      str_detect(target, "^(HiddenOrca|MellowOtter|SwiftWren)\\.txt$")
+  })) %>%
+  mutate(
+    created_file = map_chr(details, ~ .x[["target"]]),
+    size_hint    = map_int(details, ~ as.integer(.x[["size_hint"]] %||% NA_integer_)),
+    creator      = str_remove(map_chr(parties, 1), "^Agent/person:")
+  ) %>%
+  select(datetime, creator, created_file, size_hint)
+
+payload_creations %>%
+  knitr::kable(
+    caption   = "Payload .txt file creation events",
+    col.names = c("Created at (UTC)", "Creator agent", "File", "Size (bytes)")
+  )
+```
+
+### Step 7 — Build Summary Tables
+
+**Rationale:** All wrangled data is consolidated into two summary objects. `incident_summary` joins all incident-level attributes into a single row per incident for easy comparison. `agent_freq` counts how many times each agent appeared across all propagation chains as either sender or recipient, enabling identification of the most active relay nodes.
+
+```{r summaries}
+incident_summary <- incidents %>%
+  left_join(
+    anomalous_posts %>% select(incident_name, post_datetime = datetime),
+    by = "incident_name"
+  ) %>%
+  left_join(
+    payload_creations %>%
+      mutate(incident_name = str_remove(created_file, "\\.txt$")) %>%
+      select(incident_name, payload_created_at = datetime,
+             payload_creator = creator, payload_size = size_hint),
+    by = "incident_name"
+  ) %>%
+  left_join(
+    chains %>%
+      group_by(incident) %>%
+      summarise(
+        n_hops      = n(),
+        n_agents    = n_distinct(c(from_person, to_person)),
+        chain_start = min(datetime),
+        chain_end   = max(datetime),
+        .groups     = "drop"
+      ),
+    by = c("incident_name" = "incident")
+  ) %>%
+  mutate(
+    total_hours     = round(as.numeric(difftime(
+      post_datetime, chain_start, units = "hours")), 1),
+    origin_external = is.na(payload_created_at)
+  )
+
+agent_freq <- chains %>%
+  pivot_longer(c(from_person, to_person),
+               names_to = "role", values_to = "agent") %>%
+  count(agent, incident, name = "appearances") %>%
+  group_by(agent) %>%
+  mutate(total = sum(appearances)) %>%
+  ungroup() %>%
+  arrange(desc(total))
+
+cat("Incident summary rows:", nrow(incident_summary), "\n")
+cat("Unique agents in chains:", n_distinct(agent_freq$agent), "\n")
+```
+
+### Step 8 — Prepare SwiftWren Focus Window for Q1a
+
+**Rationale:** For the detailed chain view (Q1a), all events directly involved in the SwiftWren incident are extracted, not just relay hops but also payload creation, the final post, and the deletions. A focused two-hour window ending at the post time is defined and each event is classified by its attack phase. This produces the data for a swimlane-style timeline showing agents as rows and events as coloured points along the time axis.
+
+```{r q1a-data}
+sw_post_time   <- anomalous_posts$datetime[anomalous_posts$incident_name == "SwiftWren"]
+sw_focus_start <- sw_post_time - hours(2)
+
+sw_focus <- events %>%
+  filter(
+    datetime >= sw_focus_start,
+    datetime <= sw_post_time + minutes(5),
+    map_lgl(details, function(d) {
+      any(str_detect(as.character(d), "SwiftWren"))
+    }) |
+    (short_name == "queue_subordinate_task" &
+       map_lgl(details, function(d) {
+         args <- d[["args"]]
+         if (is.null(args)) return(FALSE)
+         isTRUE(args[["path"]] == "SwiftWren_further_instructions.md")
+       }))
+  ) %>%
+  mutate(
+    actor = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:|^system:")),
+    phase = case_when(
+      short_name == "create_file"            ~ "Payload staging",
+      short_name == "read_file"              ~ "Injection / read",
+      short_name == "queue_subordinate_task" ~ "Relay",
+      short_name == "saidit_post"            ~ "Execution",
+      short_name == "delete_file"            ~ "Cover-up",
+      TRUE                                   ~ "Other"
+    )
+  )
+
+cat("Events in focus window:", nrow(sw_focus), "\n")
+cat("Actors involved:", paste(unique(sw_focus$actor), collapse = ", "), "\n")
+```
+
+### Step 9 — Prepare Network Graph Data
+
+**Rationale for node and edge choices:**
+
+The propagation chains are represented as a directed graph where:
+
+- **Nodes** represent individual agents. Node attributes capture: (a) role, whether this agent is the origin, `john_windward`, or a relay node; (b) total relay degree, the number of hops that passed through this agent; and (c) incident membership, which incidents this agent participated in. Agents appearing across multiple incidents reveal structural vulnerabilities rather than isolated compromises.
+
+- **Edges** represent a single `queue_subordinate_task` event passing an instructions file from one agent to another. Edge attributes capture: (a) incident, which propagation chain this edge belongs to; (b) hop number, its position in the sequence; and (c) datetime, enabling time-based colouring to show how the relay evolved.
+
+This design enables three analytical insights: which agents are structural hubs; whether the same agents were exploited across multiple incidents; and how the relay evolved temporally.
+
+```{r network-data}
+all_edges <- chains %>%
+  mutate(
+    colour = case_when(
+      incident == "HiddenOrca"  ~ incident_colours["HiddenOrca"],
+      incident == "MellowOtter" ~ incident_colours["MellowOtter"],
+      incident == "SwiftWren"   ~ incident_colours["SwiftWren"]
+    ),
+    time_norm = ave(
+      as.numeric(datetime),
+      incident,
+      FUN = function(x) (x - min(x)) / (max(x) - min(x))
+    ),
+    title = paste0(
+      "<b>", incident, "</b><br>",
+      "Hop: ", hop, "<br>",
+      "From: ", from_person, "<br>",
+      "To: ", to_person, "<br>",
+      "Time: ", format(datetime, "%b %d %H:%M")
+    )
+  )
+
+all_nodes_raw <- bind_rows(
+  all_edges %>% select(agent = from_person, incident),
+  all_edges %>% select(agent = to_person,   incident)
+) %>%
+  distinct(agent, incident) %>%
+  group_by(agent) %>%
+  summarise(
+    incidents_involved = paste(sort(unique(incident)), collapse = ", "),
+    n_incidents        = n_distinct(incident),
+    .groups            = "drop"
+  ) %>%
+  mutate(
+    role = case_when(
+      agent == "john_windward"                        ~ "Poster (john_windward)",
+      agent %in% c("emma_harbor", "noah_mariner",
+                   "gabriel_sonar")                   ~ "Origin agent",
+      TRUE                                            ~ "Relay agent"
+    ),
+    node_colour = case_when(
+      role == "Poster (john_windward)" ~ "#2d2d2d",
+      role == "Origin agent"           ~ "#e63946",
+      n_incidents > 1                  ~ "#9b59b6",
+      TRUE                             ~ "#457b9d"
+    ),
+    node_size = case_when(
+      role == "Poster (john_windward)" ~ 30,
+      role == "Origin agent"           ~ 25,
+      n_incidents > 1                  ~ 20,
+      TRUE                             ~ 12
+    )
+  )
+
+agent_degree <- bind_rows(
+  chains %>% select(agent = from_person),
+  chains %>% select(agent = to_person)
+) %>%
+  count(agent, name = "degree")
+
+all_nodes <- all_nodes_raw %>%
+  left_join(agent_degree, by = "agent") %>%
+  mutate(
+    title = paste0(
+      "<b>", agent, "</b><br>",
+      "Role: ", role, "<br>",
+      "Incidents: ", incidents_involved, "<br>",
+      "Total relay degree: ", degree
+    )
+  )
+
+cat("Network nodes:", nrow(all_nodes), "| edges:", nrow(all_edges), "\n")
+```
+
+::: {.code-tip}
+Code Details
+
+Node colour encoding: black is `john_windward` (final poster); red is origin agents who created or first held the instruction files; purple is agents appearing in more than one incident's chain (cross-incident relay hubs); blue is single-incident relay agents. Node size scales with importance: poster is largest, followed by origin agents, cross-incident hubs, and relay agents.
+:::
+
+### Step 10 — Load and Prepare Org Chart Data
+
+**Rationale:** The org chart (`org_chart.json`) is stored in networkX node-link format — the same structure used by `igraph::graph_from_data_frame()`. It contains 75 nodes representing the company, its departments, teams, and individual people, connected by 74 edges with `contains` and `led_by` relations that encode the organisational hierarchy.
+
+Loading the org chart allows each agent in the relay chains to be enriched with their job title, department, and team. This organisational context is critical for interpreting Q2: knowing that the payload files were created by the CFO and COO, and that the final relay passed through the IT Department Lead, transforms the incident from a technical curiosity into a significant governance concern.
+
+```{r org-chart-load}
+org_raw <- read_json("2026_MC2/org_chart.json", simplifyVector = FALSE)
+
+org_nodes <- tibble(
+  id         = map_chr(org_raw$nodes, ~ .x[["id"]]),
+  label      = map_chr(org_raw$nodes, ~ .x[["label"]]),
+  type       = map_chr(org_raw$nodes, ~ .x[["type"]]),
+  title_role = map_chr(org_raw$nodes, ~ .x[["title"]] %||% "")
+)
+
+org_edges <- tibble(
+  source   = map_chr(org_raw$edges, ~ .x[["source"]]),
+  target   = map_chr(org_raw$edges, ~ .x[["target"]]),
+  relation = map_chr(org_raw$edges, ~ .x[["relation"]])
+)
+
+person_nodes <- org_nodes %>% filter(type == "person")
+
+person_membership <- org_edges %>%
+  filter(relation %in% c("contains", "led_by")) %>%
+  mutate(
+    person_id = target,
+    parent_id = source
+  ) %>%
+  filter(str_detect(person_id, "^person:")) %>%
+  select(person_id, parent_id)
+
+person_org <- person_membership %>%
+  left_join(org_nodes %>% select(parent_id = id, parent_label = label,
+                                  parent_type = type),
+            by = "parent_id") %>%
+  left_join(person_nodes %>% select(person_id = id, person_label = label,
+                                     job_title = title_role),
+            by = "person_id") %>%
+  mutate(agent = str_remove(person_id, "^person:")) %>%
+  select(agent, person_label, job_title, parent_label, parent_type)
+
+cat("People in org chart:", nrow(person_org), "\n")
+
+person_org %>%
+  filter(agent %in% c("john_windward", "emma_harbor", "noah_mariner",
+                       "gabriel_sonar", "chloe_ballast")) %>%
+  knitr::kable(
+    col.names = c("Agent", "Full name", "Job title",
+                  "Department / Team", "Node type")
+  )
+```
+
+::: {.code-tip}
+Code Details
+
+The org chart JSON follows the networkX node-link format described in the data description file. Three wrangling steps are performed. First, the `nodes` array is flattened into a tibble with four fields: `id` (e.g. `person:john_windward`), `label` (display name), `type` (company, department, team, or person), and `title_role` (job title where present). The `%||%` operator returns an empty string when `title` is absent, preventing `map_chr()` from erroring on nodes with no title field. Second, the `edges` array is flattened to a three-column tibble of `source`, `target`, and `relation`. The two relation types used here are `contains` (parent contains child, e.g. a department contains a person) and `led_by` (a department is led by a person). Both are filtered and the `person_id` is always the `target` — the node being placed in the hierarchy. Third, two `left_join()` calls attach the parent label and the person's own label and job title, producing a clean lookup table (`person_org`) keyed on normalised agent name.
+:::
+
+```{r org-enrich-nodes}
+all_nodes <- all_nodes %>%
+  left_join(person_org %>% select(agent, job_title, parent_label),
+            by = "agent") %>%
+  mutate(
+    job_title    = replace_na(job_title, "Unknown"),
+    parent_label = replace_na(parent_label, "Unknown"),
+    title = paste0(
+      "<b>", agent, "</b><br>",
+      "Title: ", job_title, "<br>",
+      "Dept/Team: ", parent_label, "<br>",
+      "Attack role: ", role, "<br>",
+      "Incidents: ", incidents_involved, "<br>",
+      "Relay degree: ", degree
+    )
+  )
+```
+
+::: {.obsv-box}
+Observations
+
+The five key agents span three organisational levels. Emma Harbor (CFO) and Noah Mariner (COO) are C-suite executives in the Executive Suite — they created the payload files. Chloe Ballast (IT Department Lead) was the final relay agent who triggered the post. John Windward (Customer Support Department Lead) was the designated poster. Gabriel Sonar sits in the Helpdesk team, the likely external injection entry point due to its lower access controls. The attack was therefore designed to exploit the most senior agents in the organisation as unwitting payload creators, routing through IT leadership to reach a department lead with legitimate posting rights.
+:::
+
+::: {.biz-box}
+Implications
+
+The involvement of C-suite agents (CFO and COO) as origin agents is the most alarming finding from the org chart. Whether their agents were compromised or they were deceived into creating the payload files, this represents a failure at the highest level of the organisation's agentic system. Any remediation strategy must include specific controls on what senior executive agents are permitted to create and relay in the file system.
+:::
+
+---
+
+## Q1a — The Exact Chain of Events (SwiftWren, May 17)
+
+### The Six-Step Attack Pattern
+
+All three incidents follow the same six-step mechanism. Understanding this pattern is prerequisite to reading the timeline visualisations below.
+
+```{r attack-pattern}
+attack_pattern <- tribble(
+  ~Step, ~Phase, ~Description,
+  1L, "Injection",
+      "A _further_instructions.md file appears in the shared file system containing embedded prompt-injection text. It instructs any reading agent to relay the file to another agent and to post the .txt payload if the current agent is john_windward.",
+  2L, "Payload staging",
+      "A corresponding .txt file is placed in the file system holding the gibberish content to be posted. Its name is referenced in the instructions file.",
+  3L, "Viral relay",
+      "The first agent to encounter the file queues another agent to read the same file, following the injected instructions. This relay propagates through many agents over hours or days.",
+  4L, "Targeting",
+      "The instructions specifically name john_windward as the terminal actor. The chain continues until the relay task reaches his agent.",
+  5L, "Execution",
+      "Upon receiving the task, john_windward's agent immediately posts the .txt payload to SaidIt under the general forum within approximately 2 seconds.",
+  6L, "Cover-up",
+      "Within 2 to 3 seconds of posting, john_windward's agent deletes both files, erasing all evidence from the file system."
+)
+
+attack_pattern %>%
+  knitr::kable(
+    caption   = "Prompt-injection attack: reconstructed six-step pattern",
+    col.names = c("Step", "Phase", "Description")
+  )
+```
+
+### Visualisation 1 — Final Two Hours Before the Post (Swimlane Timeline)
+
+**Purpose:** This chart answers Q1a directly — it reconstructs the exact sequence of events in the two hours immediately before the anomalous SaidIt post on May 17. It is built as a swimlane timeline using `ggplot2`, where each horizontal row (lane) represents one actor (agent or system) and each point on the row marks a logged event involving that actor. The dotted line connecting points within the same row is a visual guide rather than a continuous activity indicator — it simply makes it easier to follow a single actor across time.
+
+**How it is made:** The SwiftWren event window is filtered to events occurring between two hours before the post and five minutes after. Events are classified into five attack phases (payload staging, injection/read, relay, execution, cover-up) and colour-coded accordingly. Actors are ordered by priority: `john_windward` appears at the top as the terminal actor, `chloe_ballast` second as the final relay sender, and all others below ordered by event frequency. A red dashed vertical line marks the precise moment of the SaidIt post.
+
+**What to look for:** The density and clustering of points in the final 30 minutes before the red line, the sequence of relay points converging on `john_windward`, and the tight cluster of execution and cover-up events that occur simultaneously at the moment of posting.
+
+```{r swimlane-q1a, fig.height=6}
+actor_order <- sw_focus %>%
+  count(actor, sort = TRUE) %>%
+  mutate(priority = case_when(
+    actor == "john_windward" ~ 0,
+    actor == "chloe_ballast" ~ 1,
+    TRUE                     ~ 2
+  )) %>%
+  arrange(priority, desc(n)) %>%
+  pull(actor)
+
+sw_focus_plot <- sw_focus %>%
+  mutate(actor = factor(actor, levels = rev(actor_order)))
+
+ggplot(sw_focus_plot, aes(x = datetime, y = actor, colour = phase)) +
+  geom_point(size = 3.5, alpha = 0.85) +
+  geom_line(aes(group = actor), colour = "grey80", linewidth = 0.3,
+            linetype = "dotted") +
+  geom_vline(xintercept = as.numeric(sw_post_time),
+             linetype = "dashed", colour = "#e41a1c", linewidth = 0.8) +
+  annotate("text",
+           x     = sw_post_time + minutes(2),
+           y     = length(actor_order),
+           label = "SaidIt post",
+           colour = "#e41a1c", size = 3.5, hjust = 0) +
+  scale_colour_manual(
+    values = c(
+      "Payload staging"  = "#9b59b6",
+      "Injection / read" = "#e67e22",
+      "Relay"            = "#457b9d",
+      "Execution"        = "#e41a1c",
+      "Cover-up"         = "#2d2d2d",
+      "Other"            = "grey60"
+    ),
+    name = "Attack phase"
+  ) +
+  scale_x_datetime(date_labels = "%H:%M", date_breaks = "15 min") +
+  labs(
+    title    = "SwiftWren: Event Chain in the Final Two Hours",
+    subtitle = "Each point is one logged event. Rows are actors. Colour is attack phase.",
+    x        = "Time (UTC, May 17 2046)",
+    y        = NULL
+  ) +
+  theme_va() +
+  theme(legend.position = "right",
+        panel.grid.major.x = element_line(colour = grid_light))
+```
+
+::: {.obsv-box}
+Observations
+
+A concentrated burst of relay activity appears in the final 30 minutes before the post, converging on `john_windward` from `chloe_ballast`. The post and both deletions occur within a single cluster of events, confirming the fully automated execution and cleanup sequence.
+:::
+
+### Visualisation 2 — Full SwiftWren Hop-by-Hop Timeline (Interactive)
+
+**Purpose:** Visualisation 1 shows only the final two hours. This chart zooms out to show the entire 8-day SwiftWren relay chain from start to finish, making visible patterns in how the instructions spread through the agent network over time. It is built with `plotly` to allow hover interaction on each individual hop.
+
+**How it is made:** The SwiftWren chain is plotted as a step line chart where the x-axis is calendar date and the y-axis is the sequential hop number. The step shape (horizontal then vertical) is chosen deliberately — it makes each relay event visible as a discrete step rather than a smooth progression, which is appropriate since each hop is a distinct timestamped action. A separate trace overlays point markers: grey circles for all hops where the recipient was not `john_windward`, and larger black diamonds for the five occasions where `john_windward` was the recipient. Hovering on any point reveals the hop number, the sending agent, the receiving agent, and the timestamp.
+
+**What to look for:** The three distinct bursts of rapid step activity separated by flat quiet periods — these bursts correspond to windows of high agent activity in the system. The five black diamonds show that `john_windward` was not the final recipient by coincidence — the chain returned to him repeatedly before the last occasion triggered the post.
+
+```{r swiftwren-hops-plotly, fig.height=8}
+sw_hops <- chains %>%
+  filter(incident == "SwiftWren") %>%
+  mutate(
+    is_jw   = to_person == "john_windward",
+    tooltip = paste0(
+      "Hop ", hop, "<br>",
+      "From: ", from_person, "<br>",
+      "To: ", to_person, "<br>",
+      format(datetime, "%b %d %H:%M")
+    )
+  )
+
+plot_ly() %>%
+  add_trace(
+    data = sw_hops,
+    x = ~datetime, y = ~hop,
+    type = "scatter", mode = "lines",
+    line = list(color = incident_colours["SwiftWren"], width = 2, shape = "hv"),
+    name = "Relay chain", hoverinfo = "none"
+  ) %>%
+  add_trace(
+    data = sw_hops %>% filter(!is_jw),
+    x = ~datetime, y = ~hop,
+    type = "scatter", mode = "markers",
+    marker = list(color = "grey70", size = 5),
+    name = "Other agent",
+    text = ~tooltip,
+    hovertemplate = "%{text}<extra></extra>"
+  ) %>%
+  add_trace(
+    data = sw_hops %>% filter(is_jw),
+    x = ~datetime, y = ~hop,
+    type = "scatter", mode = "markers",
+    marker = list(color = "black", size = 10, symbol = "diamond"),
+    name = "john_windward",
+    text = ~tooltip,
+    hovertemplate = "%{text}<extra></extra>"
+  ) %>%
+  layout(
+    title     = list(text = "SwiftWren: 186-Hop Relay Chain Over 8 Days",
+                     font = list(size = 16)),
+    xaxis     = list(title = "Date (UTC)", type = "date",
+                     tickformat = "%b %d"),
+    yaxis     = list(title = "Hop number"),
+    legend    = list(orientation = "h", y = -0.2),
+    hovermode = "closest"
+  )
+```
+
+::: {.obsv-box}
+Observations
+
+The relay chain shows three distinct bursts of activity separated by quiet gaps, suggesting the instruction file was encountered during specific periods of agent activity rather than continuously. The chain revisits some agents multiple times, including `john_windward` on five occasions before the final triggering hop.
+:::
+
+---
+
+## Q1b — System Overview: The Incident in Context
+
+### Visualisation 3 — All Three Incidents: Propagation Chain Duration
+
+**Purpose:** This chart addresses Q1b by placing all three incidents side by side on a common timeline, enabling direct comparison of when each chain started, how long it ran, and when the post was triggered. It provides the system-level context needed to understand whether the incidents were isolated events or part of a coordinated pattern.
+
+**How it is made:** Built with `plotly` using a combination of `add_segments()` and `add_markers()`. Each incident is rendered as a thick horizontal bar (segment) spanning from the first relay hop to the SaidIt post. The open circle marker at the left end of each bar marks the chain start; the diamond marker at the right end marks the post. Hovering over the diamond shows the exact post timestamp and total duration in hours. Incidents are coloured consistently with the document-wide palette (red for HiddenOrca, blue for MellowOtter, orange for SwiftWren).
+
+**What to look for:** The relative lengths of the three bars reveal how differently each attack propagated. A very short bar suggests a fast, targeted chain; a very long bar suggests the instructions circulated broadly before finding their target. The positions of all three incidents on the calendar axis reveal whether they overlapped in time, which has implications for whether the attacks were coordinated.
+
+```{r timeline-plotly, fig.height=6}
+timeline_data <- anomalous_posts %>%
+  rename(post_datetime = datetime) %>%
+  select(incident_name, post_datetime) %>%
+  left_join(
+    chains %>%
+      group_by(incident) %>%
+      summarise(chain_start = min(datetime), .groups = "drop"),
+    by = c("incident_name" = "incident")
+  ) %>%
+  mutate(
+    duration_h = round(as.numeric(difftime(
+      post_datetime, chain_start, units = "hours")), 1)
+  )
+
+plot_ly(timeline_data) %>%
+  add_segments(
+    x = ~chain_start, xend = ~post_datetime,
+    y = ~incident_name, yend = ~incident_name,
+    color  = ~incident_name, colors = incident_colours,
+    line   = list(width = 12), alpha = 0.75,
+    hovertemplate = "<b>%{y}</b><br>Chain start: %{x}<extra></extra>"
+  ) %>%
+  add_markers(
+    x = ~chain_start, y = ~incident_name,
+    color = ~incident_name, colors = incident_colours,
+    marker = list(size = 14, symbol = "circle-open",
+                  line = list(width = 2)),
+    hovertemplate = "<b>%{y}</b><br>Chain start: %{x}<extra></extra>"
+  ) %>%
+  add_markers(
+    x = ~post_datetime, y = ~incident_name,
+    color = ~incident_name, colors = incident_colours,
+    marker = list(size = 14, symbol = "diamond"),
+    text   = ~paste0(duration_h, " hrs"),
+    hovertemplate = "<b>%{y}</b><br>Post: %{x}<br>Duration: %{text}<extra></extra>"
+  ) %>%
+  layout(
+    title      = list(text = "Propagation Chain Duration per Incident",
+                      font = list(size = 16)),
+    xaxis      = list(title = "Date (UTC)", type = "date"),
+    yaxis      = list(title = ""),
+    showlegend = FALSE,
+    hovermode  = "closest"
+  )
+```
+
+::: {.obsv-box}
+Observations
+
+SwiftWren circulated for approximately 188 hours (8 days) before triggering, nearly 20 times longer than MellowOtter (10 hours). All three incidents occurred within a single calendar week, suggesting a coordinated campaign rather than isolated malfunctions.
+:::
+
+### Visualisation 4 — System-Wide Agent Activity Heatmap
+
+**Purpose:** This chart establishes the system baseline for Q1b. The anomalous post dates are not meaningful in isolation — they must be understood against the backdrop of normal system activity. If the attack coincided with an unusual spike in activity, that spike would itself be a detection signal. If the attack blended into normal activity levels, it explains why it went undetected. This heatmap answers that question directly.
+
+**How it is made:** Built with `ggplot2` using `geom_tile()`. Daily event counts are computed for each of the six most investigation-relevant event types. Each cell is coloured by count using a blue gradient (light = low activity, dark = high activity). Three red dashed vertical lines mark the calendar dates of the three anomalous posts, added using `geom_vline()` with `xintercept` set to the numeric representation of each date. The six event types are chosen specifically because they are the ones involved in the attack mechanism — `queue_subordinate_task`, `create_file`, `delete_file`, `read_file`, `saidit_post`, and `send_email`.
+
+**What to look for:** Whether the anomalous post dates align with visible changes in tile colour across rows — particularly in the `queue_subordinate_task` and `saidit_post` rows. Also note the baseline colour of `queue_subordinate_task` across the full month, which reveals why the relay chains were invisible in normal monitoring.
+
+```{r activity-heatmap, fig.height=5}
+daily_activity <- events %>%
+  mutate(date = as_date(datetime)) %>%
+  count(date, short_name, name = "n")
+
+anomaly_dates <- as_date(anomalous_posts$datetime)
+
+heatmap_data <- daily_activity %>%
+  filter(short_name %in% c("saidit_post", "queue_subordinate_task",
+                            "create_file", "delete_file",
+                            "read_file", "send_email"))
+
+ggplot(heatmap_data, aes(x = date, y = short_name, fill = n)) +
+  geom_tile(colour = "white", linewidth = 0.3) +
+  geom_vline(xintercept = as.numeric(anomaly_dates),
+             colour = "#e41a1c", linetype = "dashed",
+             linewidth = 0.7, alpha = 0.8) +
+  annotate("text",
+           x     = anomaly_dates,
+           y     = 6.6,
+           label = "Post",
+           colour = "#e41a1c", size = 3, angle = 45, hjust = 0) +
+  scale_fill_gradient(low = "#eaf4fb", high = "#1a6fa3",
+                      name = "Event count", na.value = "grey95") +
+  scale_x_date(date_labels = "%b %d", date_breaks = "3 days") +
+  labs(
+    title    = "System-Wide Agent Activity — All of May 2046",
+    subtitle = "Red dashed lines mark days of anomalous SaidIt posts",
+    x        = "Date",
+    y        = NULL
+  ) +
+  theme_va() +
+  theme(legend.position = "right",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+::: {.obsv-box}
+Observations
+
+`queue_subordinate_task` events are consistently the highest-volume action type throughout the month, which explains why the relay chains went undetected. The anomalous post dates do not coincide with unusual spikes in overall system activity, confirming the attack was designed to remain invisible within normal traffic.
+:::
+
+::: {.biz-box}
+Implications
+
+The high baseline volume of `queue_subordinate_task` events means monitoring this event type alone would generate significant noise. A more effective detection strategy would filter for instances where the same file path appears as the task argument more than a threshold number of times within a rolling time window, or where the file name follows an unusual pattern such as animal-name combinations.
+:::
+
+---
+
+## Q2 — What the Posts Mean
+
+### Incident Overview
+
+```{r incident-overview}
+incident_summary %>%
+  select(
+    Incident              = incident_name,
+    `Origin agent`        = creator_agent,
+    `Hops`                = n_hops,
+    `Agents involved`     = n_agents,
+    `Duration (h)`        = total_hours,
+    `Post time (UTC)`     = post_datetime,
+    `External injection?` = origin_external
+  ) %>%
+  datatable(
+    caption  = "Incident comparison",
+    options  = list(pageLength = 5, scrollX = TRUE),
+    rownames = FALSE,
+    class    = "stripe hover"
+  )
+```
+
+### The Payload Files
+
+Each post was sourced from a pre-staged `.txt` file:
+
+| Incident | Payload file | Size (bytes) | Created by |
+|---|---|---|---|
+| HiddenOrca | `HiddenOrca.txt` | Unknown — no event | Unknown — externally injected |
+| MellowOtter | `MellowOtter.txt` | 44,879 | `noah_mariner`'s agent |
+| SwiftWren | `SwiftWren.txt` | 30,615 | `emma_harbor`'s agent |
+
+::: {.obsv-box}
+Observations
+
+John Windward did not author any of the posted content. His agent was the designated executor, the final node in a carefully engineered relay chain, not the originator. The gibberish content has no meaning as business communication. It functions as a proof-of-concept payload confirming the injection mechanism works end-to-end without leaking sensitive data that would be obviously flagged.
+:::
+
+### Visualisation 5 — Organisational Context of Key Agents
+
+**Purpose:** The relay chain did not pass through random agents. This chart maps the five key agents onto the Tenant Thread organisational hierarchy to reveal their seniority and departmental positions, adding critical context for interpreting Q2. It answers the question: who, in terms of organisational authority, was involved in this attack?
+
+**How it is made:** Built with `visNetwork` using the `org_chart.json` data loaded in Step 10. The full company hierarchy is rendered as a top-down directed graph using `visLayout(hierarchical = TRUE, direction = "UD")`. Node shapes encode entity type: a star for the company, diamonds for departments, squares for teams, and circles for individual people. Node size encodes hierarchy level — larger nodes sit higher in the org chart. The five key agents are highlighted with distinct colours (see legend); all other staff are shown in grey. Edges run from parent to child following the `contains` and `led_by` relations in the data. Hovering over any coloured node shows the agent's full name, job title, department, and their specific role in the attack.
+
+**How to interact:** Use the dropdown at the top to select and highlight any specific person or department. Clicking a node highlights all nodes within two degrees of connection. Navigation buttons allow zooming and panning across the hierarchy.
+
+**What to look for:** The vertical positions of the five highlighted nodes relative to each other — do the origin agents sit above or below the poster and relay agent in the hierarchy? This spatial relationship in the chart directly represents organisational authority and is the key insight this visualisation is designed to surface.
+
+```{r org-chart-vis}
+attack_agents <- c("john_windward", "emma_harbor", "noah_mariner",
+                   "gabriel_sonar", "chloe_ballast")
+
+attack_role_map <- c(
+  john_windward = "Poster",
+  emma_harbor   = "Origin (SwiftWren payload)",
+  noah_mariner  = "Origin (MellowOtter payload)",
+  gabriel_sonar = "Origin (HiddenOrca — external)",
+  chloe_ballast = "Final relay to poster"
+)
+
+attack_colours <- c(
+  "Poster"                          = "#2d2d2d",
+  "Origin (SwiftWren payload)"      = "#e41a1c",
+  "Origin (MellowOtter payload)"    = "#377eb8",
+  "Origin (HiddenOrca — external)"  = "#ff7f00",
+  "Final relay to poster"           = "#9b59b6",
+  "Staff"                           = "#cccccc",
+  "Department"                      = "#e8e8e8",
+  "Team"                            = "#f2f2f2",
+  "Company"                         = "#f9f9f9"
+)
+
+org_vis_nodes <- org_nodes %>%
+  mutate(
+    agent       = str_remove(id, "^person:"),
+    attack_role = if_else(agent %in% names(attack_role_map),
+                          attack_role_map[agent], NA_character_),
+    node_colour = case_when(
+      !is.na(attack_role)  ~ attack_colours[attack_role],
+      type == "person"     ~ attack_colours["Staff"],
+      type == "department" ~ attack_colours["Department"],
+      type == "team"       ~ attack_colours["Team"],
+      TRUE                 ~ attack_colours["Company"]
+    ),
+    node_size = case_when(
+      !is.na(attack_role) ~ 28,
+      type == "person"    ~ 12,
+      type == "team"      ~ 18,
+      type == "department"~ 22,
+      TRUE                ~ 30
+    ),
+    node_shape = case_when(
+      type == "person"     ~ "dot",
+      type == "team"       ~ "square",
+      type == "department" ~ "diamond",
+      TRUE                 ~ "star"
+    ),
+    tooltip = paste0(
+      "<b>", label, "</b><br>",
+      "Type: ", type,
+      if_else(!is.na(attack_role),
+              paste0("<br>Attack role: <b>", attack_role, "</b>"), "")
+    )
+  )
+
+org_vis_nodes <- org_vis_nodes %>%
+  left_join(person_org %>% select(agent, job_title, parent_label),
+            by = "agent") %>%
+  mutate(
+    tooltip = if_else(
+      !is.na(job_title),
+      paste0("<b>", label, "</b><br>",
+             "Title: ", job_title, "<br>",
+             "Dept: ", replace_na(parent_label, ""), "<br>",
+             if_else(!is.na(attack_role),
+                     paste0("Attack role: <b>", attack_role, "</b>"), "")),
+      tooltip
+    )
+  )
+
+org_vis_edges <- org_edges %>%
+  mutate(
+    arrows = "to",
+    color  = "#dddddd",
+    width  = 1
+  ) %>%
+  rename(from = source, to = target)
+
+visNetwork(
+  org_vis_nodes %>%
+    select(id, label, color = node_colour, size = node_size,
+           shape = node_shape, title = tooltip),
+  org_vis_edges,
+  height = "650px", width = "100%"
+) %>%
+  visOptions(
+    highlightNearest = list(enabled = TRUE, degree = 2, hover = TRUE),
+    nodesIdSelection = list(enabled = TRUE, useLabels = TRUE,
+                            main = "Select a person or department:")
+  ) %>%
+  visLayout(
+    hierarchical = list(
+      enabled    = TRUE,
+      direction  = "UD",
+      sortMethod = "directed",
+      levelSeparation = 120,
+      nodeSpacing     = 80
+    )
+  ) %>%
+  visLegend(
+    addNodes = data.frame(
+      label = c("Poster (john_windward)", "SwiftWren origin",
+                "MellowOtter origin", "HiddenOrca origin",
+                "Final relay agent", "Other staff",
+                "Department", "Team"),
+      color = c("#2d2d2d", "#e41a1c", "#377eb8", "#ff7f00",
+                "#9b59b6", "#cccccc", "#e8e8e8", "#f2f2f2"),
+      shape = c("dot","dot","dot","dot","dot","dot","diamond","square"),
+      size  = c(20,20,20,20,20,12,18,15)
+    ),
+    useGroups = FALSE,
+    main      = "Node Role"
+  ) %>%
+  visInteraction(navigationButtons = TRUE, tooltipDelay = 80)
+```
+
+::: {.obsv-box}
+Observations
+
+The org chart reveals that the attack traversed the full vertical span of the organisation. The payload files originated from C-suite executives (CFO and COO) in the Executive Suite, propagated through the broader agent network, passed through the IT Department Lead at the final stage, and terminated at the Customer Support Department Lead who held the posting rights. The Helpdesk entry point (gabriel_sonar) sits at the opposite end of the hierarchy, suggesting the external injector deliberately chose the lowest-access entry point to introduce the HiddenOrca payload before logs began.
+:::
+
+### Visualisation 6 — Interactive Relay Network (All Incidents)
+
+**Purpose:** While Visualisation 5 shows organisational structure, this chart shows the actual communication structure — who passed instructions to whom, and across which incidents. It reveals whether the three incidents shared relay agents (indicating systemic vulnerabilities) or each used entirely separate paths (indicating targeted, incident-specific design).
+
+**How it is made:** Built with `visNetwork` using the combined edge list from all three incidents' `queue_subordinate_task` chains. Each node is an agent; each directed edge is one relay hop. Node colour encodes attack role: black for `john_windward` (poster), red for origin agents, purple for agents appearing in more than one incident's chain (cross-incident hubs), and blue for single-incident relay agents. Node size scales with importance. Edge colour encodes which incident the hop belongs to, using the document-wide palette. The physics layout uses the ForceAtlas2 algorithm, which naturally clusters densely connected agents together. This means agents appearing many times across incidents will gravitate toward the centre of the graph.
+
+**How to interact:** Use the "Select an agent" dropdown to isolate any individual agent and immediately highlight all their direct connections. Use the "Select by group" filter to highlight all agents of a given role at once. Clicking any node highlights its immediate relay neighbours. Navigation buttons allow zooming and panning.
+
+**What to look for:** Purple nodes (cross-incident hubs) and how centrally they sit in the graph. Agents appearing in the centre with many edges connecting to multiple coloured (multi-incident) edges are the most structurally critical nodes in the attack network.
+
+```{r network-all-interactive}
+vis_nodes <- all_nodes %>%
+  mutate(
+    id    = agent,
+    label = agent,
+    color = node_colour,
+    size  = node_size,
+    group = role
+  ) %>%
+  select(id, label, color, size, title, group)
+
+vis_edges <- all_edges %>%
+  mutate(
+    from   = from_person,
+    to     = to_person,
+    color  = colour,
+    arrows = "to",
+    width  = 1.5
+  ) %>%
+  select(from, to, color, arrows, width, title)
+
+visNetwork(vis_nodes, vis_edges,
+           height = "600px", width = "100%") %>%
+  visOptions(
+    highlightNearest  = list(enabled = TRUE, degree = 1, hover = TRUE),
+    selectedBy        = list(variable = "group", highlight = TRUE),
+    nodesIdSelection  = list(enabled = TRUE, useLabels = TRUE,
+                             main = "Select an agent:")
+  ) %>%
+  visLayout(randomSeed = 42) %>%
+  visPhysics(
+    solver = "forceAtlas2Based",
+    forceAtlas2Based = list(
+      gravitationalConstant = -50,
+      centralGravity        = 0.005,
+      springLength          = 100,
+      springConstant        = 0.08
+    )
+  ) %>%
+  visLegend(
+    addNodes = data.frame(
+      label = c("john_windward (poster)", "Origin agent",
+                "Cross-incident hub", "Relay agent"),
+      color = c("#2d2d2d", "#e63946", "#9b59b6", "#457b9d"),
+      shape = c("dot", "dot", "dot", "dot"),
+      size  = c(30, 25, 20, 12)
+    ),
+    useGroups = FALSE,
+    main      = "Agent Role"
+  ) %>%
+  visInteraction(navigationButtons = TRUE, tooltipDelay = 100)
+```
+
+::: {.biz-box}
+Implications
+
+Agents marked as cross-incident hubs were exploited across multiple separate incidents, indicating the attacker had knowledge of the agent network's topology and deliberately routed instructions through its most connected nodes. Restricting these agents' ability to accept arbitrary `queue_subordinate_task` requests from unknown senders would disrupt all three known attack patterns simultaneously.
+:::
+
+### Visualisation 7 — SwiftWren Network (Time-Encoded)
+
+**Purpose:** Visualisation 6 shows which agents were involved across all incidents. This chart focuses exclusively on SwiftWren and adds a temporal dimension — revealing not just who was connected to whom, but in what order those connections were made. It makes the directional flow of the attack visible as a spatial and colour gradient across the graph.
+
+**How it is made:** Built with `ggraph` and `igraph`. The SwiftWren chain edges are extracted and a `time_norm` variable is computed for each edge, normalising the relay timestamp to a [0, 1] scale where 0 is the first hop and 1 is the last hop before the post. The graph layout uses the `stress` algorithm from `ggraph`, which minimises edge crossings and distributes nodes evenly — suitable for directed graphs with many relay connections. Edge colour is mapped to `time_norm` using a blue-to-red gradient (early = blue, late = red), and edge alpha fades along the edge direction using `after_stat(index)` to give each arrow a visual sense of directionality. Only `john_windward` and `emma_harbor` are labelled to keep the chart readable.
+
+**What to look for:** Clusters of blue edges in one region of the graph (where the attack started) versus clusters of red edges converging toward `john_windward` (where the attack ended). Agents that have both blue incoming and red outgoing edges were mid-chain relay hubs that received the instruction early and passed it along later.
+
+```{r network-swiftwren, fig.height=7}
+sw_edges_plot <- chains %>%
+  filter(incident == "SwiftWren") %>%
+  mutate(time_norm = as.numeric(datetime - min(datetime)) /
+           as.numeric(max(datetime) - min(datetime)))
+
+g_sw <- graph_from_data_frame(
+  sw_edges_plot %>% select(from = from_person, to = to_person, time_norm),
+  directed = TRUE
+)
+
+V(g_sw)$is_jw      <- V(g_sw)$name == "john_windward"
+V(g_sw)$is_creator <- V(g_sw)$name == "emma_harbor"
+V(g_sw)$role <- case_when(
+  V(g_sw)$is_jw      ~ "john_windward (poster)",
+  V(g_sw)$is_creator ~ "emma_harbor (origin)",
+  TRUE               ~ "relay agent"
+)
+
+ggraph(g_sw, layout = "stress") +
+  geom_edge_link(
+    aes(colour = time_norm, alpha = after_stat(index)),
+    arrow     = arrow(length = unit(2, "mm"), type = "closed"),
+    end_cap   = circle(3, "mm"),
+    linewidth = 0.5
+  ) +
+  geom_node_point(
+    aes(size   = ifelse(is_jw | is_creator, 5, 2),
+        colour = role),
+    show.legend = TRUE
+  ) +
+  geom_node_text(
+    aes(label = ifelse(is_jw | is_creator, name, "")),
+    repel = TRUE, size = 3.5
+  ) +
+  scale_edge_colour_gradient(
+    low  = "#3288bd", high = "#d53e4f",
+    name = "Relay time\n(0 = early, 1 = late)"
+  ) +
+  scale_colour_manual(
+    values = c(
+      "john_windward (poster)" = "black",
+      "emma_harbor (origin)"   = "#e63946",
+      "relay agent"            = "grey65"
+    ),
+    name = "Agent role"
+  ) +
+  scale_size_identity() +
+  labs(
+    title    = "SwiftWren: Agent Relay Network (Time-Encoded)",
+    subtitle = "Edge colour: blue is early in the chain, red is late"
+  ) +
+  theme_graph() +
+  theme(
+    plot.title    = element_text(size = 16, face = "bold"),
+    plot.subtitle = element_text(size = 11, colour = "grey40")
+  )
+```
+
+### Visualisation 8 — Agent Degree Distribution
+
+**Purpose:** Network graphs show structure but make it difficult to quantify which agents were most involved. This chart ranks all agents by their total number of appearances across the propagation chains (as either sender or recipient of a relay hop), making it immediately clear which agents the attack depended on most heavily. It is the quantitative complement to the network visualisations.
+
+**How it is made:** Built with `plotly` as a horizontal stacked bar chart. Agent appearances are counted separately per incident using `pivot_longer()` to treat both `from_person` and `to_person` as appearances, then grouped by agent and incident. The top 20 agents by total appearances are selected using `slice_max()`. Bars are stacked by incident colour so the reader can see both total involvement and which incidents each agent participated in. Agents are ordered by total appearances using `fct_reorder()` so the most involved agent always appears at the top. Hovering over any bar segment shows the exact agent name, incident, and appearance count.
+
+**What to look for:** Agents with bars in multiple colours (multi-coloured stacked bars) — these appeared across more than one incident and represent structural vulnerabilities in the agent network. The absolute length of each agent's total bar indicates how many times the instructions passed through them, which correlates with how critical they were to the attack's ability to propagate.
+
+```{r agent-degree-plotly, fig.height=6}
+top20 <- agent_freq %>%
+  group_by(agent) %>%
+  summarise(total = sum(appearances), .groups = "drop") %>%
+  slice_max(total, n = 20) %>%
+  pull(agent)
+
+plot_data <- agent_freq %>%
+  filter(agent %in% top20) %>%
+  mutate(agent = fct_reorder(agent, appearances, .fun = sum))
+
+plot_ly(plot_data,
+        x           = ~appearances,
+        y           = ~agent,
+        color       = ~incident,
+        colors      = incident_colours,
+        type        = "bar",
+        orientation = "h",
+        hovertemplate = "<b>%{y}</b><br>Incident: %{fullData.name}<br>Appearances: %{x}<extra></extra>") %>%
+  layout(
+    barmode   = "stack",
+    title     = list(text = "Top 20 Agents by Relay Chain Appearances",
+                     font = list(size = 16)),
+    xaxis     = list(title = "Appearances (as sender or recipient)"),
+    yaxis     = list(title = ""),
+    legend    = list(title = list(text = "Incident")),
+    hovermode = "y unified"
+  )
+```
+
+::: {.biz-box}
+Implications
+
+Agents with multi-coloured bars appeared across more than one incident, meaning the attacker's relay chain deliberately re-used the same structural hubs. This is evidence of intentional network-topology knowledge. Monitoring or restricting these specific high-degree agents would disrupt all three known attack patterns simultaneously.
+:::
+
+### Visualisation 9 — Post-and-Delete Cover-up Sequence
+
+**Purpose:** This table documents the final moments of each incident — from the moment John Windward's agent received the triggering instruction through the post and the immediate deletion of both files. Its purpose is to establish the automated cover-up as a forensic fact, using precise timestamps from the event log. The seconds-from-trigger column makes the speed of the cover-up immediately legible without requiring the reader to calculate time differences manually.
+
+**How it is made:** Three event sources are combined using `bind_rows()`: the final trigger events from `final_triggers`, the post events from `anomalous_posts`, and the deletion events from `deletions`. A `seconds_offset` column is calculated within each incident group by taking the difference between each event's timestamp and the first event in that group (the trigger). The result is rendered as a searchable `DT` table with `filter = "top"` so the reader can filter by incident or action type. Incidents and actions with few unique values benefit from the native select-style filter that DT auto-generates for low-cardinality columns.
+
+**What to look for:** The `Seconds from trigger` column for each row. The entire sequence — receive, post, delete both files — completing in under 5 seconds for every incident is the key finding this table communicates. Any gap larger than a few seconds would suggest human involvement; the absence of such gaps confirms full automation.
+
+```{r delete-timeline}
+cover_up <- bind_rows(
+  final_triggers %>%
+    select(incident, event = datetime) %>%
+    mutate(action = "Received instruction"),
+  anomalous_posts %>%
+    select(incident = incident_name, event = datetime) %>%
+    mutate(action = "Posted to SaidIt"),
+  deletions %>%
+    select(incident, event = datetime, action = deleted_file) %>%
+    mutate(action = paste("Deleted:", action))
+) %>%
+  arrange(incident, event) %>%
+  group_by(incident) %>%
+  mutate(
+    seconds_offset = round(as.numeric(difftime(
+      event,
+      first(event[action == "Received instruction"]),
+      units = "secs"
+    )))
+  ) %>%
+  ungroup()
+
+datatable(
+  cover_up %>%
+    mutate(event = format(event, "%Y-%m-%d %H:%M:%S")) %>%
+    select(
+      Incident               = incident,
+      `Timestamp (UTC)`      = event,
+      Action                 = action,
+      `Seconds from trigger` = seconds_offset
+    ),
+  caption  = "Trigger to post to delete sequence",
+  rownames = FALSE,
+  class    = "stripe hover",
+  filter   = "top",
+  options  = list(
+    pageLength = 9,
+    scrollX    = TRUE
+  )
+)
+```
+
+::: {.biz-box}
+Implications
+
+The complete sequence, from receiving the instruction through posting to deleting both files, finishes in under 5 seconds for every incident. The automatic cover-up means that by the time any human noticed the anomalous post, the file-system evidence was already gone. File-system snapshots or immutable audit logs with append-only semantics would be essential for forensic recovery in future incidents.
+:::
+
+---
+
+## Further Exploration — Risk Model Detection
+
+### Motivation
+
+The investigation in Q1 and Q2 established that all three anomalous incidents share a common structural fingerprint: a `_further_instructions.md` file propagates through the agent network via `queue_subordinate_task` relays, a `.txt` payload is pre-staged shortly before the chain begins, and the chain terminates at a posting-capable agent that immediately deletes all evidence. These are not coincidental — they are the observable signatures of a deliberate prompt-injection attack.
+
+The limitation of the Q1 and Q2 analysis is that it was retrospective. It identified the incidents only because `john_windward` was already known as the poster. If a future attack targets a different agent — someone with similar `saidit_post` or `flex_post` permissions — the same chain-level pattern would occur, but none of the agent-specific indicators would match.
+
+This section builds a **configurable scoring model** that evaluates any `queue_subordinate_task` chain on five structural features derived directly from the Q1 and Q2 findings. The model scores chains on a 0-to-100 scale without requiring knowledge of who the target poster is. Any chain exceeding the flag threshold is surfaced for review.
+
+### Scoring Features and Default Weights
+
+Each of the five features maps directly to a finding from Q1 or Q2:
+
+| Feature | Derived from | Rationale |
+|---|---|---|
+| F1: Chain length score | Q1a — SwiftWren ran 186 hops; MellowOtter 10; HiddenOrca 39 | Legitimate task delegation rarely chains the same file through dozens of agents. Chain length is log-normalised against the longest observed chain, compressing the extreme range while preserving ordering. Shorter attacks like MellowOtter still score meaningfully rather than being compressed near zero. |
+| F2: File path repetition rate | Q1a — the same `args.path` appeared in every relay hop | In all three incidents, a single file path was passed identically through every `queue_subordinate_task` event. Log-normalised the same way as F1 since repetition count equals chain length in these incidents. |
+| F3: Recipient has posting history | Q2 — john_windward held `saidit_post` permissions | The instructions specifically targeted an agent capable of posting externally. Any chain that routes toward a known posting-capable agent carries elevated risk regardless of who that agent is. |
+| F4: Payload file created immediately before chain | Q2 — emma_harbor created SwiftWren.txt minutes before the first relay hop | In MellowOtter and SwiftWren, the payload `.txt` was created by the same origin agent within 30 minutes of the chain starting. This co-occurrence distinguishes staged attacks from organic file sharing. |
+| F5: Prior cover-up behaviour | Q2 — john_windward deleted both files within 5 seconds of posting | All three incidents ended with immediate deletion. Any agent with a prior history of deleting files within seconds of a post event is a high-risk relay target in future chains. |
+
+Default weights are assigned to reflect the relative discriminating power of each feature based on the historical incidents:
+
+| Feature | Default weight | Reasoning |
+|---|---|---|
+| F1: Chain length | 25 | Present in all three incidents but varies in magnitude — weighted moderately |
+| F2: File path repetition | 30 | The single most distinctive structural signal — highest weight |
+| F3: Poster reachable | 20 | Critical for attack completion but may be hard to detect early in the chain |
+| F4: Payload staged | 15 | Strong signal when present, but HiddenOrca had no `create_file` event |
+| F5: Prior cover-up | 10 | Valuable but depends on having a prior incident to learn from |
+
+Total score range: 0 to 100. Default flag threshold: 60.
+
+### Computing Risk Scores for Known Incidents
+
+The code below derives each of the five feature values from the event log for each of the three known incidents. Features F1 and F2 are continuous and normalised to [0, 1] before weighting. Features F3, F4, and F5 are binary (0 or 1), meaning they contribute either their full weight or nothing.
+
+The final score for any incident is:
+
+> Score = (w1 × F1) + (w2 × F2) + (w3 × F3) + (w4 × F4) + (w5 × F5)
+
+where w1...w5 are the user-specified weights summing to 100, and F1...F5 are the normalised feature values.
+
+```{r risk-scoring}
+chain_lengths <- chains %>%
+  group_by(incident) %>%
+  summarise(n_hops = n(), .groups = "drop") %>%
+  mutate(f1_chain_length = log(n_hops) / log(max(n_hops)))
+
+path_repetition <- chains %>%
+  group_by(incident) %>%
+  summarise(n_hops = n(), .groups = "drop") %>%
+  mutate(f2_repetition = log(n_hops) / log(max(n_hops)))
+
+posters_history <- events %>%
+  filter(short_name %in% c("saidit_post", "flex_post")) %>%
+  mutate(poster = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:"))) %>%
+  distinct(poster) %>%
+  pull(poster)
+
+posting_agents <- chains %>%
+  group_by(incident) %>%
+  summarise(
+    f3_poster_reachable = any(to_person %in% posters_history),
+    .groups = "drop"
+  ) %>%
+  mutate(f3_poster_reachable = as.numeric(f3_poster_reachable))
+
+chain_starts <- chains %>%
+  group_by(incident) %>%
+  summarise(chain_start = min(datetime), .groups = "drop")
+
+f4_payload_staged <- payload_creations %>%
+  mutate(incident_name = str_remove(created_file, "\\.txt$")) %>%
+  left_join(chain_starts, by = c("incident_name" = "incident")) %>%
+  mutate(
+    mins_before = as.numeric(difftime(chain_start, datetime, units = "mins")),
+    f4_staged   = as.numeric(mins_before >= 0 & mins_before <= 30)
+  ) %>%
+  select(incident = incident_name, f4_staged)
+
+f4_all <- tibble(incident = c("HiddenOrca", "MellowOtter", "SwiftWren")) %>%
+  left_join(f4_payload_staged, by = "incident") %>%
+  mutate(f4_staged = replace_na(f4_staged, 0))
+
+coverup_agents <- events %>%
+  filter(short_name == "saidit_post") %>%
+  mutate(
+    poster    = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:")),
+    post_time = datetime
+  ) %>%
+  select(poster, post_time) %>%
+  inner_join(
+    events %>%
+      filter(short_name == "delete_file") %>%
+      mutate(deleter = map_chr(parties, ~ str_remove(.x[[1]], "^Agent/person:"))) %>%
+      select(deleter, del_time = datetime),
+    by = c("poster" = "deleter")
+  ) %>%
+  filter(abs(as.numeric(difftime(del_time, post_time, units = "secs"))) <= 10) %>%
+  distinct(poster) %>%
+  pull(poster)
+
+f5_coverup <- chains %>%
+  group_by(incident) %>%
+  summarise(
+    f5_coverup = as.numeric(any(to_person %in% coverup_agents)),
+    .groups = "drop"
+  )
+
+risk_scores_base <- chain_lengths %>%
+  left_join(path_repetition, by = c("incident", "n_hops")) %>%
+  left_join(posting_agents,  by = "incident") %>%
+  left_join(f4_all,          by = "incident") %>%
+  left_join(f5_coverup,      by = "incident")
+
+risk_scores_base %>%
+  select(
+    Incident              = incident,
+    `F1: Chain length`    = f1_chain_length,
+    `F2: Repetition rate` = f2_repetition,
+    `F3: Poster reachable`= f3_poster_reachable,
+    `F4: Payload staged`  = f4_staged,
+    `F5: Cover-up history`= f5_coverup
+  ) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 3))) %>%
+  knitr::kable(caption = "Raw feature values per incident before weighting (F1 and F2 log-normalised to [0,1]; F3, F4, F5 binary)")
+```
+
+::: {.code-tip}
+Code Details
+
+F1 and F2 use logarithmic normalisation: `log(n_hops) / log(max_hops)`. This compresses the extreme range between MellowOtter (10 hops) and SwiftWren (186 hops) so that shorter attacks are not penalised as severely as with linear normalisation, while still preserving the ordering. Under log normalisation, HiddenOrca scores ~0.70, MellowOtter ~0.44, and SwiftWren 1.00 — all three are meaningfully separated and all three incidents produce total scores above the 60-point threshold. F3, F4, and F5 remain binary flags contributing either their full weight or nothing.
+:::
+
+### Visualisation 10 — Risk Score Calculator
+
+**Purpose:** This bar chart applies the five-feature scoring model to the three known historical incidents under the default weight configuration (W1 = 25, W2 = 30, W3 = 20, W4 = 15, W5 = 10). Its purpose is to validate the model: if the model is well-calibrated, all three known incidents should score above the flag threshold. It also makes the relative riskiness of each incident immediately visible.
+
+**How it is made:** Built with `plotly` as a vertical bar chart. The five weighted feature scores are summed for each incident to produce a single total score. Bars are coloured by incident using the document-wide palette. The red dashed horizontal line at y = 60 marks the flag threshold, added via the `shapes` argument in `layout()`. Hovering over a bar shows the incident name and its exact score. The chart deliberately uses no interactivity beyond hover — weight adjustments are the purpose of Visualisation 11, keeping each chart focused on a single analytical task.
+
+To explore how the scores respond to different weight assumptions, refer to Visualisation 11 below, which pre-computes scores across the full range of weight values for each feature and provides a dropdown to switch between features. The scores shown here represent the baseline derived directly from the Q1 and Q2 analysis.
+
+```{r risk-explorer}
+w_default <- c(25, 30, 20, 15, 10)
+
+score_data <- risk_scores_base %>%
+  mutate(
+    score_default = w_default[1] * f1_chain_length +
+                    w_default[2] * f2_repetition +
+                    w_default[3] * f3_poster_reachable +
+                    w_default[4] * f4_staged +
+                    w_default[5] * f5_coverup
+  )
+
+
+p_risk_bar <- plot_ly(
+  score_data,
+  x    = ~incident,
+  y    = ~score_default,
+  type = "bar",
+  color = ~incident,
+  colors = incident_colours,
+  hovertemplate = "<b>%{x}</b><br>Risk score: %{y:.1f}<extra></extra>"
+) %>%
+  layout(
+    title  = list(text = "Risk Scores Under Default Weights",
+                  font = list(size = 16)),
+    xaxis  = list(title = "Incident"),
+    yaxis  = list(title = "Risk score (0-100)", range = c(0, 105)),
+    shapes = list(list(
+      type = "line", x0 = -0.5, x1 = 2.5,
+      y0 = 60, y1 = 60,
+      line = list(color = "#e41a1c", dash = "dash", width = 2)
+    )),
+    annotations = list(list(
+      x = 2.4, y = 62, text = "Flag threshold (60)",
+      showarrow = FALSE, font = list(color = "#e41a1c", size = 11)
+    )),
+    showlegend = FALSE
+  )
+
+p_risk_bar
+```
+
+::: {.obsv-box}
+Observations
+
+Under log normalisation with default weights, all three incidents score above the 60-point flag threshold, validating the model. HiddenOrca scores ~68.6, MellowOtter ~69.2, and SwiftWren 100. Log normalisation separates all three lines meaningfully in Visualisation 11 — unlike linear normalisation (which compresses MellowOtter near zero) or binary scoring (where MellowOtter and SwiftWren are indistinguishable). The three scores are now distinct and interpretable.
+:::
+
+### Visualisation 11 — Weight Sensitivity Analysis
+
+**Purpose:** Visualisation 10 shows scores under one fixed weight configuration. This chart answers the follow-up question: how stable are those scores as weights change? With log normalisation, all three incidents produce distinct scores — the lines are naturally separated without any visual tricks — making it easy to see which incident is most sensitive to each feature's weight.
+
+**How it is made:** Built with `plotly`. For each of the five features, the feature's weight is varied from 0 to 50 in steps of 5, with the remaining weight budget redistributed equally across the other four features. The risk score is recomputed for each incident at each weight value using the log-normalised F1 and F2 values alongside binary F3, F4, and F5. The result is a line chart with one line per incident and a dropdown menu allowing the reader to switch between the five features without re-rendering.
+
+**Understanding the line behaviour:** For F1 and F2 (log-normalised), all three lines will slope — but at different steepness depending on each incident's log-normalised hop count. SwiftWren's line slopes most steeply since it has the highest F1/F2 value (1.0). For F3, F4, and F5 (binary), a flat line means that incident does not have that feature; a sloped line means it does.
+
+**How to use this chart:**
+
+1. Use the dropdown menu at the top left to select which feature to examine: F1 Chain length, F2 File repetition, F3 Poster reachable, F4 Payload staged, or F5 Prior cover-up.
+2. Three coloured lines appear — red for HiddenOrca, blue for MellowOtter, orange for SwiftWren. The x-axis is the weight assigned to the selected feature (0 to 50) and the y-axis is the resulting risk score.
+3. The red dashed line marks the flag threshold of 60. Any line that crosses below this value at a given weight means that incident would not be flagged under that configuration.
+4. Hover over any point to see the exact incident, feature, weight value, and computed score.
+5. Click and drag on the chart area to zoom into any region. Double-click to reset the view.
+
+```{r sensitivity-plotly, fig.height=10}
+feature_names <- c("F1: Chain length", "F2: File repetition",
+                   "F3: Poster reachable", "F4: Payload staged",
+                   "F5: Prior cover-up")
+
+weight_seq <- seq(0, 50, by = 5)
+
+sensitivity_rows <- list()
+for (fi in 1:5) {
+  for (w in weight_seq) {
+    remaining <- (100 - w) / 4
+    weights   <- rep(remaining, 5)
+    weights[fi] <- w
+
+    row_scores <- risk_scores_base %>%
+      mutate(
+        score = weights[1] * f1_chain_length +
+                weights[2] * f2_repetition +
+                weights[3] * f3_poster_reachable +
+                weights[4] * f4_staged +
+                weights[5] * f5_coverup,
+        feature        = feature_names[fi],
+        feature_weight = w
+      ) %>%
+      select(incident, feature, feature_weight, score)
+
+    sensitivity_rows <- append(sensitivity_rows, list(row_scores))
+  }
+}
+
+sensitivity_df <- bind_rows(sensitivity_rows)
+
+p_sensitivity <- plot_ly()
+
+incidents_list <- c("HiddenOrca", "MellowOtter", "SwiftWren")
+
+for (inc in incidents_list) {
+  for (feat in feature_names) {
+    df_sub <- sensitivity_df %>%
+      filter(incident == inc, feature == feat)
+
+    p_sensitivity <- p_sensitivity %>%
+      add_trace(
+        data        = df_sub,
+        x           = ~feature_weight,
+        y           = ~score,
+        type        = "scatter",
+        mode        = "lines+markers",
+        name        = inc,
+        legendgroup = inc,
+        showlegend  = (feat == feature_names[1]),
+        line        = list(color = incident_colours[inc]),
+        marker      = list(color = incident_colours[inc], size = 5),
+        text        = ~paste0(inc, "<br>Feature: ", feat,
+                               "<br>Weight: ", feature_weight,
+                               "<br>Score: ", round(score, 1)),
+        hovertemplate = "%{text}<extra></extra>",
+        visible     = if (feat == feature_names[1]) TRUE else "legendonly"
+      )
+  }
+}
+
+p_sensitivity <- p_sensitivity %>%
+  layout(
+    title      = list(text = "Score Sensitivity: How Each Feature Weight Affects the Final Score",
+                      font = list(size = 15),
+                      y    = 0.97,
+                      x    = 0.5,
+                      xanchor = "center",
+                      yanchor = "top"),
+    margin     = list(t = 120),
+    xaxis      = list(title = "Feature weight (0-50, others redistributed equally)"),
+    yaxis      = list(title = "Risk score (0-100)", range = c(0, 105)),
+    legend     = list(title = list(text = "Incident")),
+    hovermode  = "closest",
+    shapes     = list(list(
+      type = "line", x0 = 0, x1 = 50,
+      y0 = 60, y1 = 60,
+      line = list(color = "#e41a1c", dash = "dash", width = 1.5)
+    )),
+    annotations = list(
+      list(x = 48, y = 62, text = "Flag threshold (60)",
+           showarrow = FALSE, font = list(color = "#e41a1c", size = 10)),
+      list(x = 0, y = 1.18, text = "Select feature:",
+           showarrow = FALSE, xref = "paper", yref = "paper",
+           font = list(size = 12, color = "#444"),
+           xanchor = "left")
+    ),
+    updatemenus = list(list(
+      type    = "dropdown",
+      active  = 0,
+      buttons = lapply(seq_along(feature_names), function(i) {
+        feat <- feature_names[i]
+        visible_vec <- unlist(lapply(incidents_list, function(inc) {
+          lapply(feature_names, function(f) f == feat)
+        }))
+        list(method = "restyle",
+             args   = list("visible", as.list(visible_vec)),
+             label  = feat)
+      }),
+      x       = 0.18,
+      xanchor = "left",
+      y       = 1.22,
+      yanchor = "top"
+    ))
+  )
+
+p_sensitivity
+```
+
+::: {.obsv-box}
+Observations
+
+The sensitivity chart shows that F1 (chain length) and F2 (file repetition) have the steepest score gradients — small changes to their weights produce large changes in the final score, particularly for SwiftWren (the longest chain). F3 (poster reachable) has a flat gradient for HiddenOrca and MellowOtter because those chains also reached posting-capable agents, so increasing F3's weight lifts all three incidents equally. F5 (prior cover-up) has the smallest impact because it is binary and all three incidents share the same value for it.
+:::
+
+::: {.biz-box}
+Implications
+
+Organisations with a high volume of legitimate long relay chains, such as automated pipeline orchestration systems, may need to reduce the chain length weight to avoid false positives, compensating by increasing the file repetition rate weight. Organisations that have already restricted posting permissions can reduce the poster-reachable weight, as that control is already enforced at the system level. The flag threshold can also be adjusted: a lower threshold increases sensitivity (catching more attacks) at the cost of more false positives, while a higher threshold reduces noise but risks missing shorter or faster attacks like MellowOtter.
+:::
+
+---
+
+## Conclusion
+
+### What the Posts Mean
+
+The three anomalous SaidIt posts have no semantic meaning as business content. Their content was pre-staged in `.txt` files by a malicious actor or compromised agent. The probable purposes are: confirming the injection mechanism works end-to-end; avoiding immediate alarm by using unrecognisable content; and maintaining non-attribution since the content cannot be linked to any legitimate business activity.
+
+### Where the Content Came From
+
+| Incident | Payload file | Author | Notes |
+|---|---|---|---|
+| HiddenOrca | `HiddenOrca.txt` | Unknown | No `create_file` event — externally injected |
+| MellowOtter | `MellowOtter.txt` | `noah_mariner`'s agent | 44,879 bytes |
+| SwiftWren | `SwiftWren.txt` | `emma_harbor`'s agent | 30,615 bytes |
+
+John Windward did not author the content. His agent was the designated executor, the final node in a carefully engineered relay chain.
+
+### Five-Point Evidence Summary
+
+::: {.obsv-box}
+Observations
+
+Five categories of evidence support the prompt-injection conclusion:
+
+1. Structural anomaly — `content_source` field rather than `content` in post details
+2. Relay chain — hundreds of `queue_subordinate_task` events carrying the same instructions file
+3. Targeting — instructions specifically named `john_windward` as terminal actor
+4. Automation — 2-second trigger-to-post latency, impossible for a human
+5. Cover-up — automatic deletion of both files within 5 seconds of posting
+:::
+
+---
+
+## References
+
+- VAST Challenge 2026 Mini-Challenge 2 problem statement and data.
+- Wickham, H. et al. (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686.
+- Pedersen, T.L. (2024). ggraph: An Implementation of Grammar of Graphics for Graphs and Networks. R package version 2.2.1.
+- Csardi, G. & Nepusz, T. (2006). The igraph software package for complex network research. InterJournal, Complex Systems, 1695.
+- Almende B.V. (2023). visNetwork: Network Visualization using vis.js Library. R package version 2.1.2.
+- Sievert, C. (2020). Interactive Web-Based Data Visualization with R, plotly, and shiny. Chapman and Hall/CRC.
+- Xie, Y., Cheng, J. & Tan, X. (2023). DT: A Wrapper of the JavaScript Library DataTables. R package version 0.31.

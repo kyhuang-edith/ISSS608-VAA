@@ -1,0 +1,1184 @@
+---
+title: "Hands-on Exercise 5"
+author: "Huang Kuan Yu"
+date: "2026-05-11"
+date-modified: "last-modified" 
+  
+format:
+  html:
+    toc: true
+    toc-expand: 1
+    toc-title: "Contents"
+    css: custom.scss
+    number-sections: true 
+execute:
+  echo: true 
+  eval: true 
+  warning: false 
+  freeze: true
+---
+
+## Getting Started
+
+### Install Packages
+
+Import all necessary packages for hands-on exercise.
+
+```{r}
+pacman::p_load(
+  plotly, ggtern, corrplot, ggstatsplot,
+  seriation, dendextend, heatmaply,
+  GGally, parallelPlot,
+  treemap, treemapify,
+  tidyverse, d3treeR
+)
+```
+
+## Chapter 13: Creating Ternary Plot with R
+
+### Import Data
+
+```{r}
+pop_data <- read_csv("data/respopagsex2000to2018_tidy.csv") 
+```
+
+### Prepare the data
+
+Use the mutate() function of dplyr package to derive three new measures, namely: young, active, and old.
+
+```{r}
+#Deriving the young, economy active and old measures
+agpop_mutated <- pop_data %>%
+  mutate(`Year` = as.character(Year))%>%
+  spread(AG, Population) %>%
+  mutate(YOUNG = rowSums(.[4:8]))%>%
+  mutate(ACTIVE = rowSums(.[9:16]))  %>%
+  mutate(OLD = rowSums(.[17:21])) %>%
+  mutate(TOTAL = rowSums(.[22:24])) %>%
+  filter(Year == 2018)%>%
+  filter(TOTAL > 0)
+```
+
+### Plotting Ternary Diagram with R
+
+### Plotting a static ternary diagram
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+ggtern(data=agpop_mutated,aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point()
+```
+:::
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+ggtern(data=agpop_mutated, aes(x=YOUNG,y=ACTIVE, z=OLD)) +
+  geom_point() +
+  labs(title="Population structure, 2015") +
+  theme_rgbw()
+```
+:::
+
+### Plotting an interactive ternary diagram
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+ 
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+label <- function(txt) {
+  list(
+    text = txt, 
+    x = 0.1, y = 1,
+    ax = 0, ay = 0,
+    xref = "paper", yref = "paper", 
+    align = "center",
+    font = list(family = "serif", size = 15, color = "white"),
+    bgcolor = "#b3b3b3", bordercolor = "black", borderwidth = 2
+  )
+}
+
+
+axis <- function(txt) {
+  list(
+    title = txt, tickformat = ".0%", tickfont = list(size = 10)
+  )
+}
+
+ternaryAxes <- list(
+  aaxis = axis("Young"), 
+  baxis = axis("Active"), 
+  caxis = axis("Old")
+)
+
+ 
+plot_ly(
+  agpop_mutated, 
+  a = ~YOUNG, 
+  b = ~ACTIVE, 
+  c = ~OLD, 
+  color = I("black"), 
+  type = "scatterternary"
+) %>%
+  layout(
+    annotations = label("Ternary Markers"), 
+    ternary = ternaryAxes
+  )
+```
+:::
+
+## Chapter 6: Visual Correlation Analysis
+
+### Import Data
+
+```{r}
+wine <- read_csv("data/wine_quality.csv")
+```
+
+### Building correlation matrix: pairs() method
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+
+# Step 3: Include with correlation coefficients
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+usr <- par("usr")
+on.exit(par(usr = usr))
+par(usr = c(0, 1, 0, 1))
+r <- abs(cor(x, y, use="complete.obs"))
+txt <- format(c(r, 0.123456789), digits=digits)[1]
+txt <- paste(prefix, txt, sep="")
+if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+}
+
+# Step 1: building a basic correlation matrix 
+pairs(wine[,2:12], 
+# Step 2: Drawing the lower corner, can show the other half with lower.panel
+      upper.panel = panel.cor)
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+pairs(wine[,1:11])
+# Step 3: Include with correlation coefficients
+panel.cor <- function(x, y, digits=2, prefix="", cex.cor, ...) {
+usr <- par("usr")
+on.exit(par(usr = usr))
+par(usr = c(0, 1, 0, 1))
+r <- abs(cor(x, y, use="complete.obs"))
+txt <- format(c(r, 0.123456789), digits=digits)[1]
+txt <- paste(prefix, txt, sep="")
+if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+text(0.5, 0.5, txt, cex = cex.cor * (1 + r) / 2)
+}
+
+# Step 1: building a basic correlation matrix 
+pairs(wine[,2:12], 
+# Step 2: Drawing the lower corner, can show the other half with lower.panel
+      upper.panel = panel.cor)
+```
+:::
+
+### Visualising correlation matrix: ggcormat()
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 16
+#|fig-height: 8
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+
+ggplot.component = list(
+    theme(text=element_text(size=5),
+      axis.text.x = element_text(size = 8),
+      axis.text.y = element_text(size = 8)))
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 16
+#|fig-height: 8
+ggstatsplot::ggcorrmat(
+  data = wine, 
+  cor.vars = 1:11,
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  title    = "Correlogram for wine dataset",
+  subtitle = "Four pairs are no significant at p < 0.05"
+)
+
+ggplot.component = list(
+    theme(text=element_text(size=5),
+      axis.text.x = element_text(size = 8),
+      axis.text.y = element_text(size = 8)))
+```
+:::
+
+### Building multiple plots
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+grouped_ggcorrmat(
+  data = wine,
+  cor.vars = 1:11,
+  grouping.var = type,
+  type = "robust",
+  p.adjust.method = "holm",
+  plotgrid.args = list(ncol = 2),
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  annotation.args = list(
+    tag_levels = "a",
+    title = "Correlogram for wine dataset",
+    subtitle = "The measures are: alcohol, sulphates, fixed acidity, citric acid, chlorides, residual sugar, density, free sulfur dioxide and volatile acidity",
+    caption = "Dataset: UCI Machine Learning Repository"
+  )
+)
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+grouped_ggcorrmat(
+  data = wine,
+  cor.vars = 1:11,
+  grouping.var = type,
+  type = "robust",
+  p.adjust.method = "holm",
+  plotgrid.args = list(ncol = 2),
+  ggcorrplot.args = list(outline.color = "black", 
+                         hc.order = TRUE,
+                         tl.cex = 10),
+  annotation.args = list(
+    tag_levels = "a",
+    title = "Correlogram for wine dataset",
+    subtitle = "The measures are: alcohol, sulphates, fixed acidity, citric acid, chlorides, residual sugar, density, free sulfur dioxide and volatile acidity",
+    caption = "Dataset: UCI Machine Learning Repository"
+  )
+)
+```
+:::
+
+### Visualising correlation matrix using corrplot package
+
+See intruction in code
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+wine.cor <- cor(wine[, 1:11])
+
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+wine.cor <- cor(wine[, 1:11])
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```
+:::
+
+### Combining corrgram with the significant test
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+wine.num <- wine[, 1:11]
+
+wine.cor <- cor(wine.num, use = "complete.obs")
+
+wine.sig <- cor.mtest(wine.num, conf.level = .95)
+corrplot(wine.cor,
+         method = "number",
+         type = "lower",
+         diag = FALSE,
+         tl.col = "black",
+         tl.srt = 45,
+         p.mat = wine.sig$p,
+         sig.level = .05)
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+wine.num <- wine[, 1:11]
+
+wine.cor <- cor(wine.num, use = "complete.obs")
+
+wine.sig <- cor.mtest(wine.num, conf.level = .95)
+corrplot(wine.cor,
+         method = "number",
+         type = "lower",
+         diag = FALSE,
+         tl.col = "black",
+         tl.srt = 45,
+         p.mat = wine.sig$p,
+         sig.level = .05)
+```
+:::
+
+### Reorder a corrgram
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               order="AOE",
+               tl.col = "black")
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+corrplot.mixed(wine.cor, 
+               lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               order="AOE",
+               tl.col = "black")
+```
+:::
+
+### Reorder using hclust
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+corrplot(wine.cor, 
+         method = "ellipse", 
+         tl.pos = "lt",
+         tl.col = "black",
+         order="hclust",
+         hclust.method = "ward.D",
+         addrect = 3)
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+corrplot(wine.cor, 
+         method = "ellipse", 
+         tl.pos = "lt",
+         tl.col = "black",
+         order="hclust",
+         hclust.method = "ward.D",
+         addrect = 3)
+```
+:::
+
+## Chapter 14: Heatmap for Visualising and Analysing Multivariate Data
+
+### Import data
+
+```{r}
+wh <- read_csv("data/WHData-2018.csv")
+```
+
+### Prepare data
+
+```{r}
+# Convert tibble to data frame
+wh_df <- as.data.frame(wh)
+
+# Set row names using country names
+row.names(wh_df) <- wh_df$Country
+
+# Select variables
+wh1 <- dplyr::select(wh_df, c(3, 7:12))
+
+# Convert to matrix
+wh_matrix <- data.matrix(wh1)
+```
+
+### Static heatmap
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+wh_heatmap <- heatmap(wh_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+wh_heatmap <- heatmap(wh_matrix,
+                      scale="column",
+                      cexRow = 0.6, 
+                      cexCol = 0.8,
+                      margins = c(10, 4))
+```
+:::
+
+### Creating interactive heatmap
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#|fig-width: 12
+#|fig-height: 8
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
+```
+
+#### The code
+
+```{r}
+#|eval: false
+#|fig-width: 12
+#|fig-height: 8
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)])
+```
+:::
+
+### Data transformation
+
+::: panel-tabset
+### Scaling method
+
+```{r}
+#|fig-width: 12
+#|fig-height: 8
+heatmaply(wh_matrix[, -c(1, 2, 4, 5)],
+          scale = "column")
+```
+
+### Normalising method
+
+```{r}
+#|fig-width: 12
+#|fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+
+### Percentising method
+
+```{r}
+#|fig-width: 12
+#|fig-height: 8
+heatmaply(percentize(wh_matrix[, -c(1, 2, 4, 5)]))
+```
+:::
+
+### Clustering algotrithm
+
+**heatmaply** supports a variety of hierarchical clustering algorithm. The main arguments provided are:
+
+- *distfun*: function used to compute the distance (dissimilarity) between both rows and columns. Defaults to dist. The options “pearson”, “spearman” and “kendall” can be used to use correlation-based clustering, which uses as.dist(1 - cor(t(x))) as the distance metric (using the specified correlation method).
+
+- *hclustfun*: function used to compute the hierarchical clustering when *Rowv* or *Colv* are not dendrograms. Defaults to *hclust*.
+
+- *dist_method* default is NULL, which results in “euclidean” to be used. It can accept alternative character strings indicating the method to be passed to distfun. By default *distfun* is “dist”” hence this can be one of “euclidean”, “maximum”, “manhattan”, “canberra”, “binary” or “minkowski”.
+
+- *hclust_method* default is NULL, which results in “complete” method to be used. It can accept alternative character strings indicating the method to be passed to *hclustfun*. By default hclustfun is hclust hence this can be one of “ward.D”, “ward.D2”, “single”, “complete”, “average” (= UPGMA), “mcquitty” (= WPGMA), “median” (= WPGMC) or “centroid” (= UPGMC).
+
+In general, a clustering model can be calibrated either manually or statistically.
+
+### Manual approach
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "ward.D")
+```
+
+### Statistical approach
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+wh_d <- dist(normalize(wh_matrix[, -c(1, 2, 4, 5)]), method = "euclidean")
+dend_expend(wh_d)[[3]]
+wh_clust <- hclust(wh_d, method = "average")
+num_k <- find_k(wh_clust)
+plot(num_k)
+
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          dist_method = "euclidean",
+          hclust_method = "average",
+          k_row = 3)
+```
+
+### Seriation
+
+::: panel-tabset
+### Optimal Leaf Ordering (OLO)
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "OLO")
+```
+
+### Gruvaeus and Wainer
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "GW")
+```
+
+### Mean
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "mean")
+```
+
+### None
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          seriate = "none")
+```
+:::
+
+### Finishing touch:
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Blues,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```
+
+#### The code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+heatmaply(normalize(wh_matrix[, -c(1, 2, 4, 5)]),
+          Colv=NA,
+          seriate = "none",
+          colors = Blues,
+          k_row = 5,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="World Happiness Score and Variables by Country, 2018 \nDataTransformation using Normalise Method",
+          xlab = "World Happiness Indicators",
+          ylab = "World Countries"
+          )
+```
+:::
+
+## Chapter 15: Visual Multivariate Analysis with Parallel Coordinates Plot
+
+For Chapter 15 same data as chapter 14 is used.
+
+### Plotting Static Parallel Coordinates Plot
+
+Things to learn from the code chunk above.
+
+- `groupColumn` argument is used to group the observations (i.e. parallel lines) by using a single variable (i.e. Region) and colour the parallel coordinates lines by region name.
+
+- `scale` argument is used to scale the variables in the parallel coordinate plot by using `uniminmax` method. The method univariately scale each variable so the minimum of the variable is zero and the maximum is one.
+
+- `alphaLines` argument is used to reduce the intensity of the line colour to 0.2. The permissible value range is between 0 to 1.
+
+- `boxplot` argument is used to turn on the boxplot by using logical `TRUE`. The default is `FALSE`.
+
+- `title` argument is used to provide the parallel coordinates plot a title.
+
+::: panel-tabset
+### Simple parallel coordinates
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggparcoord(data = wh, 
+           columns = c(7:12))
+```
+
+### Parallel coordinates with boxplot
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Parallel Coordinates Plot of World Happines Variables")
+```
+
+### Parallel coordinates with facet
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region)
+```
+:::
+
+### Rotate and adjust the x-axis label
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: false 
+#| fig-width: 12
+#| fig-height: 8
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30, hjust=1))
+```
+
+#### The code
+
+```{r}
+#| echo: false 
+#| fig-width: 12
+#| fig-height: 8
+ggparcoord(data = wh, 
+           columns = c(7:12), 
+           groupColumn = 2,
+           scale = "uniminmax",
+           alphaLines = 0.2,
+           boxplot = TRUE, 
+           title = "Multiple Parallel Coordinates Plots of World Happines Variables by Region") +
+  facet_wrap(~ Region) + 
+  theme(axis.text.x = element_text(angle = 30, hjust=1))
+```
+:::
+
+### Plotting Interactive Parallel Coordinates Plot: parallelPlot methods
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+wh <- wh %>%
+  select("Happiness score", c(7:12))
+histoVisibility <- rep(TRUE, ncol(wh))
+parallelPlot(wh,
+             width = 320,
+             height = 250,
+             rotateTitle = TRUE,
+             continuousCS = "YlOrRd",
+             histoVisibility = histoVisibility)
+```
+
+## Chapter 16: Treemap Visualisation with R
+
+### Import data
+
+```{r}
+realis2018 <- read_csv("data/realis2018.csv")
+```
+
+The data.frame *realis2018* is in trasaction record form, which is highly disaggregated and not appropriate to be used to plot a treemap. In this section, we will perform the following steps to manipulate and prepare a data.frtame that is appropriate for treemap visualisation:
+
+- group transaction records by *Project Name*, *Planning Region*, *Planning Area*, *Property Type* and *Type of Sale*, and
+
+- compute *Total Unit Sold*, *Total Area*, *Median Unit Price* and *Median Transacted Price* by applying appropriate summary statistics on *No. of Units*, *Area (sqm)*, *Unit Price (\$ psm)* and *Transacted Price (\$)* respectively.
+
+Two key verbs of **dplyr** package, namely: *group_by()* and *summarize()* will be used to perform these steps.
+
+*group_by()* breaks down a data.frame into specified groups of rows. When you then apply the verbs above on the resulting object they’ll be automatically applied “by group”.
+
+Grouping affects the verbs as follows:
+
+- grouped *select()* is the same as ungrouped *select()*, except that grouping variables are always retained.
+
+- grouped *arrange()* is the same as ungrouped; unless you set *.by_group = TRUE*, in which case it orders first by the grouping variables.
+
+- *mutate()* and *filter()* are most useful in conjunction with window functions (like *rank()*, or *min(x) == x*). They are described in detail in vignette(“window-functions”).
+
+- *sample_n()* and *sample_frac()* sample the specified number/fraction of rows in each group.
+
+- *summarise()* computes the summary for each group.
+
+In our case, *group_by()* will used together with *summarise()* to derive the summarised data.frame.
+
+### Data wrangling
+
+::: panel-tabset
+### Grouped summaries without the pipe
+
+```{r}
+realis2018_grouped <- group_by(realis2018, `Project Name`,
+                               `Planning Region`, `Planning Area`, 
+                               `Property Type`, `Type of Sale`)
+realis2018_summarised <- summarise(realis2018_grouped, 
+                          `Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE),
+                          `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+                          `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE), 
+                          `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+
+### Grouped summaries with the pipe
+
+```{r}
+realis2018_summarised <- realis2018 %>% 
+  group_by(`Project Name`,`Planning Region`, 
+           `Planning Area`, `Property Type`, 
+           `Type of Sale`) %>%
+  summarise(`Total Unit Sold` = sum(`No. of Units`, na.rm = TRUE), 
+            `Total Area` = sum(`Area (sqm)`, na.rm = TRUE),
+            `Median Unit Price ($ psm)` = median(`Unit Price ($ psm)`, na.rm = TRUE),
+            `Median Transacted Price` = median(`Transacted Price ($)`, na.rm = TRUE))
+```
+:::
+
+### Design Treemap with treemap package
+
+### Design a static treemap
+
+- index
+
+  - The index vector must consist of at least two column names or else no hierarchy treemap will be plotted.
+
+  - If multiple column names are provided, such as the code chunk above, the first name is the highest aggregation level, the second name the second highest aggregation level, and so on.
+
+- vSize
+
+  - The column must not contain negative values. This is because it’s vaues will be used to map the sizes of the rectangles of the treemaps.
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 8
+
+realis2018_selected <- realis2018_summarised %>%
+  filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type = "value",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+#### The code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+
+realis2018_selected <- realis2018_summarised %>%
+  filter(`Property Type` == "Condominium", `Type of Sale` == "Resale")
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type = "value",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+:::
+
+### Colors in treemap package
+
+::: panel-tabset
+### The "value" type treemap
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        palette="RdYlBu", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+### The "manual"type treemap
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+:::
+
+### Treemap layout
+
+::: panel-tabset
+### Working with algorithm argument
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "squarified",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+### Using sortID
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "pivotSize",
+        sortID = "Median Transacted Price",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+:::
+
+### Designing Treemap using treemapify package
+
+### Design basic treemap
+
+::: panel-tabset
+#### The plot
+
+```{r}
+#|echo: false
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "squarified",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+
+#### The code
+
+```{r}
+#| eval: false
+#| fig-width: 12
+#| fig-height: 8
+treemap(realis2018_selected,
+        index=c("Planning Region", "Planning Area", "Project Name"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="manual",
+        palette="Blues", 
+        algorithm = "squarified",
+        title="Resale Condominium by Planning Region and Area, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+```
+:::
+
+### Defining hierachy
+
+::: panel-tabset
+### Step 1: Group by planning region
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`),
+       start = "topleft") + 
+  geom_treemap()
+```
+
+### Step 2: Group by planning area
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap()
+```
+
+### Step 3: Adding boundary
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+ggplot(data=realis2018_selected, 
+       aes(area = `Total Unit Sold`,
+           fill = `Median Unit Price ($ psm)`,
+           subgroup = `Planning Region`,
+           subgroup2 = `Planning Area`)) + 
+  geom_treemap() +
+  geom_treemap_subgroup2_border(colour = "gray40",
+                                size = 2) +
+  geom_treemap_subgroup_border(colour = "gray20")
+```
+:::
+
+### Designing Interactive Treemap using d3treeR
+
+### Install package
+
+```{r}
+#| eval: false 
+install.packages("devtools")
+install_github("timelyportfolio/d3treeR")
+```
+
+### Designing an interactive treemap
+
+::: panel-tabset
+### The static plot
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+tm <- treemap(realis2018_summarised,
+        index=c("Planning Region", "Planning Area"),
+        vSize="Total Unit Sold",
+        vColor="Median Unit Price ($ psm)",
+        type="value",
+        title="Private Residential Property Sold, 2017",
+        title.legend = "Median Unit Price (S$ per sq. m)"
+        )
+
+```
+
+### The interactive plot code
+
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+d3tree(tm,rootname = "Singapore" )
+```
+:::

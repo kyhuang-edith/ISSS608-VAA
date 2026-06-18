@@ -1,0 +1,54 @@
+---
+title: "Hands-on Exercise 1"
+author: "Huang Kuan Yu"
+date: "2026-04-25"
+date-modified: "last-modified"
+format:
+  html:
+    toc: true
+    toc-expand: 1
+    toc-title: "Contents"
+    css: custom.scss
+    number-sections: true 
+execute:
+  echo: true 
+  eval: true 
+  warning: false 
+  freeze: true
+---
+
+# Getting Started
+
+## Install and launching R Packages
+
+The code chunk below uses p_load() of pacman to check if tidyverse packages are installed in the computer. If ther are, then they will be launched into R.
+
+```{r}
+pacman::p_load(tidyverse)
+```
+
+## Importing the data
+
+```{r}
+exam_data <- read_csv("data/Exam_data.csv")
+```
+
+# Plotting a simple bar chart
+
+::: panel-tabset
+## The plot
+
+```{r}
+#| echo: false
+ggplot(data = exam_data, aes(x=RACE))
+  geom_bar()
+```
+
+## The code
+
+```{r}
+#| eval: false
+ggplot(data = exam_data, aes(x=RACE))
+  geom_bar()
+```
+:::
