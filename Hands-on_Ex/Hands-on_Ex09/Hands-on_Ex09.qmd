@@ -128,7 +128,7 @@ tm_shape(mpsz_pop2020)+
              position = c("left", "bottom"))
 ```
 
-::: code-tup
+::: code-tip
 Other arguments for `tm_borders()`: - `col` = border colour, - `lwd` = border line width. The default is 1, and - `lty` = border line type. The default is “solid”.
 :::
 
@@ -160,6 +160,7 @@ tm_shape(mpsz_pop2020)+
         n = 5)) +
   tm_borders(fill_alpha = 0.5)
 ```
+
 :::
 
 #### Method 2: with custom break
@@ -454,7 +455,7 @@ quantile(var[,1], percent)
 
   - v: vector with values (without a column name)
 
-# ```{r}
+```{r}
 #| code-fold: true
 
 percentmap <- function(vnam, df, legtitle = NA, mtitle = "Percentile Map") {
@@ -551,7 +552,7 @@ boxbreaks(var)
 
 *Boxmap function*
 
-````{r}
+```{r}
 boxmap <- function(vnam, df, 
                    legtitle=NA,
                    mtitle="Box Map",
@@ -579,4 +580,5 @@ boxmap <- function(vnam, df,
 ### code chunk below to run the function
 tmap_mode("plot")
 boxmap("wp_nonfunctional", NGA_wp)
-````
+```
+::::
