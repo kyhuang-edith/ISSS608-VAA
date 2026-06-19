@@ -1807,7 +1807,7 @@ which may influence claims experience but were not explored within the current s
 By extending analysis towards confirmatory testing, predictive modelling, and deeper risk segmentation, future research may provide stronger evidence regarding the factors driving insurance profitability and volatility, thereby supporting more targeted underwriting strategies and sustainable portfolio management decisions.
 
 ## 7 References
+
 Kam, T. S. (2023). Visualising Distribution. R for Visual Analytics. https://r4va.netlify.app/chap09
 
-Scherer, C. (2019). A ggplot2 Tutorial for Beautiful Plotting in R. Cedric Scherer. https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
-(Useful for plot titles, labels, themes, fonts, spacing, annotations, and overall visual styling.)
+Scherer, C. (2019). A ggplot2 Tutorial for Beautiful Plotting in R. Cedric Scherer. https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/ (Useful for plot titles, labels, themes, fonts, spacing, annotations, and overall visual styling.)
